@@ -49,7 +49,7 @@ const TIERS = [
   {
     id: 'pro',
     name: 'Pro',
-    price: '₹99,000',
+    price: '₹55,000',
     period: 'per month',
     description: 'For scaling applications requiring dedicated indexing and staging environments.',
     buttonText: 'Upgrade to Pro',
@@ -160,6 +160,51 @@ export default function PricingPage() {
           </motion.div>
         </Container>
       </Box>
+
+      {/* LAUNCH PRICING BANNER */}
+      <Container maxWidth="lg" sx={{ mb: 6 }}>
+        <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: { xs: 1.5, md: 2 },
+            flexWrap: 'wrap',
+            px: { xs: 3, md: 5 },
+            py: 2.5,
+            borderRadius: 3,
+            background: 'linear-gradient(135deg, #172554 0%, #1e3a8a 50%, #1d4ed8 100%)',
+            border: '1px solid rgba(96, 165, 250, 0.25)',
+            boxShadow: '0 8px 32px -8px rgba(37, 99, 235, 0.3)',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+            <Box sx={{
+              position: 'absolute', inset: 0,
+              background: 'radial-gradient(ellipse at 60% 50%, rgba(96,165,250,0.12) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }} />
+            <Box sx={{
+              display: 'inline-flex', alignItems: 'center', gap: 1,
+              px: 1.5, py: 0.5, borderRadius: 10,
+              bgcolor: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.35)',
+              flexShrink: 0,
+            }}>
+              <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#60A5FA', boxShadow: '0 0 6px #60A5FA' }} />
+              <Typography sx={{ color: '#93C5FD', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                Launch Offer
+              </Typography>
+            </Box>
+            <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: { xs: '0.95rem', md: '1.05rem' }, textAlign: 'center', position: 'relative' }}>
+              14-day free trial on all plans — starting{' '}
+              <Box component="span" sx={{ color: '#93C5FD', fontWeight: 800 }}>19 April 2026</Box>
+            </Typography>
+            <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.85rem', display: { xs: 'none', md: 'block' }, position: 'relative' }}>
+              Credit card required.
+            </Typography>
+          </Box>
+        </motion.div>
+      </Container>
 
       {/* 2. THREE-COLUMN PRICING CARDS (STRICT CSS GRID) */}
       <Container maxWidth="lg" sx={{ mb: 24 }}>

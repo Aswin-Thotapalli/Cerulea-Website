@@ -180,9 +180,9 @@ const CeruleaAPIDocs = () => {
         .sidebar {
           position: fixed;
           left: 0;
-          top: 0;
+          top: 64px;
           width: 320px;
-          height: 100vh;
+          height: calc(100vh - 64px);
           background: var(--bg-card);
           border-right: 1px solid var(--border);
           overflow-y: auto;
@@ -312,7 +312,7 @@ const CeruleaAPIDocs = () => {
         /* Mobile Toggle */
         .mobile-toggle {
           position: fixed;
-          top: 1rem;
+          top: calc(64px + 1rem);
           left: 1rem;
           z-index: 101;
           background: var(--bg-card);
@@ -349,7 +349,7 @@ const CeruleaAPIDocs = () => {
         .main-content {
           flex: 1;
           margin-left: 320px;
-          padding: 4rem 6rem;
+          padding: calc(64px + 4rem) 6rem 4rem;
           max-width: 1400px;
           position: relative;
           z-index: 1;

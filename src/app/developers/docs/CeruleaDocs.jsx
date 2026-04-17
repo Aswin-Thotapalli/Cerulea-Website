@@ -960,8 +960,8 @@ function Sidebar({ activeSection, onNavigate, searchQuery, setSearchQuery }) {
 
   return (
     <aside style={{
-      position: "fixed", top: 0, left: 0,
-      width: collapsed ? 64 : 272, height: "100vh",
+      position: "fixed", top: 64, left: 0,
+      width: collapsed ? 64 : 272, height: "calc(100vh - 64px)",
       background: "linear-gradient(160deg, #0f2544 0%, #1A3C6B 60%, #1e4d8c 100%)",
       display: "flex", flexDirection: "column", zIndex: 100,
       transition: "width 0.3s ease", overflow: "hidden",
@@ -1068,7 +1068,7 @@ export default function CeruleaDocs() {
 
       {/* Reading progress bar */}
       <div style={{
-        position: "fixed", top: 0, left: 0, height: 3, zIndex: 200,
+        position: "fixed", top: 64, left: 0, height: 3, zIndex: 200,
         background: "linear-gradient(90deg, #2E75B6, #60A5FA)",
         width: `${progress}%`, transition: "width 0.1s linear"
       }} />
@@ -1087,7 +1087,7 @@ export default function CeruleaDocs() {
       }}>
         {/* Top bar */}
         <div style={{
-          position: "sticky", top: 0,
+          position: "sticky", top: 64,
           background: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)",
           borderBottom: "1px solid #F3F4F6", padding: "14px 52px",
           display: "flex", alignItems: "center", justifyContent: "space-between",

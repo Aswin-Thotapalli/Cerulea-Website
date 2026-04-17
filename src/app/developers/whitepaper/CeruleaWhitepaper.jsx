@@ -43,7 +43,7 @@ const styles = `
   /* ── STICKY NAV ───────────────────────────────── */
   .wp-nav {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 64px; left: 0; right: 0;
     background: rgba(13, 45, 79, 0.97);
     backdrop-filter: blur(12px);
     z-index: 100;
@@ -104,7 +104,7 @@ const styles = `
     grid-template-columns: 220px 1fr;
     max-width: 1200px;
     margin: 0 auto;
-    padding-top: 56px;
+    padding-top: 120px;
     min-height: 100vh;
     gap: 0;
   }
@@ -112,8 +112,8 @@ const styles = `
   /* ── SIDEBAR ──────────────────────────────────── */
   .wp-sidebar {
     position: sticky;
-    top: 56px;
-    height: calc(100vh - 56px);
+    top: 120px;
+    height: calc(100vh - 120px);
     overflow-y: auto;
     padding: 2rem 1rem 2rem 1.5rem;
     border-right: 1px solid var(--rule);
@@ -242,7 +242,7 @@ const styles = `
   .wp-section {
     padding: 3.5rem 4rem;
     border-bottom: 1px solid var(--rule);
-    scroll-margin-top: 72px;
+    scroll-margin-top: 136px;
     opacity: 0;
     transform: translateY(16px);
     transition: opacity 0.5s ease, transform 0.5s ease;

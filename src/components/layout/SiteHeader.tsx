@@ -257,9 +257,6 @@ export default function SiteHeader() {
           {/* Right CTAs */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, alignItems: 'center' }}>
             <Link href={getMainUrl('/company/contact')} style={{ textDecoration: 'none' }}>
-              <Button sx={{ color: '#0A192F', fontWeight: 700, fontSize: '0.8rem', px: 2 }}>Sign In</Button>
-            </Link>
-            <Link href={getMainUrl('/company/contact')} style={{ textDecoration: 'none' }}>
               <Button variant="contained" sx={{ bgcolor: '#0A192F', color: '#FFFFFF', fontWeight: 700, fontSize: '0.8rem', px: 2, py: 0.75, '&:hover': { bgcolor: '#1E2B4D' } }}>
                 Contact Sales
               </Button>
