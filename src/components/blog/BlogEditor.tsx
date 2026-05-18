@@ -98,6 +98,8 @@ export default function BlogEditor({ content, onChange }: Props) {
     content: content && Object.keys(content).length > 0 ? content : undefined,
     onUpdate: ({ editor }) => onChange(editor.getJSON() as Record<string, unknown>),
     editorProps: {
+      scrollThreshold: { top: 120, bottom: 80, left: 0, right: 0 },
+      scrollMargin: { top: 120, bottom: 80, left: 0, right: 0 },
       attributes: {
         style: [
           'min-height:400px', 'padding:24px', 'outline:none',
