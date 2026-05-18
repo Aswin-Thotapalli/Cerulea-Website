@@ -44,13 +44,22 @@ export default function ManagePage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [deleting, setDeleting] = useState<string | null>(null);
 
+  // Categories state
+  const [categories, setCategories] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState('');
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [deletingCategory, setDeletingCategory] = useState<string | null>(null);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       const email = session?.user?.email ?? '';
       const ok = ALLOWED_EMAILS.includes(email.toLowerCase());
       setAuthorized(ok);
       setChecking(false);
-      if (ok) fetchPosts();
+      if (ok) {
+        fetchPosts();
+        fetchCategories();
+      }
     });
   }, []);
 
@@ -62,6 +71,34 @@ export default function ManagePage() {
       .order('created_at', { ascending: false });
     setPosts((data ?? []) as BlogPost[]);
     setLoading(false);
+  };
+
+  const fetchCategories = async () => {
+    const { data } = await supabase
+      .from('blog_categories')
+      .select('name')
+      .order('name');
+    setCategories((data ?? []).map((r: { name: string }) => r.name));
+  };
+
+  const handleAddCategory = async () => {
+    const name = newCategory.trim();
+    if (!name) return;
+    setAddingCategory(true);
+    const { error } = await supabase.from('blog_categories').insert({ name });
+    setAddingCategory(false);
+    if (error) { alert('Failed to add: ' + error.message); return; }
+    setNewCategory('');
+    fetchCategories();
+  };
+
+  const handleDeleteCategory = async (name: string) => {
+    if (!confirm(`Delete category "${name}"? Posts using it won't be affected.`)) return;
+    setDeletingCategory(name);
+    const { error } = await supabase.from('blog_categories').delete().eq('name', name);
+    setDeletingCategory(null);
+    if (error) { alert('Failed to delete: ' + error.message); return; }
+    setCategories(prev => prev.filter(c => c !== name));
   };
 
   const handleDelete = async (slug: string) => {
@@ -145,8 +182,8 @@ export default function ManagePage() {
           </Box>
         </Box>
 
-        {/* Table */}
-        <Box sx={{ background: '#fff', borderRadius: 3, border: '1px solid #E2E8F0', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
+        {/* Posts Table */}
+        <Box sx={{ background: '#fff', borderRadius: 3, border: '1px solid #E2E8F0', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)', mb: 6 }}>
           {loading ? (
             <Box sx={{ p: 8, textAlign: 'center' }}>
               <Typography sx={{ color: '#94A3B8' }}>Loading…</Typography>
@@ -184,27 +221,11 @@ export default function ManagePage() {
                         </Link>
                         <Typography sx={{ fontSize: 11, color: '#94A3B8', fontFamily: 'monospace', mt: 0.25 }}>/{post.slug}</Typography>
                       </td>
-
-                      <td style={{ padding: '14px 16px' }}>
-                        <StatusBadge status={status} />
-                      </td>
-
-                      <td style={{ padding: '14px 16px' }}>
-                        <Typography sx={{ fontSize: 13, color: '#64748B' }}>{post.category || '—'}</Typography>
-                      </td>
-
-                      <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
-                        <Typography sx={{ fontSize: 13, color: '#64748B' }}>{post.reading_time ? `${post.reading_time} min` : '—'}</Typography>
-                      </td>
-
-                      <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
-                        <Typography sx={{ fontSize: 13, color: '#64748B' }}>{date}</Typography>
-                      </td>
-
-                      <td style={{ padding: '14px 16px', textAlign: 'center' }}>
-                        {post.featured && <span style={{ color: '#F59E0B', fontSize: 16 }}>★</span>}
-                      </td>
-
+                      <td style={{ padding: '14px 16px' }}><StatusBadge status={status} /></td>
+                      <td style={{ padding: '14px 16px' }}><Typography sx={{ fontSize: 13, color: '#64748B' }}>{post.category || '—'}</Typography></td>
+                      <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}><Typography sx={{ fontSize: 13, color: '#64748B' }}>{post.reading_time ? `${post.reading_time} min` : '—'}</Typography></td>
+                      <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}><Typography sx={{ fontSize: 13, color: '#64748B' }}>{date}</Typography></td>
+                      <td style={{ padding: '14px 16px', textAlign: 'center' }}>{post.featured && <span style={{ color: '#F59E0B', fontSize: 16 }}>★</span>}</td>
                       <td style={{ padding: '14px 16px' }}>
                         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
                           <button onClick={() => router.push(`/blog/edit/${post.slug}`)}
@@ -226,10 +247,60 @@ export default function ManagePage() {
         </Box>
 
         {filtered.length > 0 && (
-          <Typography sx={{ fontSize: 12, color: '#94A3B8', mt: 2, textAlign: 'right' }}>
+          <Typography sx={{ fontSize: 12, color: '#94A3B8', mt: -4, mb: 6, textAlign: 'right' }}>
             Showing {filtered.length} of {posts.length} posts
           </Typography>
         )}
+
+        {/* ── Categories ── */}
+        <Box sx={{ background: '#fff', borderRadius: 3, border: '1px solid #E2E8F0', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.04)' }}>
+          <Box sx={{ p: 3, borderBottom: '1px solid #E2E8F0', background: '#F8FAFC', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Box>
+              <Typography sx={{ fontWeight: 800, color: '#0A192F', fontSize: 15 }}>Categories</Typography>
+              <Typography sx={{ fontSize: 12, color: '#94A3B8', mt: 0.25 }}>Manage the categories available when writing posts.</Typography>
+            </Box>
+            <Typography sx={{ fontSize: 12, color: '#94A3B8' }}>{categories.length} categories</Typography>
+          </Box>
+
+          <Box sx={{ p: 3 }}>
+            {/* Add new category */}
+            <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+              <input
+                value={newCategory}
+                onChange={e => setNewCategory(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') handleAddCategory(); }}
+                placeholder="New category name…"
+                style={{ flex: 1, padding: '8px 12px', borderRadius: 8, border: '1px solid #E2E8F0', fontSize: 14, outline: 'none', fontFamily: 'inherit' }}
+              />
+              <button onClick={handleAddCategory} disabled={addingCategory || !newCategory.trim()}
+                style={btnStyle('#2563eb')}>
+                {addingCategory ? 'Adding…' : '+ Add'}
+              </button>
+            </Box>
+
+            {/* Category list */}
+            {categories.length === 0 ? (
+              <Typography sx={{ color: '#94A3B8', fontSize: 14, textAlign: 'center', py: 3 }}>No categories yet.</Typography>
+            ) : (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+                {categories.map(cat => (
+                  <Box key={cat} sx={{ display: 'flex', alignItems: 'center', gap: 1, background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 2, px: 1.5, py: 0.75 }}>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>{cat}</Typography>
+                    <button
+                      onClick={() => handleDeleteCategory(cat)}
+                      disabled={deletingCategory === cat}
+                      title={`Delete "${cat}"`}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: '0 2px', fontSize: 16, lineHeight: 1, display: 'flex', alignItems: 'center' }}
+                    >
+                      {deletingCategory === cat ? '…' : '×'}
+                    </button>
+                  </Box>
+                ))}
+              </Box>
+            )}
+          </Box>
+        </Box>
+
       </Container>
     </Box>
   );

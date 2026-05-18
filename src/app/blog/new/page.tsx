@@ -11,8 +11,6 @@ const BlogEditor = dynamic(() => import('@/components/blog/BlogEditor'), { ssr: 
 const ALLOWED_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? '')
   .split(',').map((e) => e.trim().toLowerCase()).filter(Boolean);
 
-const CATEGORIES = ['', 'Platform Architecture', 'Infrastructure', 'Developer Guide', 'Governance', 'Case Study', 'Company Update'];
-
 function slugify(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
@@ -74,6 +72,7 @@ export default function NewPostPage() {
   const [coverUrl, setCoverUrl] = useState('');
   const [status, setStatus] = useState<'draft' | 'published' | 'archived'>('draft');
   const [category, setCategory] = useState('');
+  const [categories, setCategories] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [featured, setFeatured] = useState(false);
   const [seoTitle, setSeoTitle] = useState('');
@@ -87,6 +86,12 @@ export default function NewPostPage() {
       setUserEmail(email);
       setAuthorized(ALLOWED_EMAILS.includes(email.toLowerCase()));
       setChecking(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    supabase.from('blog_categories').select('name').order('name').then(({ data }) => {
+      setCategories((data ?? []).map((r: { name: string }) => r.name));
     });
   }, []);
 
@@ -225,7 +230,8 @@ export default function NewPostPage() {
 
                 <label style={labelStyle}>Category</label>
                 <select value={category} onChange={e => setCategory(e.target.value)} style={{ ...inputStyle, marginBottom: 16 }}>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c || '— None —'}</option>)}
+                  <option value="">— None —</option>
+                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
 
                 <label style={labelStyle}>Tags <span style={{ color: '#94A3B8', fontWeight: 400, textTransform: 'none', letterSpacing: 0, fontSize: 11 }}>(Enter to add)</span></label>
