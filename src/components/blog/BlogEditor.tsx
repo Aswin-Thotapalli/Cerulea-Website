@@ -140,13 +140,13 @@ export default function BlogEditor({ content, onChange }: Props) {
   const chars = editor.storage.characterCount?.characters() ?? 0;
 
   return (
-    <div style={{ border: '1px solid #E2E8F0', borderRadius: 12, overflow: 'hidden', background: '#fff' }}>
+    <div style={{ border: '1px solid #E2E8F0', borderRadius: 12, overflow: 'clip', background: '#fff' }}>
 
       {/* ── TOOLBAR ── */}
       <div style={{
         display: 'flex', flexWrap: 'wrap', gap: 2, padding: '8px 12px',
         borderBottom: '1px solid #E2E8F0', background: '#F8FAFC',
-        alignItems: 'center', position: 'sticky', top: 64, zIndex: 10,
+        alignItems: 'center', position: 'sticky', top: 68, zIndex: 10,
       }}>
         {/* Headings */}
         <select
@@ -278,6 +278,7 @@ export default function BlogEditor({ content, onChange }: Props) {
       </div>
 
       <style>{`
+        .ProseMirror > * { scroll-margin-top: 120px; }
         .ProseMirror p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; color: #94A3B8; pointer-events: none; height: 0; }
         .ProseMirror h1 { font-size:2rem; font-weight:800; margin:1.5rem 0 .75rem; color:#0A192F; letter-spacing:-.02em; }
         .ProseMirror h2 { font-size:1.5rem; font-weight:700; margin:1.5rem 0 .75rem; color:#0A192F; }
