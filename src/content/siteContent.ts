@@ -4,7 +4,7 @@ const IS_DEV = process.env.NODE_ENV === 'development';
 const IS_LOCAL_TEST = process.env.NEXT_PUBLIC_TEST_LOCAL === 'true';
 
 const USE_LOCAL = IS_DEV || IS_LOCAL_TEST;
-const BASE_DOMAIN = USE_LOCAL ? 'localhost:3000' : 'cerulea.app';
+const BASE_DOMAIN = USE_LOCAL ? 'localhost:3000' : 'cerulea.io';
 const PROTOCOL = USE_LOCAL ? 'http://' : 'https://';
 
 export const getSubdomainUrl = (subdomain: string) => `${PROTOCOL}${subdomain}.${BASE_DOMAIN}`;
