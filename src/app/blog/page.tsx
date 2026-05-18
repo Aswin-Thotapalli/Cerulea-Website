@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Box, Container, Typography } from '@mui/material';
-import TerminalOutlinedIcon from '@mui/icons-material/TerminalOutlined';
+import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { isAdmin } from '@/lib/auth';
 import AdminControls from '@/components/blog/AdminControls';
@@ -24,7 +24,7 @@ export default async function BlogIndexPage() {
 
       {/* HERO */}
       <Box sx={{
-        pt: { xs: 16, md: 24 }, pb: { xs: 12, md: 20 },
+        pt: { xs: 16, md: 24 }, pb: { xs: 10, md: 16 },
         bgcolor: '#0A192F', position: 'relative', overflow: 'hidden',
         borderBottom: '1px solid rgba(255,255,255,0.05)'
       }}>
@@ -35,16 +35,16 @@ export default async function BlogIndexPage() {
         }} />
         <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, mb: 4 }}>
-            <TerminalOutlinedIcon sx={{ color: '#60A5FA', fontSize: 20 }} />
+            <EditNoteOutlinedIcon sx={{ color: '#60A5FA', fontSize: 22 }} />
             <Typography sx={{ color: '#60A5FA', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: '0.75rem' }}>
-              Engineering Log
+              Cerulea Blog
             </Typography>
           </Box>
           <Typography variant="h1" sx={{ fontWeight: 800, fontSize: { xs: '3rem', md: '4.5rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 3, color: '#FFFFFF' }}>
-            Architecture &<br />Infrastructure Notes.
+            Ideas, Research &<br />Perspectives.
           </Typography>
-          <Typography sx={{ color: '#94A3B8', fontSize: { xs: '1.1rem', md: '1.25rem' }, lineHeight: 1.7, fontWeight: 400, maxWidth: 600 }}>
-            Deep dives and structural frameworks detailing how Cerulea translates architectural intent into deployable blockchain networks.
+          <Typography sx={{ color: '#94A3B8', fontSize: { xs: '1.1rem', md: '1.25rem' }, lineHeight: 1.7, fontWeight: 400, maxWidth: 580 }}>
+            Technical writing, strategic thinking, and notes from the team building Cerulea&apos;s infrastructure platform.
           </Typography>
         </Container>
       </Box>
