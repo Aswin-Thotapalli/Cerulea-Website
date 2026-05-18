@@ -209,26 +209,6 @@ export const headerNav: Array<
   },
 ];
 
-export const blogIndex = [
-  {
-    slug: 'what-is-cerulea',
-    title: 'What Cerulea is (and what it is not)',
-    summary:
-      'A practical explanation of Cerulea as deployable infrastructure: Studio to Protocol/Private to Dashboard to APIs.',
-  },
-  {
-    slug: 'public-vs-private',
-    title: 'Choosing between public deployments and private chains',
-    summary:
-      'A decision framework based on participation, governance boundaries, operational ownership, and data visibility.',
-  },
-  {
-    slug: 'no-code-to-runtime',
-    title: 'How no-code becomes a deployed blockchain system in Cerulea',
-    summary:
-      'How Studio definitions become deployable runtime behavior without forcing SDK/CLI scaffolding.',
-  },
-];
 
 export const solutions = [
   {
