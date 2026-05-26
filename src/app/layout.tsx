@@ -1,5 +1,6 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
@@ -22,6 +23,7 @@ export default function RootLayout({
           {children}
           <SiteFooter />
         </ThemeRegistry>
+        <Analytics />
       </body>
     </html>
   );
