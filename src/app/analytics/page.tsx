@@ -28,20 +28,20 @@ export const revalidate = 0;
 
 function SetupRequired() {
   return (
-    <div style={{ minHeight: '100vh', background: '#04040A', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', fontFamily: 'var(--font-jakarta, system-ui, sans-serif)' }}>
-      <div style={{ background: '#0C0C14', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '32px 36px', maxWidth: 520, width: '100%' }}>
-        <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(99,102,241,0.9)" strokeWidth="2" strokeLinecap="round"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+    <div style={{ minHeight: '100vh', background: '#F5F5F8', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem', fontFamily: 'var(--font-jakarta, system-ui, sans-serif)' }}>
+      <div style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 16, padding: '32px 36px', maxWidth: 520, width: '100%', boxShadow: '0 4px 24px rgba(0,0,0,0.06)' }}>
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(82,84,200,0.1)', border: '1px solid rgba(82,84,200,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(82,84,200,0.9)" strokeWidth="2" strokeLinecap="round"><path d="M12 2L2 7l10 5 10-5-10-5M2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
         </div>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#EDEDF0', margin: '0 0 8px', letterSpacing: '-0.02em' }}>PostHog not configured</h2>
-        <p style={{ color: '#8B8B9E', lineHeight: 1.7, margin: '0 0 20px', fontSize: 14 }}>Add these to Vercel → Environment Variables and redeploy:</p>
-        <div style={{ background: '#04040A', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '16px 20px', fontFamily: 'monospace', fontSize: 13, color: '#EDEDF0', lineHeight: 2.4 }}>
-          <div style={{ color: '#4B4B5E' }}>{'# PostHog → Avatar → Personal API Keys'}</div>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#111118', margin: '0 0 8px', letterSpacing: '-0.02em' }}>PostHog not configured</h2>
+        <p style={{ color: '#52526A', lineHeight: 1.7, margin: '0 0 20px', fontSize: 14 }}>Add these to Vercel → Environment Variables and redeploy:</p>
+        <div style={{ background: '#F5F5F8', border: '1px solid rgba(0,0,0,0.08)', borderRadius: 10, padding: '16px 20px', fontFamily: 'monospace', fontSize: 13, color: '#111118', lineHeight: 2.4 }}>
+          <div style={{ color: '#8080A0' }}>{'# PostHog → Avatar → Personal API Keys'}</div>
           <div>POSTHOG_PERSONAL_API_KEY=phx_...</div>
-          <div style={{ marginTop: 8, color: '#4B4B5E' }}>{'# PostHog URL → /project/{number}'}</div>
+          <div style={{ marginTop: 8, color: '#8080A0' }}>{'# PostHog URL → /project/{number}'}</div>
           <div>POSTHOG_PROJECT_ID=123456</div>
         </div>
-        <p style={{ color: '#4B4B5E', fontSize: 12, marginTop: 12 }}>Server-only — no NEXT_PUBLIC_ prefix needed.</p>
+        <p style={{ color: '#8080A0', fontSize: 12, marginTop: 12 }}>Server-only — no NEXT_PUBLIC_ prefix needed.</p>
       </div>
     </div>
   );

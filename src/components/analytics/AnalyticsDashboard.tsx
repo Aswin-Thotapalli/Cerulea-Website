@@ -9,24 +9,24 @@ import type { SessionRec } from '@/lib/posthog-api';
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 const C = {
-  bg:       '#04040A',
-  surface:  '#0C0C14',
-  elevated: '#131320',
-  border:   'rgba(255,255,255,0.07)',
-  borderHi: 'rgba(255,255,255,0.13)',
-  text:     '#EDEDF0',
-  sub:      '#8B8B9E',
-  dim:      '#4B4B5E',
-  ghost:    '#2E2E3E',
-  indigo:   '#6366F1',
-  violet:   '#8B5CF6',
-  emerald:  '#10B981',
-  rose:     '#F43F5E',
-  amber:    '#F59E0B',
-  cyan:     '#06B6D4',
-  teal:     '#14B8A6',
-  pink:     '#EC4899',
-  sky:      '#0EA5E9',
+  bg:       '#F5F5F8',
+  surface:  '#FFFFFF',
+  elevated: '#EEEFF4',
+  border:   'rgba(0,0,0,0.08)',
+  borderHi: 'rgba(0,0,0,0.15)',
+  text:     '#111118',
+  sub:      '#52526A',
+  dim:      '#8080A0',
+  ghost:    '#A8A8C0',
+  indigo:   '#5254C8',
+  violet:   '#7C3AED',
+  emerald:  '#059669',
+  rose:     '#E11D48',
+  amber:    '#D97706',
+  cyan:     '#0891B2',
+  teal:     '#0D9488',
+  pink:     '#DB2777',
+  sky:      '#0284C7',
 } as const;
 
 const FONT = `var(--font-jakarta, 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif)`;
@@ -159,10 +159,13 @@ function Card({ children, style, glow }: { children: React.ReactNode; style?: Re
       onMouseLeave={() => setHovered(false)}
       style={{
         padding: 1,
-        background: hovered ? `rgba(255,255,255,0.06)` : `rgba(255,255,255,0.04)`,
+        background: hovered ? `rgba(0,0,0,0.04)` : `rgba(0,0,0,0.025)`,
         borderRadius: 14,
         border: `1px solid ${hovered ? C.borderHi : C.border}`,
-        transition: 'background 200ms ease, border-color 200ms ease',
+        transition: 'background 200ms ease, border-color 200ms ease, box-shadow 200ms ease',
+        boxShadow: hovered
+          ? '0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.06)'
+          : '0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04)',
         position: 'relative',
         ...style,
       }}
@@ -175,12 +178,11 @@ function Card({ children, style, glow }: { children: React.ReactNode; style?: Re
         boxSizing: 'border-box',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
       }}>
         {glow && (
           <div style={{
             position: 'absolute', inset: 0, borderRadius: 13, pointerEvents: 'none',
-            background: `radial-gradient(ellipse 140% 80% at 50% -10%, ${glow}14, transparent 70%)`,
+            background: `radial-gradient(ellipse 140% 80% at 50% -10%, ${glow}10, transparent 70%)`,
           }} />
         )}
         {children}
@@ -225,7 +227,7 @@ function HBar({ v, t, color = C.indigo, height = 4 }: { v: number; t: number; co
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   return (
-    <div ref={ref} style={{ background: C.ghost, borderRadius: 3, height, flex: 1, overflow: 'hidden' }}>
+    <div ref={ref} style={{ background: 'rgba(0,0,0,0.08)', borderRadius: 3, height, flex: 1, overflow: 'hidden' }}>
       <motion.div
         initial={{ width: 0 }}
         animate={isInView ? { width: `${Math.max(p, v ? 2 : 0)}%` } : {}}
@@ -270,7 +272,7 @@ function HeatGrid({ data, color = C.indigo }: { data: { hour: number; views: num
           transition={{ duration: 0.4, delay: i * 0.012, ease: 'easeOut' }}
           style={{
             aspectRatio: '1', borderRadius: 3,
-            background: views ? color : C.ghost,
+            background: views ? color : 'rgba(0,0,0,0.07)',
           }}
         />
       ))}
@@ -377,7 +379,7 @@ function Pill({ label, color }: { label: string; color: string }) {
 // ─── Table header cell ────────────────────────────────────────────────────────
 const TH = ({ children }: { children: React.ReactNode }) => (
   <th style={{
-    fontSize: 10, fontWeight: 700, color: C.ghost,
+    fontSize: 10, fontWeight: 700, color: C.dim,
     textTransform: 'uppercase', letterSpacing: '0.09em',
     padding: '6px 12px', borderBottom: `1px solid ${C.border}`,
     textAlign: 'left', whiteSpace: 'nowrap',
@@ -432,15 +434,15 @@ export default function AnalyticsDashboard({ data, days, phBase }: Props) {
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
         <div style={{
           position: 'absolute', width: 700, height: 700, top: -250, right: -150, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(82,84,200,0.07) 0%, transparent 65%)',
         }} />
         <div style={{
           position: 'absolute', width: 500, height: 500, bottom: 100, left: -150, borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 65%)',
         }} />
         <div style={{
           position: 'absolute', width: 400, height: 400, top: '40%', left: '40%', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(16,185,129,0.03) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(5,150,105,0.04) 0%, transparent 65%)',
         }} />
       </div>
 
@@ -448,7 +450,7 @@ export default function AnalyticsDashboard({ data, days, phBase }: Props) {
       <div style={{
         position: 'sticky', top: 64, zIndex: 40, height: 52,
         backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-        background: 'rgba(4,4,10,0.85)',
+        background: 'rgba(245,245,248,0.92)',
         borderBottom: `1px solid ${C.border}`,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 28px',
       }}>
@@ -462,14 +464,14 @@ export default function AnalyticsDashboard({ data, days, phBase }: Props) {
         </div>
 
         {/* Time range pills */}
-        <div style={{ display: 'flex', gap: 2, background: C.ghost, borderRadius: 9, padding: 2 }}>
+        <div style={{ display: 'flex', gap: 2, background: 'rgba(0,0,0,0.07)', borderRadius: 9, padding: 2 }}>
           {([7, 30, 90] as const).map(d => (
             <Link key={d} href={`/analytics?days=${d}`} style={{
               padding: '5px 14px', borderRadius: 7, fontSize: 12, fontWeight: 600,
               textDecoration: 'none', transition: 'all 180ms ease',
               background: days === d ? C.surface : 'transparent',
-              color: days === d ? C.text : C.dim,
-              boxShadow: days === d ? '0 1px 3px rgba(0,0,0,0.4)' : 'none',
+              color: days === d ? C.text : C.sub,
+              boxShadow: days === d ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
             }}>
               {d === 7 ? '7d' : d === 30 ? '30d' : '90d'}
             </Link>

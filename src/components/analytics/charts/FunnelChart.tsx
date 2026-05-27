@@ -30,12 +30,13 @@ export default function FunnelChart({ steps }: { steps: Step[] }) {
           <div key={step.label} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <div style={{
               flex: 1,
-              background: '#0C0C14',
-              border: `1px solid rgba(255,255,255,0.07)`,
+              background: '#FFFFFF',
+              border: `1px solid rgba(0,0,0,0.08)`,
               borderRadius: 12,
               padding: '16px 18px',
               position: 'relative',
               overflow: 'hidden',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
             }}>
               {/* Animated fill from bottom */}
               <motion.div
@@ -65,7 +66,7 @@ export default function FunnelChart({ steps }: { steps: Step[] }) {
                   {step.label}
                 </div>
                 {step.sublabel && (
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', marginBottom: 14 }}>{step.sublabel}</div>
+                  <div style={{ fontSize: 10, color: 'rgba(0,0,0,0.3)', marginBottom: 14 }}>{step.sublabel}</div>
                 )}
 
                 <motion.div
@@ -73,7 +74,7 @@ export default function FunnelChart({ steps }: { steps: Step[] }) {
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, ease: EASE, delay: i * 0.12 + 0.25 }}
                   style={{
-                    fontSize: '1.85rem', fontWeight: 800, color: '#EDEDF0',
+                    fontSize: '1.85rem', fontWeight: 800, color: '#111118',
                     letterSpacing: '-0.04em', lineHeight: 1,
                     fontVariantNumeric: 'tabular-nums',
                   }}
@@ -86,7 +87,7 @@ export default function FunnelChart({ steps }: { steps: Step[] }) {
                     {convPct}%
                   </span>
                   {dropPct !== null && (
-                    <span style={{ fontSize: 10, fontWeight: 600, color: dropPct < 0 ? '#F43F5E' : '#10B981' }}>
+                    <span style={{ fontSize: 10, fontWeight: 600, color: dropPct < 0 ? '#E11D48' : '#059669' }}>
                       {dropPct > 0 ? '+' : ''}{dropPct}%
                     </span>
                   )}
