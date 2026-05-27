@@ -6,6 +6,7 @@ import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { PostHogProvider } from '@/providers/PostHogProvider';
 import ScrollDepthTracker from '@/components/analytics/ScrollDepthTracker';
+import WebVitalsTracker from '@/components/analytics/WebVitalsTracker';
 
 export const metadata: Metadata = {
   title: 'Cerulea | Enterprise Blockchain Infrastructure',
@@ -40,8 +41,8 @@ export default function RootLayout({
             {children}
             <SiteFooter />
           </ThemeRegistry>
-          {/* Fires scroll depth events at 25/50/75/90/100% on every page */}
           <ScrollDepthTracker />
+          <WebVitalsTracker />
         </PostHogProvider>
       </body>
     </html>

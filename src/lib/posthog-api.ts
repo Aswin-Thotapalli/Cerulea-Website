@@ -425,3 +425,106 @@ export async function getDailyViews(days: number) {
 
   return rows.map(([date, views]) => ({ date, views }));
 }
+
+// ── Top pages with avg time on page ──────────────────────────────────────────
+
+export async function getTopPagesWithTime(days: number) {
+  const rows = await hql<[string, number, number][]>(`
+    SELECT
+      properties.$pathname                                   as page,
+      count()                                                as exits,
+      round(avg(toFloat64OrNull(properties.$time_on_page))) as avg_time
+    FROM events
+    WHERE event = '$pageleave'
+      AND timestamp > now() - interval ${days} day
+      AND properties.$pathname IS NOT NULL
+      AND toFloat64OrNull(properties.$time_on_page) > 0
+      AND toFloat64OrNull(properties.$time_on_page) < 7200
+    GROUP BY page
+    ORDER BY exits DESC
+    LIMIT 12`);
+  return rows.map(([page, exits, avgTime]) => ({ page, exits, avgTime: Math.round(avgTime ?? 0) }));
+}
+
+// ── Conversion funnel ─────────────────────────────────────────────────────────
+
+export async function getConversionFunnel(days: number) {
+  const [visitors, ctaClicks, formStarts, formSubmits] = await Promise.all([
+    hql<[[number]]>(`
+      SELECT count(distinct person_id) FROM events
+      WHERE event = '$pageview'
+        AND timestamp > now() - interval ${days} day`),
+    hql<[[number]]>(`
+      SELECT count(distinct person_id) FROM events
+      WHERE event = 'cta_clicked'
+        AND timestamp > now() - interval ${days} day`),
+    hql<[[number]]>(`
+      SELECT count(distinct person_id) FROM events
+      WHERE event = 'contact_form_started'
+        AND timestamp > now() - interval ${days} day`),
+    hql<[[number]]>(`
+      SELECT count(distinct person_id) FROM events
+      WHERE event = 'contact_form_submitted'
+        AND timestamp > now() - interval ${days} day`),
+  ]);
+  return {
+    visitors:    visitors[0]?.[0]    ?? 0,
+    ctaClicks:   ctaClicks[0]?.[0]   ?? 0,
+    formStarts:  formStarts[0]?.[0]  ?? 0,
+    formSubmits: formSubmits[0]?.[0] ?? 0,
+  };
+}
+
+// ── Web Vitals ────────────────────────────────────────────────────────────────
+
+export async function getWebVitals(days: number) {
+  const rows = await hql<[string, number, number][]>(`
+    SELECT
+      properties.metric_name                              as metric,
+      round(avg(toFloat64OrNull(properties.value)))       as avg_val,
+      round(quantile(0.75)(toFloat64OrNull(properties.value))) as p75
+    FROM events
+    WHERE event = 'web_vitals'
+      AND timestamp > now() - interval ${days} day
+      AND metric IS NOT NULL
+    GROUP BY metric
+    ORDER BY metric ASC`);
+  return rows.map(([metric, avg, p75]) => ({ metric, avg: avg ?? 0, p75: p75 ?? 0 }));
+}
+
+// ── Session recordings (REST, not HogQL) ──────────────────────────────────────
+
+export interface SessionRec {
+  id: string;
+  duration: number;
+  start_time: string;
+  click_count: number;
+  keypress_count: number;
+  active_seconds: number;
+  console_error_count: number;
+  viewed: boolean;
+  person?: {
+    name?: string;
+    properties?: {
+      email?: string;
+      $geoip_country_name?: string;
+      $geoip_country_code?: string;
+      $browser?: string;
+      $device_type?: string;
+      $os?: string;
+    };
+  };
+}
+
+export async function getSessionRecordings(limit = 20): Promise<SessionRec[]> {
+  const res = await fetch(
+    `${BASE}/session_recordings/?order=-start_time&limit=${limit}`,
+    {
+      headers: { Authorization: `Bearer ${API_KEY}` },
+      cache: 'no-store',
+    }
+  );
+  if (!res.ok) throw new Error(`PostHog recordings API ${res.status}`);
+  const json = await res.json();
+  return json.results ?? [];
+}

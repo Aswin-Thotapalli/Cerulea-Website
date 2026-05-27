@@ -30,24 +30,54 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     posthog.init(key, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
       ui_host: 'https://us.posthog.com',
-
-      // Page views — handled manually below so App Router navigations are tracked
       capture_pageview: false,
       capture_pageleave: true,
-
-      // Autocapture: every click, link, button, and form interaction
       autocapture: true,
-
-      // Session recordings — watch real user sessions
-      session_recording: {
-        maskInputOptions: { password: true }, // never record passwords
-      },
-
-      // Always create person profiles so geo/device data is attached
+      session_recording: { maskInputOptions: { password: true } },
       person_profiles: 'always',
-
       persistence: 'localStorage',
     });
+
+    // Track external link clicks
+    const onLinkClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement).closest('a');
+      if (!a) return;
+      const href = a.getAttribute('href') ?? '';
+      if (href.startsWith('http') && !href.includes('cerulea')) {
+        posthog.capture('external_link_clicked', {
+          href,
+          text: a.textContent?.trim().slice(0, 100),
+          page: window.location.pathname,
+        });
+      }
+    };
+
+    // Track unhandled JS errors
+    const onError = (e: ErrorEvent) => {
+      posthog.capture('js_error', {
+        message: e.message,
+        filename: e.filename,
+        line: e.lineno,
+        page: window.location.pathname,
+      });
+    };
+    const onRejection = (e: PromiseRejectionEvent) => {
+      posthog.capture('js_error', {
+        message: String(e.reason),
+        type: 'unhandled_promise',
+        page: window.location.pathname,
+      });
+    };
+
+    document.addEventListener('click', onLinkClick);
+    window.addEventListener('error', onError);
+    window.addEventListener('unhandledrejection', onRejection);
+
+    return () => {
+      document.removeEventListener('click', onLinkClick);
+      window.removeEventListener('error', onError);
+      window.removeEventListener('unhandledrejection', onRejection);
+    };
   }, []);
 
   return (
