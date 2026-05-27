@@ -1,6 +1,12 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { isAdmin } from '@/lib/auth';
+
+export const metadata: Metadata = {
+  title: 'Analytics | Cerulea',
+  robots: { index: false, follow: false }, // keep out of search engines
+};
 import {
   isConfigured,
   getOverview,
@@ -132,7 +138,7 @@ export default async function AnalyticsPage({
     <div style={{ background: '#F8FAFC', minHeight: '100vh', fontFamily: 'inherit' }}>
 
       {/* ── Top Bar ─────────────────────────────────────────────────────────── */}
-      <div style={{ background: '#0A192F', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64, position: 'sticky', top: 0, zIndex: 50 }}>
+      <div style={{ background: '#0A192F', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56, position: 'sticky', top: 64, zIndex: 40, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <Link href="/" style={{ color: '#60A5FA', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>← cerulea.io</Link>
           <span style={{ color: 'rgba(255,255,255,0.15)' }}>|</span>
