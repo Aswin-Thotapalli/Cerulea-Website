@@ -7,6 +7,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { Variants } from 'framer-motion';
+import { track } from '@/lib/track';
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -32,14 +33,20 @@ export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Mock API call
+
+    // Identify visitor and record submission in PostHog
+    track.contactFormSubmitted(formData);
+
+    // Mock API call — replace with real email/CRM integration
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
       setFormData({ name: '', email: '', company: '', message: '' });
     }, 1200);
   };
+
+  // Track when user first interacts with the form
+  const handleFormFocus = () => track.contactFormStarted();
 
   return (
     <Box sx={{ bgcolor: '#FAFAFA', minHeight: '100vh', pb: 20 }}>
@@ -77,7 +84,7 @@ export default function ContactPage() {
                   </Button>
                 </Box>
               ) : (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} onFocus={handleFormFocus}>
                   <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3, mb: 3 }}>
                     <TextField 
                       label="Full Name" 
