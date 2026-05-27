@@ -1,7 +1,15 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry';
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-jakarta',
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800'],
+});
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { PostHogProvider } from '@/providers/PostHogProvider';
@@ -21,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={jakarta.variable}>
       <head>
         {/* Microsoft Clarity — heatmaps, session recordings, rage-click detection */}
         {clarityId && (
