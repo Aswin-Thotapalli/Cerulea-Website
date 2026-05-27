@@ -16,8 +16,8 @@ import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
 
 const LINKS = {
-  docs: 'https://cerulea.app/docs',
-  dashboard: 'https://dashboard.cerulea.app',
+  docs: 'https://cerulea.io/docs',
+  dashboard: 'https://dashboard.cerulea.io',
 };
 
 const fadeUp: Variants = {

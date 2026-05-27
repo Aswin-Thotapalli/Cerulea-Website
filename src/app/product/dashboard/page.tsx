@@ -15,8 +15,8 @@ import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore
 import { Variants } from 'framer-motion';
 
 const LINKS = {
-  dashboard: 'https://dashboard.cerulea.app',
-  docs: 'https://cerulea.app/docs',
+  dashboard: 'https://dashboard.cerulea.io',
+  docs: 'https://cerulea.io/docs',
 };
 
 const fadeUp: Variants = {

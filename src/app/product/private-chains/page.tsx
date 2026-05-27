@@ -17,7 +17,7 @@ import { Variants } from 'framer-motion';
 
 const LINKS = {
   contact: '/company/contact',
-  docs: 'https://cerulea.app/docs',
+  docs: 'https://cerulea.io/docs',
 };
 
 const fadeUp: Variants = {

@@ -29,20 +29,35 @@ export default function ContactPage() {
   const [formData, setFormData] = React.useState({ name: '', email: '', company: '', message: '' });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError('');
 
-    // Identify visitor and record submission in PostHog
-    track.contactFormSubmitted(formData);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-    // Mock API call — replace with real email/CRM integration
-    setTimeout(() => {
-      setIsSubmitting(false);
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Something went wrong. Please try again.');
+      }
+
+      // Identify visitor and record in PostHog
+      track.contactFormSubmitted(formData);
+
       setIsSubmitted(true);
       setFormData({ name: '', email: '', company: '', message: '' });
-    }, 1200);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Failed to send. Please email us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Track when user first interacts with the form
@@ -132,6 +147,11 @@ export default function ContactPage() {
                   >
                     {isSubmitting ? 'Sending...' : 'Submit Message'}
                   </Button>
+                  {submitError && (
+                    <Typography sx={{ mt: 2, color: '#dc2626', fontSize: '0.875rem' }}>
+                      {submitError}
+                    </Typography>
+                  )}
                 </form>
               )}
             </Box>
@@ -151,8 +171,8 @@ export default function ContactPage() {
                   <Typography sx={{ color: '#475569', mb: 1, fontSize: '0.95rem', lineHeight: 1.6 }}>
                     For pricing, private chain architecture, and volume deployments.
                   </Typography>
-                  <Typography component="a" href="mailto:sales@cerulea.app" sx={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                    sales@cerulea.app
+                  <Typography component="a" href="mailto:sales@cerulea.io" sx={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
+                    sales@cerulea.io
                   </Typography>
                 </Box>
 
@@ -166,8 +186,8 @@ export default function ContactPage() {
                   <Typography sx={{ color: '#475569', mb: 1, fontSize: '0.95rem', lineHeight: 1.6 }}>
                     For technical assistance with Cerulea Studio or your L1 deployments.
                   </Typography>
-                  <Typography component="a" href="mailto:support@cerulea.app" sx={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                    support@cerulea.app
+                  <Typography component="a" href="mailto:support@cerulea.io" sx={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
+                    support@cerulea.io
                   </Typography>
                 </Box>
               </Stack>

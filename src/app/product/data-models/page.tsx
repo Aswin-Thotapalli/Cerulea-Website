@@ -15,8 +15,8 @@ import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 import { Variants } from 'framer-motion';
 
 const LINKS = {
-  studio: 'https://studio.cerulea.app',
-  docs: 'https://cerulea.app/docs',
+  studio: 'https://studio.cerulea.io',
+  docs: 'https://cerulea.io/docs',
 };
 
 const fadeUp: Variants = {

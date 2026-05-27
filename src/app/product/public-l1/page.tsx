@@ -16,9 +16,9 @@ import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { Variants } from 'framer-motion';
 
 const LINKS = {
-  studio: 'https://studio.cerulea.app',
-  docs: 'https://cerulea.app/docs',
-  explorer: 'https://explorer.cerulea.app',
+  studio: 'https://studio.cerulea.io',
+  docs: 'https://cerulea.io/docs',
+  explorer: 'https://explorer.cerulea.io',
 };
 
 const fadeUp: Variants = {
