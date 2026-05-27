@@ -426,6 +426,90 @@ export async function getDailyViews(days: number) {
   return rows.map(([date, views]) => ({ date, views }));
 }
 
+// ── Entry pages (first page of each session) ─────────────────────────────────
+
+export async function getEntryPages(days: number) {
+  const rows = await hql<[string, number][]>(`
+    SELECT first_page as page, count() as sessions
+    FROM (
+      SELECT
+        properties.$session_id,
+        argMin(properties.$pathname, timestamp) as first_page
+      FROM events
+      WHERE event = '$pageview'
+        AND timestamp > now() - interval ${days} day
+        AND properties.$session_id IS NOT NULL
+      GROUP BY properties.$session_id
+    )
+    WHERE first_page IS NOT NULL
+    GROUP BY page
+    ORDER BY sessions DESC
+    LIMIT 10`);
+  return rows.map(([page, sessions]) => ({ page, sessions }));
+}
+
+// ── Exit pages (last page of each session) ────────────────────────────────────
+
+export async function getExitPages(days: number) {
+  const rows = await hql<[string, number][]>(`
+    SELECT last_page as page, count() as sessions
+    FROM (
+      SELECT
+        properties.$session_id,
+        argMax(properties.$pathname, timestamp) as last_page
+      FROM events
+      WHERE event = '$pageview'
+        AND timestamp > now() - interval ${days} day
+        AND properties.$session_id IS NOT NULL
+      GROUP BY properties.$session_id
+    )
+    WHERE last_page IS NOT NULL
+    GROUP BY page
+    ORDER BY sessions DESC
+    LIMIT 10`);
+  return rows.map(([page, sessions]) => ({ page, sessions }));
+}
+
+// ── UTM campaigns ─────────────────────────────────────────────────────────────
+
+export async function getUTMSources(days: number) {
+  const rows = await hql<[string, string, string, number][]>(`
+    SELECT
+      coalesce(properties.$utm_source, '(none)')   as source,
+      coalesce(properties.$utm_medium, '(none)')   as medium,
+      coalesce(properties.$utm_campaign, '(none)') as campaign,
+      count()                                      as sessions
+    FROM events
+    WHERE event = '$pageview'
+      AND timestamp > now() - interval ${days} day
+      AND (
+        properties.$utm_source IS NOT NULL
+        OR properties.$utm_medium IS NOT NULL
+        OR properties.$utm_campaign IS NOT NULL
+      )
+    GROUP BY source, medium, campaign
+    ORDER BY sessions DESC
+    LIMIT 15`);
+  return rows.map(([source, medium, campaign, sessions]) => ({ source, medium, campaign, sessions }));
+}
+
+// ── Product page + feature breakdown ─────────────────────────────────────────
+
+export async function getProductBreakdown(days: number) {
+  const rows = await hql<[string, string, number][]>(`
+    SELECT
+      coalesce(properties.page, '(unknown)')    as page,
+      coalesce(properties.feature, '(unknown)') as feature,
+      count()                                   as views
+    FROM events
+    WHERE event = 'product_feature_viewed'
+      AND timestamp > now() - interval ${days} day
+    GROUP BY page, feature
+    ORDER BY views DESC
+    LIMIT 20`);
+  return rows.map(([page, feature, views]) => ({ page, feature, views }));
+}
+
 // ── Top pages with avg time on page ──────────────────────────────────────────
 
 export async function getTopPagesWithTime(days: number) {
