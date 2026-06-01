@@ -82,7 +82,7 @@ const TIERS = [
     buttonHref: '/company/contact-sales',
     highlight: true,
     accent: '#2563eb',
-    badge: 'Most Popular',
+    badge: null,
     footerNote: null,
     features: [
       'Everything in Developer',
