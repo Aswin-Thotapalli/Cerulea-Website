@@ -1,770 +1,229 @@
 'use client';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
-const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+// ─── Data ──────────────────────────────────────────────────────────────────────
 
-  :root {
-    --navy: #0D2D4F;
-    --navy-mid: #153d65;
-    --teal: #0E7C86;
-    --teal-light: #13a3b0;
-    --teal-muted: #e8f4f6;
-    --teal-border: #c5e3e8;
-    --ink: #1a2535;
-    --ink-mid: #374151;
-    --ink-light: #6b7280;
-    --surface: #f8fafc;
-    --white: #ffffff;
-    --rule: #e2e8f0;
-    --gold: #c8922a;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  .wp-root {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 16px;
-    color: var(--ink);
-    background: var(--surface);
-    min-height: 100vh;
-  }
-
-  /* ── PROGRESS BAR ─────────────────────────────── */
-  .wp-progress {
-    position: fixed;
-    top: 0; left: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--teal), var(--teal-light));
-    z-index: 200;
-    transition: width 0.1s linear;
-  }
-
-  /* ── STICKY NAV ───────────────────────────────── */
-  .wp-nav {
-    position: fixed;
-    top: 64px; left: 0; right: 0;
-    background: rgba(13, 45, 79, 0.97);
-    backdrop-filter: blur(12px);
-    z-index: 100;
-    border-bottom: 1px solid rgba(14,124,134,0.3);
-  }
-  .wp-nav-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .wp-nav-logo {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.25rem;
-    color: var(--white);
-    letter-spacing: 0.08em;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  .wp-nav-logo span {
-    display: inline-block;
-    width: 6px; height: 6px;
-    background: var(--teal-light);
-    border-radius: 50%;
-  }
-  .wp-nav-links {
-    display: flex;
-    gap: 0.25rem;
-    list-style: none;
-  }
-  .wp-nav-links button {
-    background: none;
-    border: none;
-    color: rgba(255,255,255,0.6);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    padding: 0.4rem 0.75rem;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .wp-nav-links button:hover,
-  .wp-nav-links button.active {
-    color: var(--white);
-    background: rgba(14,124,134,0.25);
-  }
-
-  /* ── LAYOUT ───────────────────────────────────── */
-  .wp-layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-top: 120px;
-    min-height: 100vh;
-    gap: 0;
-  }
-
-  /* ── SIDEBAR ──────────────────────────────────── */
-  .wp-sidebar {
-    position: sticky;
-    top: 120px;
-    height: calc(100vh - 120px);
-    overflow-y: auto;
-    padding: 2rem 1rem 2rem 1.5rem;
-    border-right: 1px solid var(--rule);
-    background: var(--white);
-    scrollbar-width: none;
-  }
-  .wp-sidebar::-webkit-scrollbar { display: none; }
-  .wp-sidebar-label {
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--rule);
-  }
-  .wp-sidebar-item {
-    display: block;
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 400;
-    color: var(--ink-light);
-    padding: 0.45rem 0.75rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.18s;
-    line-height: 1.4;
-    border-left: 2px solid transparent;
-    margin-bottom: 2px;
-  }
-  .wp-sidebar-item:hover { color: var(--navy); background: var(--teal-muted); }
-  .wp-sidebar-item.active {
-    color: var(--teal);
-    font-weight: 600;
-    background: var(--teal-muted);
-    border-left-color: var(--teal);
-  }
-
-  /* ── MAIN CONTENT ─────────────────────────────── */
-  .wp-main {
-    padding: 0;
-    background: var(--surface);
-  }
-
-  /* ── HERO ─────────────────────────────────────── */
-  .wp-hero {
-    background: var(--navy);
-    padding: 5rem 4rem 4rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .wp-hero::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 400px; height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(14,124,134,0.18) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .wp-hero::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--teal), transparent);
-  }
-  .wp-hero-meta {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--teal-light);
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .wp-hero-meta::before {
-    content: '';
-    display: inline-block;
-    width: 24px; height: 2px;
-    background: var(--teal-light);
-  }
-  .wp-hero-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2.8rem, 5vw, 4rem);
-    color: var(--white);
-    line-height: 1.05;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-  }
-  .wp-hero-subtitle {
-    font-size: 1.15rem;
-    font-weight: 300;
-    color: rgba(255,255,255,0.65);
-    margin-bottom: 2rem;
-    max-width: 560px;
-    line-height: 1.6;
-  }
-  .wp-hero-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-  }
-  .wp-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.72rem;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    padding: 0.35rem 0.8rem;
-    border-radius: 100px;
-    border: 1px solid rgba(14,124,134,0.4);
-    color: rgba(255,255,255,0.75);
-    background: rgba(14,124,134,0.12);
-  }
-
-  /* ── SECTION ──────────────────────────────────── */
-  .wp-section {
-    padding: 3.5rem 4rem;
-    border-bottom: 1px solid var(--rule);
-    scroll-margin-top: 136px;
-    opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .wp-section.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .wp-section:last-child { border-bottom: none; }
-
-  .wp-section-header {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 1.75rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid var(--teal-border);
-  }
-  .wp-section-number {
-    font-family: 'DM Serif Display', serif;
-    font-size: 0.85rem;
-    color: var(--teal);
-    font-style: italic;
-    min-width: 1.5rem;
-  }
-  .wp-h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.9rem;
-    color: var(--navy);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-  }
-  .wp-h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.25rem;
-    color: var(--navy);
-    margin: 2rem 0 0.75rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--rule);
-  }
-  .wp-p {
-    font-size: 0.95rem;
-    line-height: 1.8;
-    color: var(--ink-mid);
-    margin-bottom: 1rem;
-    font-weight: 300;
-  }
-  .wp-p strong { font-weight: 600; color: var(--ink); }
-
-  /* ── CALLOUT / QUOTE ──────────────────────────── */
-  .wp-callout {
-    margin: 1.75rem 0;
-    padding: 1.25rem 1.5rem;
-    border-left: 4px solid var(--teal);
-    background: var(--teal-muted);
-    border-radius: 0 8px 8px 0;
-  }
-  .wp-callout p {
-    font-size: 0.95rem;
-    font-style: italic;
-    color: var(--navy);
-    line-height: 1.7;
-    font-weight: 400;
-  }
-
-  /* ── BULLETS ──────────────────────────────────── */
-  .wp-list {
-    list-style: none;
-    margin: 0.75rem 0 1.25rem;
-  }
-  .wp-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    font-size: 0.92rem;
-    line-height: 1.65;
-    color: var(--ink-mid);
-    padding: 0.35rem 0;
-    font-weight: 300;
-  }
-  .wp-list li::before {
-    content: '';
-    flex-shrink: 0;
-    margin-top: 0.55rem;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--teal);
-  }
-
-  /* ── COMPARISON TABLE ─────────────────────────── */
-  .wp-table-wrap {
-    margin: 1.5rem 0;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid var(--teal-border);
-    box-shadow: 0 2px 12px rgba(13,45,79,0.06);
-  }
-  .wp-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.875rem;
-  }
-  .wp-table thead tr {
-    background: var(--navy);
-  }
-  .wp-table thead th {
-    padding: 0.85rem 1.1rem;
-    text-align: left;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.85);
-    border-right: 1px solid rgba(255,255,255,0.08);
-  }
-  .wp-table thead th:last-child { border-right: none; }
-  .wp-table tbody tr:nth-child(even) { background: var(--teal-muted); }
-  .wp-table tbody tr:nth-child(odd) { background: var(--white); }
-  .wp-table tbody tr:hover { background: #d4edf0; }
-  .wp-table td {
-    padding: 0.8rem 1.1rem;
-    color: var(--ink-mid);
-    border-right: 1px solid var(--rule);
-    line-height: 1.5;
-    vertical-align: top;
-    font-weight: 300;
-  }
-  .wp-table td:first-child { font-weight: 600; color: var(--navy); }
-  .wp-table td:last-child { border-right: none; }
-
-  /* ── KV TABLE (summary) ───────────────────────── */
-  .wp-kv {
-    margin: 1.5rem 0;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid var(--teal-border);
-    box-shadow: 0 2px 12px rgba(13,45,79,0.06);
-  }
-  .wp-kv-row {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    border-bottom: 1px solid var(--rule);
-  }
-  .wp-kv-row:last-child { border-bottom: none; }
-  .wp-kv-row:nth-child(even) .wp-kv-key { background: var(--teal-muted); }
-  .wp-kv-row:nth-child(even) .wp-kv-val { background: #f0f9fa; }
-  .wp-kv-key {
-    padding: 0.8rem 1.1rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--navy);
-    background: var(--surface);
-    border-right: 1px solid var(--rule);
-    display: flex;
-    align-items: center;
-  }
-  .wp-kv-val {
-    padding: 0.8rem 1.1rem;
-    font-size: 0.85rem;
-    color: var(--ink-mid);
-    background: var(--white);
-    font-weight: 300;
-    line-height: 1.5;
-    display: flex;
-    align-items: center;
-  }
-
-  /* ── AUDIENCE CARDS ───────────────────────────── */
-  .wp-card-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin: 1.25rem 0;
-  }
-  .wp-card {
-    padding: 1.5rem;
-    border-radius: 10px;
-    border: 1px solid var(--teal-border);
-    background: var(--white);
-    transition: box-shadow 0.2s, transform 0.2s;
-  }
-  .wp-card:hover {
-    box-shadow: 0 6px 24px rgba(13,45,79,0.1);
-    transform: translateY(-2px);
-  }
-  .wp-card-icon {
-    font-size: 1.4rem;
-    margin-bottom: 0.6rem;
-  }
-  .wp-card-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1rem;
-    color: var(--navy);
-    margin-bottom: 0.5rem;
-  }
-  .wp-card-body {
-    font-size: 0.82rem;
-    color: var(--ink-light);
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  /* ── LIFECYCLE FLOW ───────────────────────────── */
-  .wp-lifecycle {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    margin: 1.5rem 0;
-    background: var(--white);
-    border: 1px solid var(--teal-border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .wp-lc-item {
-    flex: 1;
-    min-width: 90px;
-    padding: 1rem 0.75rem;
-    text-align: center;
-    border-right: 1px solid var(--teal-border);
-    position: relative;
-  }
-  .wp-lc-item:last-child { border-right: none; }
-  .wp-lc-num {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.4rem;
-    color: var(--teal-border);
-    line-height: 1;
-    margin-bottom: 0.3rem;
-  }
-  .wp-lc-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: var(--navy);
-    letter-spacing: 0.04em;
-  }
-  .wp-lc-item:hover .wp-lc-num { color: var(--teal); }
-  .wp-lc-item:hover { background: var(--teal-muted); }
-  .wp-lc-item { transition: background 0.2s; }
-
-  /* ── INTEGRATION TABLE ────────────────────────── */
-  .wp-int-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-    margin: 1.25rem 0;
-  }
-  .wp-int-card {
-    border: 1px solid var(--rule);
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--white);
-  }
-  .wp-int-header {
-    background: var(--navy);
-    padding: 0.55rem 0.9rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.85);
-  }
-  .wp-int-body {
-    padding: 0.65rem 0.9rem;
-    font-size: 0.8rem;
-    color: var(--ink-light);
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  /* ── DECISION CARDS ───────────────────────────── */
-  .wp-decision-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-    margin: 1.25rem 0;
-  }
-  .wp-decision-card {
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid var(--teal-border);
-  }
-  .wp-decision-head {
-    padding: 0.9rem 1.25rem;
-    font-family: 'DM Serif Display', serif;
-    font-size: 1rem;
-    color: var(--white);
-  }
-  .wp-decision-head.pub { background: var(--teal); }
-  .wp-decision-head.priv { background: var(--navy); }
-  .wp-decision-body {
-    padding: 1rem 1.25rem;
-    background: var(--white);
-  }
-  .wp-decision-body li {
-    font-size: 0.83rem;
-    color: var(--ink-mid);
-    padding: 0.3rem 0;
-    border-bottom: 1px solid var(--rule);
-    font-weight: 300;
-    display: flex;
-    gap: 0.5rem;
-    align-items: flex-start;
-    line-height: 1.5;
-    list-style: none;
-  }
-  .wp-decision-body li:last-child { border-bottom: none; }
-  .wp-decision-body li::before {
-    content: '';
-    flex-shrink: 0;
-    margin-top: 0.5rem;
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--teal);
-  }
-
-  /* ── DISCLAIMER ───────────────────────────────── */
-  .wp-disclaimer {
-    background: var(--navy);
-    padding: 2rem 4rem;
-  }
-  .wp-disclaimer-inner {
-    max-width: 780px;
-  }
-  .wp-disclaimer-label {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--teal-light);
-    margin-bottom: 0.75rem;
-  }
-  .wp-disclaimer p {
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.45);
-    line-height: 1.7;
-    font-weight: 300;
-  }
-
-  /* ── CTA ──────────────────────────────────────── */
-  .wp-cta {
-    background: linear-gradient(135deg, var(--navy) 0%, #0a3d5c 100%);
-    padding: 4rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .wp-cta::before {
-    content: '';
-    position: absolute;
-    top: -80px; left: 50%;
-    transform: translateX(-50%);
-    width: 500px; height: 300px;
-    background: radial-gradient(ellipse, rgba(14,124,134,0.2) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .wp-cta-eyebrow {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--teal-light);
-    margin-bottom: 1rem;
-  }
-  .wp-cta-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2.2rem;
-    color: var(--white);
-    margin-bottom: 0.75rem;
-    line-height: 1.2;
-  }
-  .wp-cta-sub {
-    font-size: 0.95rem;
-    color: rgba(255,255,255,0.55);
-    margin-bottom: 2rem;
-    font-weight: 300;
-    max-width: 440px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.6;
-  }
-  .wp-cta-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .wp-btn-primary {
-    background: var(--teal);
-    color: var(--white);
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 0.8rem 1.75rem;
-    border-radius: 6px;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    transition: background 0.2s, transform 0.15s;
-  }
-  .wp-btn-primary:hover { background: var(--teal-light); transform: translateY(-1px); }
-  .wp-btn-outline {
-    background: transparent;
-    color: rgba(255,255,255,0.8);
-    border: 1px solid rgba(255,255,255,0.25);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 0.8rem 1.75rem;
-    border-radius: 6px;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    transition: all 0.2s;
-  }
-  .wp-btn-outline:hover { border-color: rgba(255,255,255,0.5); color: var(--white); }
-
-  @media (max-width: 900px) {
-    .wp-layout { grid-template-columns: 1fr; }
-    .wp-sidebar { display: none; }
-    .wp-section, .wp-hero, .wp-disclaimer, .wp-cta { padding-left: 1.5rem; padding-right: 1.5rem; }
-    .wp-card-grid, .wp-decision-grid, .wp-int-grid { grid-template-columns: 1fr; }
-    .wp-nav-links { display: none; }
-  }
-`;
-
-const NAV_SECTIONS = [
-  { id: "abstract",      label: "Abstract" },
-  { id: "for-whom",      label: "Who Is This For" },
-  { id: "problem",       label: "The Problem" },
-  { id: "solution",      label: "The Solution" },
-  { id: "philosophy",    label: "Core Philosophy" },
-  { id: "architecture",  label: "Architecture" },
-  { id: "studio",        label: "Cerulea Studio" },
-  { id: "governance",    label: "Governance" },
-  { id: "security",      label: "Security" },
-  { id: "intelligence",  label: "Cerulea Intelligence" },
-  { id: "integrations",  label: "Integrations" },
-  { id: "enterprise",    label: "Enterprise Model" },
-  { id: "decision",      label: "Decision Guide" },
-  { id: "summary",       label: "Platform Summary" },
+const SECTIONS = [
+  { id: "abstract",     num: "I",    title: "Abstract" },
+  { id: "for-whom",     num: "II",   title: "Who Is This For" },
+  { id: "problem",      num: "III",  title: "The Problem" },
+  { id: "solution",     num: "IV",   title: "The Solution" },
+  { id: "philosophy",   num: "V",    title: "Core Philosophy" },
+  { id: "architecture", num: "VI",   title: "Architecture" },
+  { id: "studio",       num: "VII",  title: "Cerulea Studio" },
+  { id: "governance",   num: "VIII", title: "Governance" },
+  { id: "security",     num: "IX",   title: "Security Model" },
+  { id: "intelligence", num: "X",    title: "Cerulea Intelligence" },
+  { id: "integrations", num: "XI",   title: "Integrations" },
+  { id: "enterprise",   num: "XII",  title: "Enterprise Model" },
+  { id: "decision",     num: "XIII", title: "Decision Guide" },
+  { id: "summary",      num: "XIV",  title: "Platform Summary" },
 ];
 
-function useScrollSpy(ids) {
-  const [active, setActive] = useState(ids[0]);
+// ─── Hooks ─────────────────────────────────────────────────────────────────────
+
+function useActiveSection() {
+  const [active, setActive] = useState("abstract");
   useEffect(() => {
-    const handler = () => {
-      let current = ids[0];
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top < 120) current = id;
-      }
-      setActive(current);
-    };
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, [ids]);
-  return active;
+    const els = SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean);
+    const obs = new IntersectionObserver(
+      entries => {
+        const visible = entries.filter(e => e.isIntersecting);
+        if (visible.length > 0) {
+          const top = visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+          setActive(top.target.id);
+        }
+      },
+      { rootMargin: "-10% 0px -60% 0px", threshold: 0 }
+    );
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+  return [active, setActive];
 }
 
 function useScrollProgress() {
-  const [pct, setPct] = useState(0);
+  const [progress, setProgress] = useState(0);
   useEffect(() => {
-    const handler = () => {
+    const onScroll = () => {
       const el = document.documentElement;
       const scrolled = el.scrollTop;
       const total = el.scrollHeight - el.clientHeight;
-      setPct(total > 0 ? (scrolled / total) * 100 : 0);
+      setProgress(total > 0 ? (scrolled / total) * 100 : 0);
     };
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  return pct;
+  return progress;
 }
 
-function useReveal() {
+function useReveal(threshold = 0.12) {
   const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    if (!ref.current) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) entry.target.classList.add("visible"); },
-      { threshold: 0.08 }
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold }
     );
-    obs.observe(ref.current);
+    if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, []);
-  return ref;
+  }, [threshold]);
+  return [ref, visible];
 }
 
-function Section({ id, num, title, children }) {
-  const ref = useReveal();
+// ─── Shared components (identical to CeruleaDocs) ─────────────────────────────
+
+function Tag({ children }) {
   return (
-    <section id={id} className="wp-section" ref={ref}>
-      <div className="wp-section-header">
-        {num && <span className="wp-section-number">{num}</span>}
-        <h2 className="wp-h1">{title}</h2>
-      </div>
-      {children}
-    </section>
+    <span style={{
+      display: "inline-block", background: "rgba(46,117,182,0.12)", color: "#2E75B6",
+      fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+      padding: "3px 10px", borderRadius: 20, border: "1px solid rgba(46,117,182,0.2)"
+    }}>{children}</span>
   );
 }
 
-function Callout({ children }) {
-  return <div className="wp-callout"><p>{children}</p></div>;
+function Note({ children }) {
+  return (
+    <div style={{
+      background: "linear-gradient(135deg, #EBF3FB 0%, #F0F7FF 100%)",
+      borderLeft: "3px solid #2E75B6", borderRadius: "0 8px 8px 0",
+      padding: "14px 18px", margin: "20px 0", fontSize: 14,
+      color: "#1A3C6B", lineHeight: 1.7, fontStyle: "italic"
+    }}>{children}</div>
+  );
+}
+
+function SectionHeader({ num, title }) {
+  const [ref, visible] = useReveal(0.1);
+  return (
+    <div ref={ref} style={{
+      display: "flex", alignItems: "flex-start", gap: 18, marginBottom: 32,
+      paddingBottom: 24, borderBottom: "1px solid #E5E7EB",
+      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(16px)",
+      transition: "opacity 0.5s ease, transform 0.5s ease"
+    }}>
+      <div style={{
+        background: "linear-gradient(135deg, #1A3C6B, #2E75B6)", color: "#fff",
+        fontSize: 12, fontWeight: 800, width: 44, height: 44, borderRadius: 12,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        flexShrink: 0, marginTop: 4, letterSpacing: "0.04em", fontFamily: "'DM Serif Display', Georgia, serif"
+      }}>{num}</div>
+      <h2 style={{
+        fontSize: 30, fontWeight: 700, color: "#1A3C6B", lineHeight: 1.15,
+        fontFamily: "'DM Serif Display', Georgia, serif", margin: 0
+      }}>{title}</h2>
+    </div>
+  );
+}
+
+function Subsection({ title, children }) {
+  const [ref, visible] = useReveal(0.1);
+  return (
+    <div ref={ref} style={{
+      marginBottom: 40,
+      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(20px)",
+      transition: "opacity 0.55s ease, transform 0.55s ease"
+    }}>
+      <h3 style={{
+        fontSize: 17, fontWeight: 700, color: "#2E75B6", marginBottom: 14,
+        display: "flex", alignItems: "center", gap: 10, fontFamily: "'DM Sans', sans-serif"
+      }}>
+        <span style={{ width: 3, height: 18, background: "#2E75B6", borderRadius: 2, display: "inline-block", flexShrink: 0 }} />
+        {title}
+      </h3>
+      {children}
+    </div>
+  );
 }
 
 function BulletList({ items }) {
   return (
-    <ul className="wp-list">
-      {items.map((item, i) => <li key={i}>{item}</li>)}
+    <ul style={{ listStyle: "none", margin: "12px 0 16px", display: "flex", flexDirection: "column", gap: 9, padding: 0 }}>
+      {items.map((item, i) => (
+        <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 14.5, lineHeight: 1.65, color: "#374151" }}>
+          <span style={{ width: 5, height: 5, background: "#2E75B6", borderRadius: "50%", flexShrink: 0, marginTop: 9 }} />
+          {item}
+        </li>
+      ))}
     </ul>
   );
 }
 
+function Card({ icon, title, body, delay = 0 }) {
+  const [ref, visible] = useReveal(0.1);
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div ref={ref} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
+      background: hovered ? "#fff" : "#F9FAFB",
+      border: `1px solid ${hovered ? "#BFDBF7" : "#E5E7EB"}`,
+      borderRadius: 12, padding: "20px 22px", transition: "all 0.25s ease",
+      boxShadow: hovered ? "0 8px 24px rgba(26,60,107,0.1)" : "none",
+      transform: visible ? (hovered ? "translateY(-3px)" : "none") : "translateY(20px)",
+      opacity: visible ? 1 : 0, transitionDelay: `${delay}ms`,
+    }}>
+      <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
+      <div style={{ fontSize: 14, fontWeight: 700, color: "#1A3C6B", marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>{title}</div>
+      <div style={{ fontSize: 13.5, color: "#6B7280", lineHeight: 1.6 }}>{body}</div>
+    </div>
+  );
+}
+
+function TwoCol({ left, right, leftTitle, rightTitle, accent = false }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, margin: "16px 0" }}>
+      {[{ title: leftTitle, items: left, a: accent }, { title: rightTitle, items: right }].map(({ title, items, a }, i) => (
+        <div key={i} style={{
+          background: a ? "linear-gradient(135deg, #EBF3FB, #F0F7FF)" : "#F9FAFB",
+          border: `1px solid ${a ? "#BFDBF7" : "#E5E7EB"}`, borderRadius: 10, padding: 20
+        }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#1A3C6B", marginBottom: 12, paddingBottom: 8, borderBottom: "1px solid #E5E7EB" }}>{title}</div>
+          <BulletList items={items} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StrategyStep({ tag, body, index }) {
+  const [ref, visible] = useReveal(0.1);
+  return (
+    <div ref={ref} style={{
+      display: "flex", gap: 16, padding: "16px 18px",
+      background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 10, alignItems: "flex-start",
+      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(10px)",
+      transition: "opacity 0.4s ease, transform 0.4s ease", transitionDelay: `${index * 80}ms`
+    }}>
+      <div style={{
+        background: "linear-gradient(135deg, #1A3C6B, #2E75B6)", color: "#fff",
+        fontSize: 10, fontWeight: 800, padding: "4px 12px", borderRadius: 20,
+        whiteSpace: "nowrap", letterSpacing: "0.06em", textTransform: "uppercase", flexShrink: 0, marginTop: 2
+      }}>{tag}</div>
+      <div style={{ fontSize: 14, color: "#374151", lineHeight: 1.65 }}>{body}</div>
+    </div>
+  );
+}
+
+// ─── Whitepaper-specific components ───────────────────────────────────────────
+
 function CompTable({ cols, rows }) {
   return (
-    <div className="wp-table-wrap">
-      <table className="wp-table">
+    <div style={{ overflowX: "auto", margin: "16px 0", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
         <thead>
-          <tr>{cols.map((c, i) => <th key={i}>{c}</th>)}</tr>
+          <tr>
+            {cols.map((c, i) => (
+              <th key={i} style={{ background: "#1A3C6B", color: "#fff", padding: "12px 16px", textAlign: "left", fontWeight: 600, fontFamily: "'DM Sans', sans-serif", borderRight: i < cols.length - 1 ? "1px solid rgba(255,255,255,0.1)" : "none" }}>{c}</th>
+            ))}
+          </tr>
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>
+            <tr key={i}>
+              {row.map((cell, j) => (
+                <td key={j} style={{ padding: "11px 16px", borderBottom: "1px solid #F1F5F9", background: i % 2 === 0 ? "#F9FAFB" : "#fff", fontWeight: j === 0 ? 700 : 400, color: j === 0 ? "#1A3C6B" : "#4B5563", borderRight: j < row.length - 1 ? "1px solid #E5E7EB" : "none", lineHeight: 1.5 }}>{cell}</td>
+              ))}
+            </tr>
           ))}
         </tbody>
       </table>
@@ -773,397 +232,533 @@ function CompTable({ cols, rows }) {
 }
 
 function KVTable({ rows }) {
+  const [ref, visible] = useReveal(0.05);
   return (
-    <div className="wp-kv">
+    <div ref={ref} style={{ margin: "16px 0", borderRadius: 10, overflow: "hidden", border: "1px solid #E5E7EB", opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(16px)", transition: "opacity 0.5s ease, transform 0.5s ease" }}>
       {rows.map(([k, v], i) => (
-        <div className="wp-kv-row" key={i}>
-          <div className="wp-kv-key">{k}</div>
-          <div className="wp-kv-val">{v}</div>
+        <div key={i} style={{ display: "grid", gridTemplateColumns: "200px 1fr", borderBottom: i < rows.length - 1 ? "1px solid #E5E7EB" : "none" }}>
+          <div style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#1A3C6B", background: i % 2 === 0 ? "#EBF3FB" : "#F9FAFB", borderRight: "1px solid #E5E7EB", display: "flex", alignItems: "center" }}>{k}</div>
+          <div style={{ padding: "12px 16px", fontSize: 13.5, color: "#374151", background: i % 2 === 0 ? "#F0F7FF" : "#fff", lineHeight: 1.6 }}>{v}</div>
         </div>
       ))}
     </div>
   );
 }
 
-export default function CeruleaWhitepaper() {
-  const progress = useScrollProgress();
-  const active = useScrollSpy(NAV_SECTIONS.map(s => s.id));
+// ─── Sidebar (identical to CeruleaDocs) ───────────────────────────────────────
 
-  const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
+function Sidebar({ activeSection, onNavigate, searchQuery, setSearchQuery }) {
+  const [collapsed, setCollapsed] = useState(false);
   return (
-    <>
-      <style>{styles}</style>
-      <div className="wp-root">
-        {/* Progress bar */}
-        <div className="wp-progress" style={{ width: `${progress}%` }} />
-
-        {/* Nav */}
-        <nav className="wp-nav">
-          <div className="wp-nav-inner">
-            <div className="wp-nav-logo">
-              CERULEA <span />
-            </div>
-            <ul className="wp-nav-links">
-              {NAV_SECTIONS.slice(0, 7).map(s => (
-                <li key={s.id}>
-                  <button
-                    className={active === s.id ? "active" : ""}
-                    onClick={() => scrollTo(s.id)}
-                  >{s.label}</button>
-                </li>
-              ))}
-            </ul>
+    <aside style={{
+      position: "fixed", top: 64, left: 0,
+      width: collapsed ? 64 : 272, height: "calc(100vh - 64px)",
+      background: "linear-gradient(160deg, #0f2544 0%, #1A3C6B 60%, #1e4d8c 100%)",
+      display: "flex", flexDirection: "column", zIndex: 100,
+      transition: "width 0.3s ease", overflow: "hidden",
+      boxShadow: "4px 0 24px rgba(0,0,0,0.15)"
+    }}>
+      <div style={{ padding: "24px 18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ overflow: "hidden" }}>
+            {!collapsed && <>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "0.1em", fontFamily: "'DM Serif Display', Georgia, serif" }}>CERULEA</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: "0.06em", textTransform: "uppercase", marginTop: 2 }}>Platform Whitepaper v1.0</div>
+            </>}
           </div>
-        </nav>
-
-        <div className="wp-layout">
-          {/* Sidebar */}
-          <aside className="wp-sidebar">
-            <div className="wp-sidebar-label">Contents</div>
-            {NAV_SECTIONS.map(s => (
-              <button
-                key={s.id}
-                className={`wp-sidebar-item ${active === s.id ? "active" : ""}`}
-                onClick={() => scrollTo(s.id)}
-              >{s.label}</button>
-            ))}
-          </aside>
-
-          {/* Main */}
-          <main className="wp-main">
-            {/* Hero */}
-            <div className="wp-hero">
-              <div className="wp-hero-meta">Platform Whitepaper &nbsp;&bull;&nbsp; Version 1.0 &nbsp;&bull;&nbsp; February 2026</div>
-              <h1 className="wp-hero-title">Cerulea</h1>
-              <p className="wp-hero-subtitle">No-Code Blockchain Infrastructure Platform</p>
-              <div className="wp-hero-badges">
-                {["Public L1", "Private Chains", "No-Code", "Enterprise-Grade", "Configurable Governance"].map(b => (
-                  <span key={b} className="wp-badge">{b}</span>
-                ))}
-              </div>
-            </div>
-
-            {/* Abstract */}
-            <Section id="abstract" num="01" title="Abstract">
-              <p className="wp-p">
-                Blockchain infrastructure has long been the domain of highly specialized engineering teams. Building a production-grade blockchain system requires coordinating runtime compilation, validator configuration, governance wiring, infrastructure provisioning, DevOps pipelines, and monitoring stacks. Each layer demands distinct expertise, separate tooling, and months of integration work. The result is high cost, extended timelines, and operational fragility.
-              </p>
-              <Callout>
-                Cerulea exists because the barrier to deploying blockchain infrastructure has never been the idea. It has always been the execution. We built a platform to close that gap permanently.
-              </Callout>
-              <p className="wp-p">
-                Cerulea is a fully no-code blockchain infrastructure platform. Organizations and developers design, deploy, and operate complete public or private blockchain systems through structured configuration alone. No code is written at any stage. Every architectural decision (validator structure, governance mechanics, infrastructure topology, compliance enforcement, upgrade policy) is expressed through configuration, not engineering.
-              </p>
-              <p className="wp-p">
-                This whitepaper describes Cerulea's architecture, platform capabilities, governance framework, security model, and enterprise operating model. It is written for technical evaluators, enterprise architects, and decision-makers assessing blockchain infrastructure options.
-              </p>
-            </Section>
-
-            {/* Who is this for */}
-            <Section id="for-whom" num="02" title="Who Is This For">
-              <p className="wp-p">
-                Cerulea serves organizations and builders at the infrastructure layer of blockchain, not at the application layer that runs on top of it. If you are evaluating whether Cerulea fits your context, start here.
-              </p>
-              <div className="wp-card-grid">
-                {[
-                  { icon: "🏢", title: "Enterprise Teams", body: "Organizations in finance, logistics, healthcare, or government that need a permissioned blockchain environment with compliance controls, data sovereignty, and internal governance authority." },
-                  { icon: "🏗️", title: "Platform Builders", body: "Teams building ecosystem infrastructure, shared network services, or multi-party coordination systems that require a governed public blockchain layer." },
-                  { icon: "⚙️", title: "Technical Architects", body: "Engineers and architects responsible for selecting and evaluating blockchain infrastructure stacks. Cerulea replaces custom build with structured configuration." },
-                  { icon: "🚀", title: "Founders & Product Teams", body: "Builders who need blockchain infrastructure without assembling a specialized engineering team. Cerulea removes the engineering dependency without removing architectural depth." },
-                ].map(c => (
-                  <div key={c.title} className="wp-card">
-                    <div className="wp-card-icon">{c.icon}</div>
-                    <div className="wp-card-title">{c.title}</div>
-                    <div className="wp-card-body">{c.body}</div>
-                  </div>
-                ))}
-              </div>
-              <Callout>
-                Cerulea is purpose-built for blockchain infrastructure. It is not a smart contract builder, token launchpad, DeFi application platform, or general SaaS host. If your need is the execution, governance, and infrastructure layer, you are in the right place.
-              </Callout>
-            </Section>
-
-            {/* The Problem */}
-            <Section id="problem" num="03" title="The Problem">
-              <p className="wp-p">
-                Deploying a production blockchain system today means assembling and integrating a fragmented engineering stack:
-              </p>
-              <BulletList items={[
-                "Runtime engineering and genesis configuration",
-                "Validator setup, staking logic, and slashing conditions",
-                "Governance wiring for on-chain proposal and voting mechanics",
-                "Infrastructure provisioning across cloud or on-premise environments",
-                "DevOps pipelines, monitoring stacks, and alerting systems",
-                "Integration layers connecting to external enterprise systems",
-              ]} />
-              <p className="wp-p">
-                Each of these layers requires different expertise, different tools, and different teams. There is no standard lifecycle for upgrades, governance changes, or system retirement. Organizations build one-off processes for each.
-              </p>
-              <p className="wp-p">
-                For enterprises, the problem compounds: compliance requirements, data sovereignty constraints, and internal governance mandates cannot be accommodated by off-the-shelf platforms designed for open participation.
-              </p>
-              <p className="wp-p">
-                The result is slow deployment, high cost, and infrastructure that is difficult to audit, upgrade, or retire safely. Cerulea was built to solve this.
-              </p>
-            </Section>
-
-            {/* Solution */}
-            <Section id="solution" num="04" title="The Cerulea Solution">
-              <p className="wp-p">
-                Cerulea replaces the fragmented blockchain engineering process with a unified, no-code configuration framework. Architecture becomes structured. Infrastructure becomes intentional. Governance becomes explicit. Deployment becomes atomic.
-              </p>
-              <p className="wp-p">Every system built on Cerulea follows a defined lifecycle:</p>
-              <div className="wp-lifecycle">
-                {["Create","Configure","Deploy","Operate","Govern","Upgrade","Expand","Monitor","Retire"].map((s, i) => (
-                  <div key={s} className="wp-lc-item">
-                    <div className="wp-lc-num">{String(i+1).padStart(2,"0")}</div>
-                    <div className="wp-lc-label">{s}</div>
-                  </div>
-                ))}
-              </div>
-              <p className="wp-p">Before deployment, nothing exists except configuration. There are no partially running systems and no pre-created infrastructure. After deployment, the complete operational blockchain environment exists. There is no in-between state.</p>
-              <h3 className="wp-h2">What Cerulea Deploys</h3>
-              <p className="wp-p">When a deployment is triggered, Cerulea generates and provisions:</p>
-              <BulletList items={[
-                "A functioning blockchain network (public or private)",
-                "Runtime configuration and genesis parameters",
-                "Validator initialization and governance logic",
-                "Smart contract execution capability",
-                "API and RPC access layers",
-                "Monitoring and observability infrastructure",
-                "Operational dashboard and explorer surfaces",
-              ]} />
-            </Section>
-
-            {/* Core Philosophy */}
-            <Section id="philosophy" num="05" title="Core Philosophy">
-              {[
-                { title: "Determinism", body: "Every system produced by Cerulea is the result of explicit configuration, not hidden automation. There are no emergent deployments and no invisible defaults influencing runtime behavior. What you configure is exactly what runs." },
-                { title: "Separation of Configuration and Execution", body: "Until deployment is triggered, nothing exists operationally. Configuration is structured, versioned, and stored. It is not executed. After deployment, the system exists as a complete operational blockchain environment." },
-                { title: "Reduction of Engineering Dependency", body: "Cerulea does not remove architectural depth. It removes the requirement to express architecture through code. Complex systems can still be built, through structured configuration rather than development pipelines." },
-                { title: "Configurable Decentralization", body: "Decentralization in Cerulea is an architectural decision, not a platform characteristic. Organizations configure validator openness, governance weighting, infrastructure distribution, compliance enforcement, and upgrade authority based on system requirements, not ideology." },
-              ].map(({ title, body }) => (
-                <div key={title}>
-                  <h3 className="wp-h2">{title}</h3>
-                  <p className="wp-p">{body}</p>
-                </div>
-              ))}
-            </Section>
-
-            {/* Architecture */}
-            <Section id="architecture" num="06" title="Architecture">
-              <p className="wp-p">Cerulea supports two primary deployment architectures. The architecture selected at project creation determines every subsequent configuration decision.</p>
-              <CompTable
-                cols={["Dimension", "Public L1", "Private Chain"]}
-                rows={[
-                  ["Participation", "Open, permissionless", "Permissioned, enterprise-controlled"],
-                  ["Governance", "Token-weighted, community-driven", "Authority-based, organization-defined"],
-                  ["Validators", "Hybrid open onboarding, PoS", "Enterprise-selected nodes"],
-                  ["Infrastructure", "Distributed network participants", "Cloud, on-prem, or hybrid (org-owned)"],
-                  ["Use Cases", "dApps, token systems, ecosystem services", "Enterprise blockchain, regulated industries"],
-                  ["Compliance", "Network-level rules only", "Custom compliance enforcement modules"],
-                  ["Data control", "Network participants", "Deploying organization exclusively"],
-                ]}
-              />
-              <h3 className="wp-h2">Runtime Engine</h3>
-              <p className="wp-p">The Runtime Engine defines how configured systems become executable blockchain environments. Runtime behavior is versioned: every deployment is associated with a specific runtime version, and changes occur only through governance-approved upgrades.</p>
-              <BulletList items={[
-                "WASM-based execution for smart contracts and modules",
-                "EVM compatibility for Solidity-based contracts on Public L1",
-                "On-chain parameter adjustments via governance",
-                "Runtime security sandboxing to prevent unauthorized execution",
-                "Versioned upgrade orchestration with no hard forks required",
-              ]} />
-              <h3 className="wp-h2">Cross-Chain Interoperability</h3>
-              <p className="wp-p">Cross-chain capabilities are configured, not assumed. Supported interoperability includes cross-chain message passing, asset bridging protocols, and optional Private Chain to Public L1 connectivity. For Private Chains, all external connectivity must be explicitly enabled during configuration.</p>
-            </Section>
-
-            {/* Studio */}
-            <Section id="studio" num="07" title="Cerulea Studio">
-              <p className="wp-p">Cerulea Studio is the core environment through which all blockchain systems are created, configured, and deployed. It is not a companion interface. It is the only way to build on Cerulea.</p>
-              {[
-                { title: "Architecture Selection", body: "The first decision inside Studio defines the architectural topology, determining validator structure, governance mechanics, infrastructure ownership, compliance posture, and operational control boundaries." },
-                { title: "Templates and Module Presets", body: "Templates are structured starting points that accelerate configuration without restricting flexibility. Every element can be adjusted, extended, or replaced. Templates reduce friction without reducing control." },
-                { title: "Module Configuration Framework", body: "Infrastructure Modules govern foundational mechanics: consensus, validator management, upgrade orchestration, and governance hooks. Application Modules extend the system with token systems, identity frameworks, payment logic, and compliance enforcement." },
-                { title: "Workspace and Project Model", body: "Workspaces represent organizational boundaries. Projects within workspaces represent individual blockchain systems, containing all configuration including architecture selection, module settings, governance setup, deployment history, and operational state." },
-                { title: "Deployment Engine", body: "When triggered, Cerulea provisions the complete operational stack in a single atomic activation: runtime, validator structures, governance hooks, monitoring surfaces, and operational interfaces. There is no partial deployment state." },
-              ].map(({ title, body }) => (
-                <div key={title}>
-                  <h3 className="wp-h2">{title}</h3>
-                  <p className="wp-p">{body}</p>
-                </div>
-              ))}
-            </Section>
-
-            {/* Governance */}
-            <Section id="governance" num="08" title="Governance">
-              <p className="wp-p">Governance is the operational mechanism through which all post-deployment change occurs in Cerulea. It is not optional. No system can be modified outside the governance framework once deployed.</p>
-              <CompTable
-                cols={["Aspect", "Public L1", "Private Chain"]}
-                rows={[
-                  ["Proposal creation", "Any qualifying token holder", "Defined stakeholder roles"],
-                  ["Voting mechanism", "Token-weighted stake", "Role-based or multi-sig approval"],
-                  ["Execution", "Automatic on-chain after quorum", "Enterprise-approved scheduling"],
-                  ["Upgrade authority", "Community alignment required", "Internal governance policy"],
-                  ["Audit trail", "Public on-chain", "Compliance-aligned logging"],
-                ]}
-              />
-              <h3 className="wp-h2">Upgrade Strategies</h3>
-              <BulletList items={[
-                "Rolling changes applied incrementally; network remains operational throughout",
-                "Canary changes applied to a limited subset of nodes first to validate under live conditions",
-                "Blue-green two parallel environments with traffic shifted at a defined point for near-zero downtime",
-              ]} />
-            </Section>
-
-            {/* Security */}
-            <Section id="security" num="09" title="Security Model">
-              <h3 className="wp-h2">Operational vs. Data Control Boundary</h3>
-              <p className="wp-p">Cerulea maintains a strict boundary between operational coordination and data control. Cerulea manages deployment orchestration, upgrade management, and monitoring provisioning. Data control (transaction execution, smart contract state, validator key management) belongs entirely to the deploying organization for Private Chains.</p>
-              <Callout>Cerulea does not read transaction payloads, access smart contract state, or control enterprise validator keys. This boundary is enforced architecturally, not by policy.</Callout>
-              <h3 className="wp-h2">Enterprise Data Sovereignty</h3>
-              <BulletList items={[
-                "Transaction content and smart contract state",
-                "Validator key management and node access",
-                "Network exposure boundaries and API access policies",
-                "Governance participation and change authority",
-                "Infrastructure hosting and operational decisions",
-              ]} />
-              <h3 className="wp-h2">Compliance Positioning</h3>
-              <p className="wp-p">Cerulea supports compliance requirements without prescribing a specific regulatory framework. It provides role-based access controls, governance-controlled change management, audit trails for all governance actions, enterprise-defined compliance module enforcement, and cross-border governance adaptability. Organizations are responsible for ensuring deployments meet their legal and regulatory requirements.</p>
-            </Section>
-
-            {/* Intelligence */}
-            <Section id="intelligence" num="10" title="Cerulea Intelligence">
-              <p className="wp-p">Cerulea Intelligence is an embedded guidance layer inside Studio that provides contextual recommendations and risk-aware signals during the design and configuration phase only. It operates before deployment and cannot take autonomous action.</p>
-              <h3 className="wp-h2">What It Does</h3>
-              <BulletList items={[
-                "Explains configuration implications as settings are made",
-                "Highlights structural gaps in system design",
-                "Suggests governance alignment based on architecture intent",
-                "Identifies incompatible module combinations",
-                "Surfaces integration dependencies and readiness signals",
-                "Flags upgrade settings that could create operational risk",
-              ]} />
-              <h3 className="wp-h2">What It Cannot Do</h3>
-              <BulletList items={[
-                "Deploy systems automatically",
-                "Change configurations without explicit user action",
-                "Execute governance proposals or vote in governance processes",
-                "Manage validators or control infrastructure",
-                "Access transaction data or read smart contract state",
-              ]} />
-              <Callout>Cerulea Intelligence is an advisory system, not an autonomous agent. Every action remains under explicit user and governance control.</Callout>
-            </Section>
-
-            {/* Integrations */}
-            <Section id="integrations" num="11" title="Integrations">
-              <p className="wp-p">Integrations allow Cerulea deployments to interact with external systems at the operational boundary. They do not override governance or runtime behavior.</p>
-              <div className="wp-int-grid">
-                {[
-                  ["Payments", "Stripe, PayPal, Coinbase Commerce, Lemon Squeezy, Razorpay"],
-                  ["Authentication", "Clerk, Privy, Dynamic, Auth0, Firebase Auth"],
-                  ["Communication", "SendGrid, Resend, Twilio, XMTP, Push Protocol"],
-                  ["Storage", "AWS S3, Pinata (IPFS), Irys (Arweave), Lighthouse (Filecoin), Supabase Storage"],
-                  ["Data & Oracles", "Chainlink, The Graph, Alchemy, Moralis, Pyth Network"],
-                  ["Analytics", "PostHog, Segment, Dune API, Google Analytics 4, Mixpanel"],
-                  ["Webhooks", "Slack, Discord, Telegram Bot, Zapier, Custom Endpoint"],
-                ].map(([cat, providers]) => (
-                  <div key={cat} className="wp-int-card">
-                    <div className="wp-int-header">{cat}</div>
-                    <div className="wp-int-body">{providers}</div>
-                  </div>
-                ))}
-              </div>
-            </Section>
-
-            {/* Enterprise */}
-            <Section id="enterprise" num="12" title="Enterprise Operating Model">
-              <p className="wp-p">Private Chain deployments are sovereign blockchain environments. The deploying organization owns the system, controls the infrastructure, and bears operational responsibility. Cerulea provides the orchestration platform, configuration lifecycle, and operational tooling.</p>
-              {[
-                { title: "Private Chain Ownership", body: "The enterprise controls all validator nodes and hosting, defines governance authority and participant roles, manages infrastructure scaling and uptime, retains exclusive access to transaction data and chain state, and determines network exposure and API access policies." },
-                { title: "Validator Ownership", body: "Validator node ownership belongs to the enterprise. Cerulea may deploy a limited number of nodes solely for licensing enforcement and usage metering. These nodes have no access to transaction payloads, smart contract state, or enterprise data. Enterprises retain the right to audit Cerulea-operated nodes at any time." },
-                { title: "Enterprise Upgrade Model", body: "No upgrade can be applied by Cerulea without the deploying organization triggering the process through their own governance. Enterprises schedule upgrades to align with maintenance windows, compliance review cycles, or change management processes." },
-              ].map(({ title, body }) => (
-                <div key={title}>
-                  <h3 className="wp-h2">{title}</h3>
-                  <p className="wp-p">{body}</p>
-                </div>
-              ))}
-            </Section>
-
-            {/* Decision Guide */}
-            <Section id="decision" num="13" title="Decision Guide">
-              <p className="wp-p">Use this section before beginning configuration. Architecture, governance, infrastructure ownership, and cost structure all follow from this initial decision.</p>
-              <div className="wp-decision-grid">
-                <div className="wp-decision-card">
-                  <div className="wp-decision-head pub">Choose Public L1 if...</div>
-                  <ul className="wp-decision-body">
-                    {[
-                      "The system requires open, permissionless participation",
-                      "Governance must be community-driven and transparent",
-                      "You do not need to control who runs validators",
-                      "Your use case is a dApp, token system, or ecosystem service",
-                    ].map(i => <li key={i}>{i}</li>)}
-                  </ul>
-                </div>
-                <div className="wp-decision-card">
-                  <div className="wp-decision-head priv">Choose Private Chain if...</div>
-                  <ul className="wp-decision-body">
-                    {[
-                      "Access must be permissioned",
-                      "The organization must own and control validator infrastructure",
-                      "Compliance, audit, or regulatory requirements apply",
-                      "Governance authority must remain inside the organization",
-                    ].map(i => <li key={i}>{i}</li>)}
-                  </ul>
-                </div>
-              </div>
-              <Callout>The anchor question: Is this open ecosystem infrastructure, or controlled organizational infrastructure?</Callout>
-              <h3 className="wp-h2">Cost vs. Control</h3>
-              <p className="wp-p">Cerulea removes the engineering cost of building blockchain systems. It does not remove the operational cost of running them. Public L1 reduces infrastructure cost but increases coordination overhead. Private Chains increase infrastructure responsibility but give full operational control. Neither model is cheaper by default.</p>
-            </Section>
-
-            {/* Summary */}
-            <Section id="summary" num="14" title="Platform Summary">
-              <KVTable rows={[
-                ["Deployment model", "Public L1 and Private Chain"],
-                ["Configuration approach", "Fully no-code, structured configuration framework"],
-                ["Governance", "On-chain, proposal-lifecycle driven. Token-weighted (Public L1) or authority-based (Private Chain)"],
-                ["Runtime", "WASM + EVM-compatible, versioned upgrades, governance-gated changes"],
-                ["Infrastructure hosting", "Cloud (AWS, Azure, GCP), On-Prem, or Hybrid (Private Chain only)"],
-                ["Security boundary", "Operational coordination (Cerulea) vs. data control (enterprise or network participants)"],
-                ["Integrations", "7 categories, 35+ supported providers"],
-                ["AI guidance", "Cerulea Intelligence: advisory-only, pre-deployment configuration assistance"],
-                ["Build lifecycle", "9-stage lifecycle: Create through Retire"],
-              ]} />
-            </Section>
-
-            {/* CTA */}
-            <div className="wp-cta">
-              <div className="wp-cta-eyebrow">Get Started</div>
-              <div className="wp-cta-title">Ready to build on Cerulea?</div>
-              <p className="wp-cta-sub">Explore the platform, request a demo, or speak with our team about your infrastructure requirements.</p>
-              <div className="wp-cta-buttons">
-                <button className="wp-btn-primary">Request a Demo</button>
-                <button className="wp-btn-outline">View Documentation</button>
-              </div>
-            </div>
-
-            {/* Disclaimer */}
-            <div className="wp-disclaimer">
-              <div className="wp-disclaimer-inner">
-                <div className="wp-disclaimer-label">Legal Disclaimer</div>
-                <p>This document is provided for informational purposes only. The information contained herein is subject to change without notice. Cerulea makes no warranties, express or implied, regarding the accuracy or completeness of this document. This whitepaper does not constitute legal, financial, or regulatory advice. Organizations are responsible for ensuring that any deployment meets the legal and regulatory requirements applicable in their jurisdiction. Cerulea does not provide compliance certifications. All product features, integrations, and capabilities described are subject to the terms of the applicable enterprise agreement. Version 1.0, February 2026.</p>
-              </div>
-            </div>
-
-          </main>
+          <button onClick={() => setCollapsed(!collapsed)} style={{
+            background: "rgba(255,255,255,0.08)", border: "none", color: "rgba(255,255,255,0.6)",
+            width: 28, height: 28, borderRadius: 6, cursor: "pointer", fontSize: 12,
+            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+          }}>{collapsed ? "›" : "‹"}</button>
         </div>
       </div>
-    </>
+
+      {!collapsed && (
+        <div style={{ padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search whitepaper..."
+            style={{
+              width: "100%", padding: "8px 12px",
+              background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 8, color: "#fff", fontSize: 12.5, outline: "none",
+              fontFamily: "'DM Sans', sans-serif"
+            }}
+          />
+        </div>
+      )}
+
+      <nav style={{ flex: 1, overflowY: "auto", padding: "12px 0", scrollbarWidth: "none" }}>
+        {SECTIONS.filter(s => !searchQuery || s.title.toLowerCase().includes(searchQuery.toLowerCase())).map(s => {
+          const isActive = activeSection === s.id;
+          return (
+            <a key={s.id} href={`#${s.id}`} onClick={e => { e.preventDefault(); onNavigate(s.id); }}
+              title={collapsed ? `${s.num}. ${s.title}` : ""}
+              style={{
+                display: "flex", alignItems: "center", gap: 10,
+                padding: "9px 18px", textDecoration: "none", fontSize: 12.5, fontFamily: "'DM Sans', sans-serif",
+                color: isActive ? "#fff" : "rgba(255,255,255,0.55)",
+                background: isActive ? "rgba(255,255,255,0.1)" : "transparent",
+                borderLeft: `3px solid ${isActive ? "#60A5FA" : "transparent"}`,
+                transition: "all 0.15s ease", whiteSpace: "nowrap", overflow: "hidden"
+              }}
+            >
+              <span style={{ fontSize: 10, fontWeight: 800, color: isActive ? "#93C5FD" : "rgba(255,255,255,0.3)", letterSpacing: "0.06em", minWidth: 22, flexShrink: 0 }}>{s.num}</span>
+              {!collapsed && <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{s.title}</span>}
+            </a>
+          );
+        })}
+      </nav>
+
+      {!collapsed && (
+        <div style={{ padding: "12px 18px", borderTop: "1px solid rgba(255,255,255,0.08)", fontSize: 11, color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
+          February 2026 &nbsp;·&nbsp; Version 1.0
+        </div>
+      )}
+    </aside>
+  );
+}
+
+// ─── Section components ────────────────────────────────────────────────────────
+
+function P({ children }) {
+  return <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 14, textAlign: "justify" }}>{children}</p>;
+}
+
+function AbstractSection() {
+  return (
+    <section id="abstract" style={{ marginBottom: 80 }}>
+      <SectionHeader num="I" title="Abstract" />
+      <P>Blockchain infrastructure has long been the domain of highly specialised engineering teams. Building a production-grade blockchain system requires coordinating runtime compilation, validator configuration, governance wiring, infrastructure provisioning, DevOps pipelines, and monitoring stacks. Each layer demands distinct expertise, separate tooling, and months of integration work.</P>
+      <Note>Cerulea exists because the barrier to deploying blockchain infrastructure has never been the idea. It has always been the execution. We built a platform to close that gap permanently.</Note>
+      <P>Cerulea is a fully no-code blockchain infrastructure platform. Organisations and developers design, deploy, and operate complete public or private blockchain systems through structured configuration alone. No code is written at any stage. Every architectural decision — validator structure, governance mechanics, infrastructure topology, compliance enforcement, upgrade policy — is expressed through configuration, not engineering.</P>
+      <P>This whitepaper describes Cerulea's architecture, platform capabilities, governance framework, security model, and enterprise operating model. It is written for technical evaluators, enterprise architects, and decision-makers assessing blockchain infrastructure options.</P>
+    </section>
+  );
+}
+
+function ForWhomSection() {
+  return (
+    <section id="for-whom" style={{ marginBottom: 80 }}>
+      <SectionHeader num="II" title="Who Is This For" />
+      <P>Cerulea serves organisations and builders at the infrastructure layer of blockchain, not at the application layer that runs on top of it.</P>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, margin: "20px 0" }}>
+        {[
+          { icon: "🏢", title: "Enterprise Teams", body: "Organisations in finance, logistics, healthcare, or government that need a permissioned blockchain environment with compliance controls, data sovereignty, and internal governance authority." },
+          { icon: "🏗️", title: "Platform Builders", body: "Teams building ecosystem infrastructure, shared network services, or multi-party coordination systems that require a governed public blockchain layer." },
+          { icon: "⚙️", title: "Technical Architects", body: "Engineers and architects responsible for selecting and evaluating blockchain infrastructure stacks. Cerulea replaces custom build with structured configuration." },
+          { icon: "🚀", title: "Founders & Product Teams", body: "Builders who need blockchain infrastructure without assembling a specialised engineering team. Cerulea removes the engineering dependency without removing architectural depth." },
+        ].map((c, i) => <Card key={i} {...c} delay={i * 80} />)}
+      </div>
+      <Note>Cerulea is purpose-built for blockchain infrastructure — not a smart contract builder, token launchpad, DeFi application platform, or general SaaS host.</Note>
+    </section>
+  );
+}
+
+function ProblemSection() {
+  return (
+    <section id="problem" style={{ marginBottom: 80 }}>
+      <SectionHeader num="III" title="The Problem" />
+      <P>Deploying a production blockchain system today means assembling and integrating a fragmented engineering stack:</P>
+      <BulletList items={[
+        "Runtime engineering and genesis configuration",
+        "Validator setup, staking logic, and slashing conditions",
+        "Governance wiring for on-chain proposal and voting mechanics",
+        "Infrastructure provisioning across cloud or on-premise environments",
+        "DevOps pipelines, monitoring stacks, and alerting systems",
+        "Integration layers connecting to external enterprise systems",
+      ]} />
+      <P>Each of these layers requires different expertise, different tools, and different teams. For enterprises, the problem compounds: compliance requirements, data sovereignty constraints, and internal governance mandates cannot be accommodated by off-the-shelf platforms designed for open participation.</P>
+      <P>The result is slow deployment, high cost, and infrastructure that is difficult to audit, upgrade, or retire safely. Cerulea was built to solve this.</P>
+    </section>
+  );
+}
+
+function SolutionSection() {
+  const [ref, visible] = useReveal(0.05);
+  return (
+    <section id="solution" style={{ marginBottom: 80 }}>
+      <SectionHeader num="IV" title="The Cerulea Solution" />
+      <P>Cerulea replaces the fragmented blockchain engineering process with a unified, no-code configuration framework. Architecture becomes structured. Infrastructure becomes intentional. Governance becomes explicit. Deployment becomes atomic.</P>
+      <div ref={ref} style={{ background: "linear-gradient(135deg, #EBF3FB 0%, #F0F7FF 100%)", border: "1px solid #BFDBF7", borderRadius: 14, padding: "22px 24px", margin: "24px 0", opacity: visible ? 1 : 0, transition: "opacity 0.6s ease" }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#2E75B6", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 16 }}>Build Lifecycle</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 0, alignItems: "center", justifyContent: "space-between" }}>
+          {["Create","Configure","Deploy","Operate","Govern","Upgrade","Expand","Monitor","Retire"].map((label, i) => (
+            <div key={label} style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <div style={{ width: 38, height: 38, background: "#fff", border: "1.5px solid #BFDBF7", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#2E75B6", fontWeight: 700, boxShadow: "0 2px 8px rgba(46,117,182,0.1)" }}>{String(i+1).padStart(2,"0")}</div>
+                <span style={{ fontSize: 10, fontWeight: 600, color: "#2E75B6", letterSpacing: "0.04em" }}>{label}</span>
+              </div>
+              {i < 8 && <span style={{ color: "#93C5FD", fontSize: 16, margin: "0 4px", marginBottom: 14 }}>›</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+      <Subsection title="What Cerulea Deploys">
+        <P>When a deployment is triggered, Cerulea generates and provisions:</P>
+        <BulletList items={[
+          "A functioning blockchain network (public or private)",
+          "Runtime configuration and genesis parameters",
+          "Validator initialization and governance logic",
+          "Smart contract execution capability",
+          "API and RPC access layers",
+          "Monitoring and observability infrastructure",
+          "Operational dashboard and explorer surfaces",
+        ]} />
+      </Subsection>
+    </section>
+  );
+}
+
+function PhilosophySection() {
+  return (
+    <section id="philosophy" style={{ marginBottom: 80 }}>
+      <SectionHeader num="V" title="Core Philosophy" />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, margin: "8px 0 28px" }}>
+        {[
+          { icon: "◈", title: "Determinism", body: "Every system is the result of explicit configuration. No emergent deployments and no invisible defaults influencing runtime behavior." },
+          { icon: "⇄", title: "Separation", body: "Until deployment is triggered, nothing exists operationally. Configuration is structured, versioned, and stored — but not executed." },
+          { icon: "−", title: "Reduced Dependency", body: "Cerulea removes the requirement to express architecture through code. Complex systems can still be built through structured configuration." },
+          { icon: "◎", title: "Configurable Decentralization", body: "Decentralization is an architectural decision — validator openness, governance weighting, and compliance enforcement are all configurable." },
+        ].map((c, i) => <Card key={i} {...c} delay={i * 80} />)}
+      </div>
+    </section>
+  );
+}
+
+function ArchitectureSection() {
+  return (
+    <section id="architecture" style={{ marginBottom: 80 }}>
+      <SectionHeader num="VI" title="Architecture" />
+      <P>Cerulea supports two primary deployment architectures. The architecture selected at project creation determines every subsequent configuration decision.</P>
+      <CompTable
+        cols={["Dimension", "Public L1", "Private Chain"]}
+        rows={[
+          ["Participation", "Open, permissionless", "Permissioned, enterprise-controlled"],
+          ["Governance", "Token-weighted, community-driven", "Authority-based, organisation-defined"],
+          ["Validators", "Hybrid open onboarding, PoS", "Enterprise-selected nodes"],
+          ["Infrastructure", "Distributed network participants", "Cloud, on-prem, or hybrid (org-owned)"],
+          ["Use Cases", "dApps, token systems, ecosystem services", "Enterprise blockchain, regulated industries"],
+          ["Compliance", "Network-level rules only", "Custom compliance enforcement modules"],
+          ["Data control", "Network participants", "Deploying organisation exclusively"],
+        ]}
+      />
+      <Subsection title="Runtime Engine">
+        <P>The Runtime Engine defines how configured systems become executable blockchain environments. Runtime behavior is versioned: every deployment is associated with a specific runtime version, and changes occur only through governance-approved upgrades.</P>
+        <BulletList items={[
+          "WASM-based execution for smart contracts and modules",
+          "EVM compatibility for Solidity-based contracts on Public L1",
+          "On-chain parameter adjustments via governance",
+          "Runtime security sandboxing to prevent unauthorised execution",
+          "Versioned upgrade orchestration with no hard forks required",
+        ]} />
+      </Subsection>
+      <Subsection title="Cross-Chain Interoperability">
+        <P>Cross-chain capabilities are configured, not assumed. Supported interoperability includes cross-chain message passing, asset bridging protocols, and optional Private Chain to Public L1 connectivity. All external connectivity must be explicitly enabled during configuration.</P>
+      </Subsection>
+    </section>
+  );
+}
+
+function StudioSection() {
+  return (
+    <section id="studio" style={{ marginBottom: 80 }}>
+      <SectionHeader num="VII" title="Cerulea Studio" />
+      <P>Cerulea Studio is the core environment through which all blockchain systems are created, configured, and deployed. It is not a companion interface. It is the only way to build on Cerulea.</P>
+      {[
+        { title: "Architecture Selection", body: "The first decision inside Studio defines the architectural topology, determining validator structure, governance mechanics, infrastructure ownership, compliance posture, and operational control boundaries." },
+        { title: "Templates and Module Presets", body: "Templates are structured starting points that accelerate configuration without restricting flexibility. Every element can be adjusted, extended, or replaced. Templates reduce friction without reducing control." },
+        { title: "Module Configuration Framework", body: "Infrastructure Modules govern foundational mechanics: consensus, validator management, upgrade orchestration, and governance hooks. Application Modules extend the system with token systems, identity frameworks, payment logic, and compliance enforcement." },
+        { title: "Workspace and Project Model", body: "Workspaces represent organisational boundaries. Projects within workspaces represent individual blockchain systems, containing all configuration including architecture selection, module settings, governance setup, deployment history, and operational state." },
+        { title: "Deployment Engine", body: "When triggered, Cerulea provisions the complete operational stack in a single atomic activation: runtime, validator structures, governance hooks, monitoring surfaces, and operational interfaces. There is no partial deployment state." },
+      ].map(({ title, body }) => (
+        <Subsection key={title} title={title}><P>{body}</P></Subsection>
+      ))}
+    </section>
+  );
+}
+
+function GovernanceSection() {
+  return (
+    <section id="governance" style={{ marginBottom: 80 }}>
+      <SectionHeader num="VIII" title="Governance" />
+      <P>Governance is the operational mechanism through which all post-deployment change occurs in Cerulea. It is not optional. No system can be modified outside the governance framework once deployed.</P>
+      <CompTable
+        cols={["Aspect", "Public L1", "Private Chain"]}
+        rows={[
+          ["Proposal creation", "Any qualifying token holder", "Defined stakeholder roles"],
+          ["Voting mechanism", "Token-weighted stake", "Role-based or multi-sig approval"],
+          ["Execution", "Automatic on-chain after quorum", "Enterprise-approved scheduling"],
+          ["Upgrade authority", "Community alignment required", "Internal governance policy"],
+          ["Audit trail", "Public on-chain", "Compliance-aligned logging"],
+        ]}
+      />
+      <Subsection title="Upgrade Strategies">
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {[
+            ["Rolling", "Changes applied incrementally across validator nodes. The network continues operating throughout the upgrade."],
+            ["Canary", "Changes applied to a limited subset of nodes first to validate behavior under live conditions before proceeding."],
+            ["Blue-Green", "Two parallel environments run simultaneously. Traffic is shifted at a defined point for near-zero downtime."],
+          ].map(([tag, body], i) => <StrategyStep key={tag} tag={tag} body={body} index={i} />)}
+        </div>
+      </Subsection>
+    </section>
+  );
+}
+
+function SecuritySection() {
+  return (
+    <section id="security" style={{ marginBottom: 80 }}>
+      <SectionHeader num="IX" title="Security Model" />
+      <Subsection title="Operational vs. Data Control Boundary">
+        <TwoCol
+          leftTitle="Cerulea manages"
+          rightTitle="Enterprise owns"
+          left={["Deployment orchestration", "Upgrade management", "Monitoring surface provisioning", "Lifecycle control tooling"]}
+          right={["Transaction execution and state", "Smart contract state", "Validator key management", "All enterprise data within the deployed system"]}
+        />
+        <Note>Cerulea does not read transaction payloads, access smart contract state, or control enterprise validator keys. This boundary is enforced architecturally, not by policy.</Note>
+      </Subsection>
+      <Subsection title="Enterprise Data Sovereignty">
+        <P>Organisations retain exclusive control over transaction content, validator key management, network exposure boundaries, governance participation, and all infrastructure decisions.</P>
+      </Subsection>
+      <Subsection title="Compliance Positioning">
+        <BulletList items={[
+          "Role-based access control for permissioned participation",
+          "Governance-controlled upgrade and change management",
+          "Audit trails for all governance actions and configuration changes",
+          "Enterprise-defined compliance rule enforcement at the module level",
+          "Cross-border governance adaptability for multi-jurisdiction deployments",
+        ]} />
+        <Note>Cerulea provides the structural controls through which organisations can implement their own compliance requirements — not legal compliance certifications.</Note>
+      </Subsection>
+    </section>
+  );
+}
+
+function IntelligenceSection() {
+  return (
+    <section id="intelligence" style={{ marginBottom: 80 }}>
+      <SectionHeader num="X" title="Cerulea Intelligence" />
+      <P>Cerulea Intelligence is an embedded guidance layer inside Studio that provides contextual recommendations and risk-aware signals during the design and configuration phase only. It cannot take autonomous action.</P>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, margin: "20px 0" }}>
+        {[
+          { icon: "◎", title: "Configuration Guidance", body: "Explains configuration implications, highlights structural gaps, and suggests governance alignment based on architecture intent." },
+          { icon: "△", title: "Risk Signals", body: "Surfaces missing configuration, conflicting governance settings, incomplete integrations, and infrastructure issues before deployment." },
+          { icon: "◉", title: "Use Case Example", body: "A Private Chain user with compliance modules enabled receives governance suggestions tailored to authority-based models and regulated infrastructure." },
+          { icon: "✗", title: "Intentionally Constrained", body: "Cannot deploy systems, change config without user action, execute governance proposals, manage validators, or access transaction data." },
+        ].map((c, i) => <Card key={i} {...c} delay={i * 80} />)}
+      </div>
+      <Note>Cerulea Intelligence is an advisory system, not an autonomous agent. Every action remains under explicit user and governance control.</Note>
+    </section>
+  );
+}
+
+function IntegrationsSection() {
+  const [activeTab, setActiveTab] = useState(0);
+  const categories = [
+    { title: "Payments",       providers: ["Stripe", "PayPal", "Coinbase Commerce", "Lemon Squeezy", "Razorpay"] },
+    { title: "Authentication", providers: ["Clerk", "Privy", "Dynamic", "Auth0", "Firebase Auth"] },
+    { title: "Communication",  providers: ["SendGrid", "Resend", "Twilio", "XMTP", "Push Protocol"] },
+    { title: "Storage",        providers: ["AWS S3", "Pinata (IPFS)", "Irys (Arweave)", "Lighthouse (Filecoin)", "Supabase Storage"] },
+    { title: "Data & Oracles", providers: ["Chainlink", "The Graph", "Alchemy", "Moralis", "Pyth Network"] },
+    { title: "Analytics",      providers: ["PostHog", "Segment", "Dune API", "Google Analytics 4", "Mixpanel"] },
+    { title: "Webhooks",       providers: ["Slack", "Discord", "Telegram Bot", "Zapier", "Custom Endpoint"] },
+  ];
+  const cat = categories[activeTab];
+  return (
+    <section id="integrations" style={{ marginBottom: 80 }}>
+      <SectionHeader num="XI" title="Integrations" />
+      <P>Integrations allow Cerulea deployments to interact with external systems at the operational boundary. They do not override governance or runtime behavior.</P>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, margin: "20px 0" }}>
+        {categories.map((c, i) => (
+          <button key={i} onClick={() => setActiveTab(i)} style={{ padding: "7px 14px", borderRadius: 20, fontSize: 13, fontWeight: 600, border: `1.5px solid ${activeTab === i ? "#1A3C6B" : "#E5E7EB"}`, background: activeTab === i ? "#1A3C6B" : "#fff", color: activeTab === i ? "#fff" : "#6B7280", cursor: "pointer", transition: "all 0.2s ease", fontFamily: "'DM Sans', sans-serif" }}>
+            {c.title}
+          </button>
+        ))}
+      </div>
+      <div key={activeTab} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 10, animation: "fadeSlideIn 0.3s ease" }}>
+        {cat.providers.map((name, i) => (
+          <div key={i} style={{ padding: "14px 16px", background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 10, fontSize: 14, fontWeight: 600, color: "#1A3C6B" }}>{name}</div>
+        ))}
+      </div>
+      <style>{`@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+    </section>
+  );
+}
+
+function EnterpriseSection() {
+  return (
+    <section id="enterprise" style={{ marginBottom: 80 }}>
+      <SectionHeader num="XII" title="Enterprise Operating Model" />
+      <P>Private Chain deployments are sovereign blockchain environments. The deploying organisation owns the system, controls the infrastructure, and bears operational responsibility. Cerulea provides the orchestration platform and operational tooling.</P>
+      <TwoCol
+        leftTitle="Enterprise Controls"
+        rightTitle="Cerulea Provides"
+        left={["All validator nodes and hosting environment", "Governance authority and participant roles", "Infrastructure scaling, redundancy, and uptime", "Exclusive access to transaction data and chain state", "Network exposure and API access policies"]}
+        right={["Configuration framework and Studio environment", "Deployment orchestration and lifecycle tooling", "Upgrade coordination support", "Monitoring surfaces and observability", "Usage metering (usage data only, no payload access)"]}
+      />
+      {[
+        { title: "Validator Ownership", body: "Validator node ownership belongs entirely to the enterprise. Cerulea may deploy a limited number of nodes solely for licensing enforcement and usage metering. These nodes have no access to transaction payloads, smart contract state, or enterprise data." },
+        { title: "Enterprise Upgrade Model", body: "No upgrade can be applied by Cerulea without the deploying organisation triggering the process through their own governance. Enterprises schedule upgrades to align with maintenance windows, compliance review cycles, or change management processes." },
+      ].map(({ title, body }) => (
+        <Subsection key={title} title={title}><P>{body}</P></Subsection>
+      ))}
+    </section>
+  );
+}
+
+function DecisionSection() {
+  return (
+    <section id="decision" style={{ marginBottom: 80 }}>
+      <SectionHeader num="XIII" title="Decision Guide" />
+      <P>Use this section before beginning configuration. Architecture, governance, infrastructure ownership, and cost structure all follow from this initial decision.</P>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, margin: "20px 0" }}>
+        <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #A7F3D0" }}>
+          <div style={{ padding: "14px 20px", background: "#059669", fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 15, color: "#fff", fontWeight: 700 }}>Choose Public L1 if…</div>
+          <div style={{ padding: "16px 20px", background: "#fff" }}>
+            <BulletList items={[
+              "The system requires open, permissionless participation",
+              "Governance must be community-driven and transparent",
+              "You do not need to control who runs validators",
+              "Your use case is a dApp, token system, or ecosystem service",
+            ]} />
+          </div>
+        </div>
+        <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid #BFDBF7" }}>
+          <div style={{ padding: "14px 20px", background: "#1A3C6B", fontFamily: "'DM Serif Display', Georgia, serif", fontSize: 15, color: "#fff", fontWeight: 700 }}>Choose Private Chain if…</div>
+          <div style={{ padding: "16px 20px", background: "#fff" }}>
+            <BulletList items={[
+              "Access must be permissioned",
+              "The organisation must own and control validator infrastructure",
+              "Compliance, audit, or regulatory requirements apply",
+              "Governance authority must remain inside the organisation",
+            ]} />
+          </div>
+        </div>
+      </div>
+      <Note><strong>Anchor question:</strong> Is this open ecosystem infrastructure, or controlled organisational infrastructure?</Note>
+      <Subsection title="Cost vs. Control">
+        <P>Cerulea removes the engineering cost of building blockchain systems. It does not remove the operational cost of running them. Public L1 reduces infrastructure cost but increases coordination overhead. Private Chains increase infrastructure responsibility but give full operational control. Neither model is cheaper by default.</P>
+      </Subsection>
+    </section>
+  );
+}
+
+function SummarySection() {
+  return (
+    <section id="summary" style={{ marginBottom: 80 }}>
+      <SectionHeader num="XIV" title="Platform Summary" />
+      <KVTable rows={[
+        ["Deployment model", "Public L1 and Private Chain"],
+        ["Configuration approach", "Fully no-code, structured configuration framework"],
+        ["Governance", "On-chain, proposal-lifecycle driven. Token-weighted (Public L1) or authority-based (Private Chain)"],
+        ["Runtime", "WASM + EVM-compatible, versioned upgrades, governance-gated changes"],
+        ["Infrastructure hosting", "Cloud (AWS, Azure, GCP), On-Prem, or Hybrid (Private Chain only)"],
+        ["Security boundary", "Operational coordination (Cerulea) vs. data control (enterprise or network participants)"],
+        ["Integrations", "7 categories, 35+ supported providers"],
+        ["AI guidance", "Cerulea Intelligence: advisory-only, pre-deployment configuration assistance"],
+        ["Build lifecycle", "9-stage lifecycle: Create through Retire"],
+      ]} />
+    </section>
+  );
+}
+
+// ─── App ────────────────────────────────────────────────────────────────────────
+
+export default function CeruleaWhitepaper() {
+  const [activeSection, setActiveSection] = useActiveSection();
+  const [searchQuery, setSearchQuery] = useState("");
+  const progress = useScrollProgress();
+
+  const navigate = useCallback((id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  return (
+    <div style={{ fontFamily: "'DM Sans', 'Segoe UI', sans-serif", background: "#fff", minHeight: "100vh" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+        * { box-sizing: border-box; }
+        body { margin: 0; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(26,60,107,0.2); border-radius: 4px; }
+        p { margin: 0 0 14px; }
+        a { text-decoration: none; }
+      `}</style>
+
+      {/* Reading progress bar */}
+      <div style={{ position: "fixed", top: 64, left: 0, height: 3, zIndex: 200, background: "linear-gradient(90deg, #2E75B6, #60A5FA)", width: `${progress}%`, transition: "width 0.1s linear" }} />
+
+      <Sidebar activeSection={activeSection} onNavigate={navigate} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
+      <main style={{ marginLeft: 272, minHeight: "100vh", paddingBottom: 80 }}>
+        {/* Breadcrumb */}
+        <div style={{ position: "sticky", top: 64, background: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", borderBottom: "1px solid #F3F4F6", padding: "14px 52px", display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 50 }}>
+          <div style={{ fontSize: 13, color: "#9CA3AF" }}>
+            Cerulea &rsaquo; <span style={{ color: "#1A3C6B", fontWeight: 600 }}>{SECTIONS.find(s => s.id === activeSection)?.title || "Platform Whitepaper"}</span>
+          </div>
+          <div style={{ fontSize: 12, color: "#9CA3AF" }}>Version 1.0 &nbsp;·&nbsp; February 2026</div>
+        </div>
+
+        <div style={{ maxWidth: 860, padding: "60px 52px 0", width: "100%" }}>
+          {/* Hero */}
+          <div style={{ background: "linear-gradient(135deg, #0f2544 0%, #1A3C6B 55%, #2563ab 100%)", borderRadius: 20, padding: "56px 52px", marginBottom: 72, position: "relative", overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: -80, right: -80, width: 320, height: 320, background: "radial-gradient(circle, rgba(96,165,250,0.12) 0%, transparent 70%)", borderRadius: "50%", pointerEvents: "none" }} />
+            <Tag>Platform Whitepaper</Tag>
+            <h1 style={{ fontSize: 54, fontWeight: 700, color: "#fff", margin: "18px 0 12px", letterSpacing: "-0.03em", lineHeight: 1.05, fontFamily: "'DM Serif Display', Georgia, serif" }}>Cerulea</h1>
+            <p style={{ fontSize: 17, color: "rgba(255,255,255,0.7)", maxWidth: 500, lineHeight: 1.65, marginBottom: 36 }}>
+              No-Code Blockchain Infrastructure Platform — Public L1 &amp; Private Chains.
+            </p>
+            <div style={{ display: "flex", gap: 28, fontSize: 13, color: "rgba(255,255,255,0.45)" }}>
+              {[["14", "Sections"], ["9", "Lifecycle Stages"], ["7", "Integration Categories"]].map(([n, l]) => (
+                <div key={l}>
+                  <span style={{ fontSize: 20, fontWeight: 700, color: "rgba(255,255,255,0.85)", display: "block", fontFamily: "'DM Serif Display', serif" }}>{n}</span>
+                  <span>{l}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Sections */}
+          <AbstractSection />
+          <ForWhomSection />
+          <ProblemSection />
+          <SolutionSection />
+          <PhilosophySection />
+          <ArchitectureSection />
+          <StudioSection />
+          <GovernanceSection />
+          <SecuritySection />
+          <IntelligenceSection />
+          <IntegrationsSection />
+          <EnterpriseSection />
+          <DecisionSection />
+          <SummarySection />
+
+          {/* CTA */}
+          <div style={{ background: "linear-gradient(135deg, #0f2544 0%, #1A3C6B 55%, #2563ab 100%)", borderRadius: 20, padding: "52px 48px", textAlign: "center", marginBottom: 40, position: "relative", overflow: "hidden" }}>
+            <div style={{ position: "absolute", top: -60, left: "50%", transform: "translateX(-50%)", width: 400, height: 200, background: "radial-gradient(ellipse, rgba(96,165,250,0.15) 0%, transparent 70%)", pointerEvents: "none" }} />
+            <Tag>Get Started</Tag>
+            <div style={{ fontFamily: "'DM Serif Display', Georgia, serif", fontSize: "2rem", color: "#fff", margin: "16px 0 10px", lineHeight: 1.2 }}>Ready to build on Cerulea?</div>
+            <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.55)", marginBottom: "2rem", maxWidth: 440, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>Explore the platform, request a demo, or speak with our team about your infrastructure requirements.</p>
+            <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+              <a href="/company/contact-sales" style={{ background: "#2E75B6", color: "#fff", padding: "12px 28px", borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none", transition: "background 0.2s" }}>Contact Sales</a>
+              <a href="/developers/docs" style={{ background: "transparent", color: "rgba(255,255,255,0.8)", border: "1px solid rgba(255,255,255,0.25)", padding: "12px 28px", borderRadius: 8, fontWeight: 500, fontSize: 14, textDecoration: "none" }}>View Documentation</a>
+            </div>
+          </div>
+
+          {/* Disclaimer */}
+          <div style={{ padding: "28px 32px", background: "#F9FAFB", border: "1px solid #E5E7EB", borderRadius: 12, marginBottom: 60 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#2E75B6", marginBottom: 10 }}>Legal Disclaimer</div>
+            <p style={{ fontSize: 12, color: "#9CA3AF", lineHeight: 1.7, margin: 0 }}>This document is provided for informational purposes only. The information contained herein is subject to change without notice. Cerulea makes no warranties, express or implied, regarding the accuracy or completeness of this document. This whitepaper does not constitute legal, financial, or regulatory advice. Organisations are responsible for ensuring that any deployment meets the legal and regulatory requirements applicable in their jurisdiction. Version 1.0, February 2026.</p>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

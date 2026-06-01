@@ -1,351 +1,361 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Stack, Divider } from '@mui/material';
-import {
-  Book, Code, Zap, Shield, Database, GitBranch, Users, Lock,
-  Webhook, Settings, BarChart3, Rocket, AlertCircle, Menu, X,
-  Search, ExternalLink, Copy, Check,
-} from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from "react";
 
-// ─── Helper components (defined outside to avoid remount) ──────────────────────
+// ─── Data ──────────────────────────────────────────────────────────────────────
 
-function SectionTitle({ children }) {
+const SECTIONS = [
+  { id: "introduction",   num: "I",    title: "Introduction" },
+  { id: "authentication", num: "II",   title: "Authentication" },
+  { id: "rest-api",       num: "III",  title: "Core REST API" },
+  { id: "rpc-methods",    num: "IV",   title: "RPC Methods" },
+  { id: "webhooks",       num: "V",    title: "Webhooks" },
+  { id: "workspaces",     num: "VI",   title: "Workspaces" },
+  { id: "dapp-builder",   num: "VII",  title: "dApp Builder" },
+  { id: "blockchains",    num: "VIII", title: "Private Blockchains" },
+  { id: "contracts",      num: "IX",   title: "Smart Contracts" },
+  { id: "validators",     num: "X",    title: "Validators" },
+  { id: "governance",     num: "XI",   title: "Governance" },
+  { id: "modules",        num: "XII",  title: "Modules" },
+  { id: "tokens",         num: "XIII", title: "Tokens" },
+  { id: "monitoring",     num: "XIV",  title: "Monitoring" },
+  { id: "errors",         num: "XV",   title: "Error Handling" },
+];
+
+// ─── Hooks ─────────────────────────────────────────────────────────────────────
+
+function useActiveSection() {
+  const [active, setActive] = useState("introduction");
+  useEffect(() => {
+    const els = SECTIONS.map(s => document.getElementById(s.id)).filter(Boolean);
+    const obs = new IntersectionObserver(
+      entries => {
+        const visible = entries.filter(e => e.isIntersecting);
+        if (visible.length > 0) {
+          const top = visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+          setActive(top.target.id);
+        }
+      },
+      { rootMargin: "-10% 0px -60% 0px", threshold: 0 }
+    );
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+  return [active, setActive];
+}
+
+function useScrollProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const el = document.documentElement;
+      const scrolled = el.scrollTop;
+      const total = el.scrollHeight - el.clientHeight;
+      setProgress(total > 0 ? (scrolled / total) * 100 : 0);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return progress;
+}
+
+function useReveal(threshold = 0.12) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, visible];
+}
+
+// ─── Shared components (identical to CeruleaDocs) ─────────────────────────────
+
+function Tag({ children }) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, mt: 1 }}>
-      <Box sx={{ width: 4, height: 28, bgcolor: '#2563eb', borderRadius: 0.5, flexShrink: 0 }} />
-      <Typography sx={{ fontSize: { xs: '1.5rem', md: '1.875rem' }, fontWeight: 800, color: '#172554', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-        {children}
-      </Typography>
-    </Box>
+    <span style={{
+      display: "inline-block", background: "rgba(46,117,182,0.12)", color: "#2E75B6",
+      fontSize: 11, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
+      padding: "3px 10px", borderRadius: 20, border: "1px solid rgba(46,117,182,0.2)"
+    }}>{children}</span>
   );
 }
 
-function SubTitle({ children }) {
+function Note({ children }) {
   return (
-    <Typography sx={{ fontSize: '1.05rem', fontWeight: 700, color: '#172554', mt: 4, mb: 1.5 }}>
-      {children}
-    </Typography>
+    <div style={{
+      background: "linear-gradient(135deg, #EBF3FB 0%, #F0F7FF 100%)",
+      borderLeft: "3px solid #2E75B6", borderRadius: "0 8px 8px 0",
+      padding: "14px 18px", margin: "20px 0", fontSize: 14,
+      color: "#1A3C6B", lineHeight: 1.7, fontStyle: "italic"
+    }}>{children}</div>
   );
 }
 
-function Description({ children }) {
+function SectionHeader({ num, title }) {
+  const [ref, visible] = useReveal(0.1);
   return (
-    <Typography sx={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.8, mb: 2 }}>
+    <div ref={ref} style={{
+      display: "flex", alignItems: "flex-start", gap: 18, marginBottom: 32,
+      paddingBottom: 24, borderBottom: "1px solid #E5E7EB",
+      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(16px)",
+      transition: "opacity 0.5s ease, transform 0.5s ease"
+    }}>
+      <div style={{
+        background: "linear-gradient(135deg, #1A3C6B, #2E75B6)", color: "#fff",
+        fontSize: 12, fontWeight: 800, width: 44, height: 44, borderRadius: 12,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        flexShrink: 0, marginTop: 4, letterSpacing: "0.04em", fontFamily: "'DM Serif Display', Georgia, serif"
+      }}>{num}</div>
+      <h2 style={{
+        fontSize: 30, fontWeight: 700, color: "#1A3C6B", lineHeight: 1.15,
+        fontFamily: "'DM Serif Display', Georgia, serif", margin: 0
+      }}>{title}</h2>
+    </div>
+  );
+}
+
+function Subsection({ title, children }) {
+  const [ref, visible] = useReveal(0.1);
+  return (
+    <div ref={ref} style={{
+      marginBottom: 40,
+      opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(20px)",
+      transition: "opacity 0.55s ease, transform 0.55s ease"
+    }}>
+      <h3 style={{
+        fontSize: 17, fontWeight: 700, color: "#2E75B6", marginBottom: 14,
+        display: "flex", alignItems: "center", gap: 10, fontFamily: "'DM Sans', sans-serif"
+      }}>
+        <span style={{ width: 3, height: 18, background: "#2E75B6", borderRadius: 2, display: "inline-block", flexShrink: 0 }} />
+        {title}
+      </h3>
       {children}
-    </Typography>
+    </div>
   );
 }
 
 function BulletList({ items }) {
   return (
-    <Box sx={{ pl: 0, m: 0, my: 2 }}>
+    <ul style={{ listStyle: "none", margin: "12px 0 16px", display: "flex", flexDirection: "column", gap: 9, padding: 0 }}>
       {items.map((item, i) => (
-        <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, py: 0.75 }}>
-          <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#2563eb', mt: '7px', flexShrink: 0 }} />
-          <Typography sx={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.6 }}>{item}</Typography>
-        </Box>
+        <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: 14.5, lineHeight: 1.65, color: "#374151" }}>
+          <span style={{ width: 5, height: 5, background: "#2E75B6", borderRadius: "50%", flexShrink: 0, marginTop: 9 }} />
+          {item}
+        </li>
       ))}
-    </Box>
+    </ul>
   );
 }
 
-function Table({ headers, rows }) {
+function Card({ icon, title, body, delay = 0 }) {
+  const [ref, visible] = useReveal(0.1);
+  const [hovered, setHovered] = useState(false);
   return (
-    <Box sx={{ overflowX: 'auto', my: 3, border: '1px solid #E2E8F0', borderRadius: 2, bgcolor: '#FFFFFF' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <div
+      ref={ref}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: hovered ? "#fff" : "#F9FAFB",
+        border: `1px solid ${hovered ? "#BFDBF7" : "#E5E7EB"}`,
+        borderRadius: 12, padding: "20px 22px",
+        transition: "all 0.25s ease",
+        boxShadow: hovered ? "0 8px 24px rgba(26,60,107,0.1)" : "none",
+        transform: visible ? (hovered ? "translateY(-3px)" : "none") : "translateY(20px)",
+        opacity: visible ? 1 : 0,
+        transitionDelay: `${delay}ms`,
+      }}
+    >
+      <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
+      <div style={{ fontSize: 14, fontWeight: 700, color: "#1A3C6B", marginBottom: 8, fontFamily: "'DM Sans', sans-serif" }}>{title}</div>
+      <div style={{ fontSize: 13.5, color: "#6B7280", lineHeight: 1.6 }}>{body}</div>
+    </div>
+  );
+}
+
+// ─── API-specific components ───────────────────────────────────────────────────
+
+const METHOD_COLORS = {
+  GET:    { bg: "#DCFCE7", color: "#166534", border: "#BBF7D0" },
+  POST:   { bg: "#DBEAFE", color: "#1E40AF", border: "#BFDBFE" },
+  PUT:    { bg: "#FEF3C7", color: "#92400E", border: "#FDE68A" },
+  DELETE: { bg: "#FEE2E2", color: "#991B1B", border: "#FECACA" },
+};
+
+function IC({ children }) {
+  return (
+    <code style={{
+      background: "rgba(46,117,182,0.12)", color: "#2E75B6",
+      padding: "2px 7px", borderRadius: 4,
+      fontFamily: '"Fira Code","Fira Mono",ui-monospace,monospace',
+      fontSize: "0.88em", fontWeight: 600
+    }}>{children}</code>
+  );
+}
+
+function CodeBlock({ code, language = "bash" }) {
+  const [copied, setCopied] = useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(code).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <div style={{ borderRadius: 12, overflow: "hidden", margin: "20px 0", border: "1px solid #1E3A5F" }}>
+      <div style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: "10px 18px", background: "#0a1929", borderBottom: "1px solid #1E3A5F"
+      }}>
+        <span style={{ color: "#60A5FA", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+          {language}
+        </span>
+        <button onClick={copy} style={{
+          display: "flex", alignItems: "center", gap: 6,
+          background: "transparent", border: `1px solid ${copied ? "#22C55E" : "#2E75B6"}`,
+          color: copied ? "#22C55E" : "#60A5FA",
+          padding: "3px 12px", borderRadius: 6, fontSize: 12, cursor: "pointer",
+          transition: "all 0.2s", fontFamily: "'DM Sans', sans-serif"
+        }}>
+          {copied ? "✓ Copied" : "Copy"}
+        </button>
+      </div>
+      <div style={{ background: "#0f2544", padding: "20px 22px", overflowX: "auto" }}>
+        <pre style={{
+          color: "#CBD5E1",
+          fontFamily: '"Fira Code","Fira Mono",ui-monospace,monospace',
+          fontSize: 13.5, lineHeight: 1.75, margin: 0, whiteSpace: "pre"
+        }}>{code}</pre>
+      </div>
+    </div>
+  );
+}
+
+function EndpointCard({ method, path, description, children }) {
+  const [ref, visible] = useReveal(0.1);
+  const [hovered, setHovered] = useState(false);
+  const mc = METHOD_COLORS[method] || METHOD_COLORS.GET;
+  return (
+    <div
+      ref={ref}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: hovered ? "#fff" : "#F9FAFB",
+        border: `1px solid ${hovered ? "#BFDBF7" : "#E5E7EB"}`,
+        borderRadius: 12, padding: "20px 22px", margin: "20px 0",
+        transition: "all 0.25s ease",
+        boxShadow: hovered ? "0 8px 24px rgba(26,60,107,0.1)" : "none",
+        opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(16px)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10, flexWrap: "wrap" }}>
+        <span style={{
+          padding: "3px 10px", borderRadius: 6, fontSize: 11, fontWeight: 800,
+          letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0,
+          background: mc.bg, color: mc.color, border: `1px solid ${mc.border}`
+        }}>{method}</span>
+        <span style={{
+          fontFamily: '"Fira Code","Fira Mono",ui-monospace,monospace',
+          fontSize: 13, color: "#2E75B6", background: "rgba(46,117,182,0.08)",
+          padding: "3px 10px", borderRadius: 6, wordBreak: "break-all"
+        }}>{path}</span>
+      </div>
+      <p style={{ fontSize: 14, color: "#6B7280", lineHeight: 1.6, margin: children ? "0 0 4px" : 0 }}>{description}</p>
+      {children}
+    </div>
+  );
+}
+
+function DataTable({ headers, rows }) {
+  return (
+    <div style={{ overflowX: "auto", margin: "16px 0" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
         <thead>
           <tr>
-            {headers.map((h, i) => (
-              <th key={i} style={{ padding: '10px 16px', textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.08em', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-                {h}
-              </th>
+            {headers.map(h => (
+              <th key={h} style={{
+                background: "#1A3C6B", color: "#fff", padding: "12px 16px",
+                textAlign: "left", fontWeight: 600, fontFamily: "'DM Sans', sans-serif"
+              }}>{h}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i} style={{ borderBottom: i < rows.length - 1 ? '1px solid #F1F5F9' : 'none' }}>
+            <tr key={i}>
               {row.map((cell, j) => (
-                <td key={j} style={{ padding: '10px 16px', fontSize: '0.875rem', color: '#475569', verticalAlign: 'top' }}>
-                  {cell}
-                </td>
+                <td key={j} style={{
+                  padding: "12px 16px", borderBottom: "1px solid #E5E7EB",
+                  background: i % 2 === 0 ? "#F9FAFB" : "#fff",
+                  color: j === 0 ? "#1A3C6B" : "#374151",
+                  fontWeight: j === 0 ? 700 : 400, verticalAlign: "top"
+                }}>{cell}</td>
               ))}
             </tr>
           ))}
         </tbody>
       </table>
-    </Box>
+    </div>
   );
 }
 
-const METHOD_STYLES = {
-  GET:    { bg: '#DCFCE7', color: '#166534', border: '#BBF7D0' },
-  POST:   { bg: '#DBEAFE', color: '#1E40AF', border: '#BFDBFE' },
-  PUT:    { bg: '#FEF3C7', color: '#92400E', border: '#FDE68A' },
-  DELETE: { bg: '#FEE2E2', color: '#991B1B', border: '#FECACA' },
-};
+// ─── Sections ─────────────────────────────────────────────────────────────────
 
-function EndpointCard({ method, path, description, children }) {
-  const ms = METHOD_STYLES[method] || METHOD_STYLES.GET;
+function IntroductionSection() {
   return (
-    <Box sx={{ border: '1px solid #E2E8F0', borderRadius: 3, p: 3, my: 3, bgcolor: '#FFFFFF', transition: 'all 0.2s', '&:hover': { borderColor: '#BFDBFE', boxShadow: '0 4px 16px rgba(37,99,235,0.08)' } }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5, flexWrap: 'wrap' }}>
-        <Typography sx={{ px: 1.25, py: 0.4, borderRadius: 1, bgcolor: ms.bg, color: ms.color, border: `1px solid ${ms.border}`, fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase', flexShrink: 0 }}>
-          {method}
-        </Typography>
-        <Typography sx={{ fontFamily: 'monospace', fontSize: '0.875rem', color: '#2563eb', bgcolor: '#EFF6FF', px: 1.5, py: 0.4, borderRadius: 1, flex: 1, minWidth: 0, wordBreak: 'break-all' }}>
-          {path}
-        </Typography>
-      </Box>
-      <Typography sx={{ color: '#64748B', fontSize: '0.9rem', mb: children ? 1 : 0 }}>{description}</Typography>
-      {children}
-    </Box>
+    <section id="introduction" style={{ marginBottom: 80 }}>
+      <SectionHeader num="I" title="Introduction" />
+      <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", textAlign: "justify", marginBottom: 14 }}>
+        The Cerulea API provides programmatic access to all platform capabilities — from deploying blockchain networks and managing smart contracts to querying real-time metrics and configuring governance. The API combines RESTful endpoints for resource management with JSON-RPC 2.0 for direct blockchain interaction.
+      </p>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, marginBottom: 32 }}>
+        {[
+          { icon: "⬡", title: "Complete dApps",       body: "Build full-stack dApps with smart contracts, tokens, and frontend interfaces." },
+          { icon: "⛓", title: "Private Blockchains",  body: "Deploy custom blockchain networks with configurable consensus mechanisms." },
+          { icon: "◈", title: "Validator Management", body: "Manage validators, governance, and network parameters programmatically." },
+          { icon: "◉", title: "Real-time Monitoring", body: "Query and stream live blockchain performance data and analytics." },
+          { icon: "⚙", title: "Modular Architecture", body: "Enable and configure DeFi, NFT, DAO, and identity modules via API." },
+          { icon: "↑", title: "CI/CD Integration",    body: "Automate deployments and upgrades with GitHub integration support." },
+        ].map((c, i) => <Card key={i} {...c} delay={i * 70} />)}
+      </div>
+
+      <Subsection title="API Architecture">
+        <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 14 }}>
+          Cerulea uses a hybrid architecture combining RESTful endpoints for resource management with JSON-RPC 2.0 for blockchain interactions — intuitive REST for infrastructure management, powerful RPC for direct blockchain operations.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginTop: 14 }}>
+          <div style={{ background: "#EFF6FF", border: "1px solid #BFDBF7", borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 12, fontWeight: 800, color: "#1A3C6B", marginBottom: 10, letterSpacing: "0.04em" }}>REST API</div>
+            <BulletList items={["Resource creation and management", "Authentication and access control", "Workspace and project operations", "Webhook registration"]} />
+          </div>
+          <div style={{ background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 10, padding: 20 }}>
+            <div style={{ fontSize: 12, fontWeight: 800, color: "#065F46", marginBottom: 10, letterSpacing: "0.04em" }}>JSON-RPC 2.0</div>
+            <BulletList items={["Direct blockchain interaction", "Block and transaction queries", "Contract execution and calls", "Transaction simulation"]} />
+          </div>
+        </div>
+        <Note>Base URL: <strong>https://api.cerulea.app/v1</strong> — All REST endpoints are prefixed with this base. The RPC endpoint is <IC>POST /rpc</IC>.</Note>
+      </Subsection>
+    </section>
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────────
-
-const SECTIONS = [
-  { id: 'introduction',  title: 'Introduction',        icon: Book },
-  { id: 'authentication',title: 'Authentication',       icon: Lock },
-  { id: 'rest-api',      title: 'REST API',             icon: Code },
-  { id: 'rpc-methods',   title: 'RPC Methods',          icon: Zap },
-  { id: 'webhooks',      title: 'Webhooks',             icon: Webhook },
-  { id: 'workspaces',    title: 'Workspaces',           icon: Users },
-  { id: 'dapp-builder',  title: 'dApp Builder',         icon: Rocket },
-  { id: 'blockchains',   title: 'Private Blockchains',  icon: Database },
-  { id: 'contracts',     title: 'Smart Contracts',      icon: GitBranch },
-  { id: 'validators',    title: 'Validators',           icon: Shield },
-  { id: 'governance',    title: 'Governance',           icon: Users },
-  { id: 'modules',       title: 'Modules',              icon: Settings },
-  { id: 'tokens',        title: 'Tokens',               icon: Code },
-  { id: 'monitoring',    title: 'Monitoring',           icon: BarChart3 },
-  { id: 'errors',        title: 'Error Handling',       icon: AlertCircle },
-];
-
-const CeruleaAPIDocs = () => {
-  const [activeSection, setActiveSection] = useState('introduction');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [copied, setCopied] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const copyToClipboard = (text, id) => {
-    navigator.clipboard.writeText(text);
-    setCopied(id);
-    setTimeout(() => setCopied(''), 2000);
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY + 120;
-      for (const section of SECTIONS) {
-        const el = document.getElementById(section.id);
-        if (el && scrollPosition >= el.offsetTop && scrollPosition < el.offsetTop + el.offsetHeight) {
-          setActiveSection(section.id);
-          break;
-        }
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToSection = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
-  };
-
-  // Code block — needs copyToClipboard + copied state so defined here
-  const CodeBlock = ({ code, language = 'bash', id }) => (
-    <Box sx={{ bgcolor: '#0F172A', borderRadius: 2, overflow: 'hidden', my: 3, border: '1px solid #1E293B' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2.5, py: 1.25, bgcolor: '#020617', borderBottom: '1px solid #1E293B' }}>
-        <Typography sx={{ color: '#38BDF8', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-          {language}
-        </Typography>
-        <Box
-          component="button"
-          onClick={() => copyToClipboard(code, id)}
-          sx={{ display: 'flex', alignItems: 'center', gap: 0.75, bgcolor: 'transparent', border: '1px solid', borderColor: copied === id ? '#22C55E' : '#334155', color: copied === id ? '#22C55E' : '#94A3B8', px: 1.5, py: 0.5, borderRadius: 1, fontSize: '0.75rem', cursor: 'pointer', transition: 'all 0.2s', '&:hover': { borderColor: '#64748B', color: '#E2E8F0' }, fontFamily: 'inherit' }}
-        >
-          {copied === id ? <Check size={13} /> : <Copy size={13} />}
-          <span style={{ marginLeft: 2 }}>{copied === id ? 'Copied' : 'Copy'}</span>
-        </Box>
-      </Box>
-      <Box sx={{ p: 3, overflowX: 'auto' }}>
-        <Typography component="pre" sx={{ color: '#E2E8F0', fontFamily: '"Fira Code", "Fira Mono", ui-monospace, monospace', fontSize: '0.875rem', lineHeight: 1.7, m: 0, whiteSpace: 'pre' }}>
-          {code}
-        </Typography>
-      </Box>
-    </Box>
-  );
-
-  const filtered = SECTIONS.filter(s => !searchQuery || s.title.toLowerCase().includes(searchQuery.toLowerCase()));
-
+function AuthenticationSection() {
   return (
-    <Box className="cerulea-api-docs" sx={{ display: 'flex', bgcolor: '#FAFAFA', minHeight: '100vh', position: 'relative' }}>
+    <section id="authentication" style={{ marginBottom: 80 }}>
+      <SectionHeader num="II" title="Authentication" />
+      <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", textAlign: "justify", marginBottom: 24 }}>
+        Cerulea uses a dual authentication system — API keys for server-to-server communication and OAuth 2.0 for user-facing applications and third-party integrations.
+      </p>
 
-      {/* Scoped style for inline <code> elements in tables/lists */}
-      <style>{`
-        .cerulea-api-docs code {
-          background: #EFF6FF;
-          color: #1D4ED8;
-          padding: 2px 7px;
-          border-radius: 4px;
-          font-family: "Fira Code", "Fira Mono", ui-monospace, monospace;
-          font-size: 0.84em;
-          font-weight: 600;
-        }
-      `}</style>
-
-      {/* Mobile toggle */}
-      <Box
-        component="button"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        sx={{ display: { xs: 'flex', lg: 'none' }, position: 'fixed', top: 72, left: 12, zIndex: 200, alignItems: 'center', justifyContent: 'center', width: 40, height: 40, bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 2, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', color: '#475569', '&:hover': { bgcolor: '#F8FAFC' } }}
-      >
-        {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
-      </Box>
-
-      {/* ── SIDEBAR ── */}
-      <Box sx={{
-        position: 'fixed', left: 0, top: 64,
-        width: 260, height: 'calc(100vh - 64px)',
-        bgcolor: '#FFFFFF', borderRight: '1px solid #E2E8F0',
-        overflowY: 'auto', zIndex: 100,
-        transform: { xs: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)', lg: 'translateX(0)' },
-        transition: 'transform 0.25s ease',
-        '&::-webkit-scrollbar': { width: 5 },
-        '&::-webkit-scrollbar-track': { background: 'transparent' },
-        '&::-webkit-scrollbar-thumb': { background: '#CBD5E1', borderRadius: 10 },
-      }}>
-
-        {/* Sidebar header */}
-        <Box sx={{ p: 2.5, pb: 2, borderBottom: '1px solid #F1F5F9' }}>
-          <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 1.5 }}>
-            <Box sx={{ width: 22, height: 22, borderRadius: 0.75, background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)', boxShadow: '0 0 10px rgba(59,130,246,0.35)' }} />
-            <Typography sx={{ fontWeight: 800, color: '#0A192F', fontSize: '0.95rem', letterSpacing: '-0.01em' }}>Cerulea</Typography>
-          </Stack>
-          <Box sx={{ display: 'inline-flex', alignItems: 'center', bgcolor: '#EFF6FF', color: '#2563eb', px: 1.25, py: 0.35, borderRadius: 10, fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', border: '1px solid #BFDBFE', mb: 2 }}>
-            API v1.0
-          </Box>
-          <Box sx={{ px: 1.5, py: 0.875, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 1.5 }}>
-            <Typography sx={{ fontFamily: 'monospace', fontSize: '0.77rem', color: '#2563eb', wordBreak: 'break-all' }}>
-              api.cerulea.app/v1
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* Search */}
-        <Box sx={{ px: 2.5, py: 1.5, borderBottom: '1px solid #F1F5F9' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1.5, py: 0.75, bgcolor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 1.5, transition: 'all 0.15s', '&:focus-within': { borderColor: '#2563eb', bgcolor: '#FFFFFF', boxShadow: '0 0 0 3px rgba(37,99,235,0.08)' } }}>
-            <Search size={14} color="#94A3B8" style={{ flexShrink: 0 }} />
-            <input
-              type="text"
-              placeholder="Search docs..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ border: 'none', outline: 'none', background: 'transparent', fontSize: '0.85rem', color: '#475569', width: '100%', fontFamily: 'inherit' }}
-            />
-          </Box>
-        </Box>
-
-        {/* Nav items */}
-        <Box sx={{ py: 1 }}>
-          {filtered.map((section) => {
-            const Icon = section.icon;
-            const isActive = activeSection === section.id;
-            return (
-              <Box
-                key={section.id}
-                onClick={() => scrollToSection(section.id)}
-                sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2.5, py: 0.875, cursor: 'pointer', borderLeft: '2px solid', borderLeftColor: isActive ? '#2563eb' : 'transparent', bgcolor: isActive ? '#EFF6FF' : 'transparent', color: isActive ? '#2563eb' : '#475569', transition: 'all 0.15s', '&:hover': { bgcolor: isActive ? '#EFF6FF' : '#F8FAFC', color: isActive ? '#2563eb' : '#172554' } }}
-              >
-                <Icon size={14} style={{ flexShrink: 0 }} />
-                <Typography sx={{ fontSize: '0.875rem', fontWeight: isActive ? 600 : 400, color: 'inherit', lineHeight: 1.4 }}>
-                  {section.title}
-                </Typography>
-              </Box>
-            );
-          })}
-        </Box>
-      </Box>
-
-      {/* ── MAIN CONTENT ── */}
-      <Box sx={{ ml: { xs: 0, lg: '260px' }, flex: 1, minWidth: 0, px: { xs: 3, sm: 5, md: 8 }, pt: { xs: 10, md: 14 }, pb: 16 }}>
-        <Box sx={{ maxWidth: 860 }}>
-
-          {/* HERO */}
-          <Box sx={{ mb: 8, pb: 6, borderBottom: '1px solid #E2E8F0' }}>
-            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, bgcolor: '#EFF6FF', border: '1px solid #BFDBFE', px: 1.5, py: 0.5, borderRadius: 10, mb: 3 }}>
-              <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#2563eb' }} />
-              <Typography sx={{ color: '#2563eb', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>API Reference</Typography>
-            </Box>
-            <Typography variant="h1" sx={{ fontSize: { xs: '2.5rem', md: '3.5rem' }, fontWeight: 800, color: '#172554', letterSpacing: '-0.03em', lineHeight: 1.1, mb: 2 }}>
-              API Documentation
-            </Typography>
-            <Typography sx={{ color: '#475569', fontSize: '1.1rem', lineHeight: 1.7, maxWidth: 680, mb: 4 }}>
-              Build complete dApps and private blockchains. The Cerulea API combines REST endpoints for resource management and JSON-RPC for direct blockchain interactions.
-            </Typography>
-            <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>
-              {[
-                { label: 'Production Ready', color: '#059669', bg: '#DCFCE7', border: '#BBF7D0' },
-                { label: 'Enterprise Grade', color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
-                { label: 'REST + JSON-RPC',  color: '#2563eb', bg: '#EFF6FF', border: '#BFDBFE' },
-              ].map(({ label, color, bg, border }) => (
-                <Box key={label} sx={{ display: 'inline-flex', alignItems: 'center', px: 1.5, py: 0.6, bgcolor: bg, border: `1px solid ${border}`, borderRadius: 10, color, fontSize: '0.8rem', fontWeight: 700 }}>
-                  {label}
-                </Box>
-              ))}
-            </Stack>
-          </Box>
-
-          {/* INTRODUCTION */}
-          <Box component="section" id="introduction" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Introduction</SectionTitle>
-            <Description>
-              Welcome to the Cerulea API documentation. Cerulea is a production-grade, no-code blockchain
-              infrastructure platform that enables developers and enterprises to build fully functional
-              decentralised applications and private blockchain networks without writing blockchain code.
-            </Description>
-
-            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }, gap: 2, my: 4 }}>
-              {[
-                { title: 'Complete dApps',        desc: 'Build full-stack dApps with smart contracts, tokens, and frontends.' },
-                { title: 'Private Blockchains',   desc: 'Deploy custom blockchain networks with configurable consensus.' },
-                { title: 'Validator Management',  desc: 'Manage validators, governance, and network parameters.' },
-                { title: 'Modular Architecture',  desc: 'Configure modules for DeFi, NFTs, DAOs, and more.' },
-                { title: 'Real-time Monitoring',  desc: 'Monitor and analyse blockchain performance in real-time.' },
-                { title: 'CI/CD Integration',     desc: 'Automated deployments with GitHub integration.' },
-              ].map(({ title, desc }) => (
-                <Box key={title} sx={{ p: 2.5, bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 2.5, transition: 'all 0.2s', '&:hover': { borderColor: '#BFDBFE', boxShadow: '0 4px 12px rgba(37,99,235,0.06)' } }}>
-                  <Box sx={{ width: 32, height: 32, borderRadius: 1.5, bgcolor: '#EFF6FF', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 1.5 }}>
-                    <Box sx={{ width: 14, height: 14, borderRadius: '50%', bgcolor: '#2563eb' }} />
-                  </Box>
-                  <Typography sx={{ fontWeight: 700, color: '#172554', fontSize: '0.875rem', mb: 0.5 }}>{title}</Typography>
-                  <Typography sx={{ color: '#64748B', fontSize: '0.825rem', lineHeight: 1.55 }}>{desc}</Typography>
-                </Box>
-              ))}
-            </Box>
-
-            <SubTitle>API Architecture</SubTitle>
-            <Description>
-              The Cerulea API follows a hybrid architecture combining RESTful endpoints for resource
-              management with JSON-RPC for blockchain interactions — intuitive REST for infrastructure
-              management, and powerful RPC methods for blockchain operations.
-            </Description>
-          </Box>
-
-          {/* AUTHENTICATION */}
-          <Box component="section" id="authentication" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Authentication & Authorization</SectionTitle>
-            <Description>Cerulea uses a dual authentication system for maximum security and flexibility.</Description>
-
-            <SubTitle>API Key Authentication</SubTitle>
-            <Description>For server-to-server communication and automated workflows.</Description>
-
-            <EndpointCard method="POST" path="/auth/api-keys" description="Create a new API key with custom scopes and expiration">
-              <CodeBlock id="api-key-create" language="bash" code={`curl -X POST https://api.cerulea.app/v1/auth/api-keys \\
+      <Subsection title="API Key Authentication">
+        <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 14 }}>For server-to-server communication and automated workflows.</p>
+        <EndpointCard method="POST" path="/auth/api-keys" description="Create a new API key with custom scopes and expiration">
+          <CodeBlock language="bash" code={`curl -X POST https://api.cerulea.app/v1/auth/api-keys \\
   -H "Authorization: Bearer <your_oauth_token>" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -353,23 +363,15 @@ const CeruleaAPIDocs = () => {
     "scopes": ["workspace:read", "workspace:write", "blockchain:deploy"],
     "expiresIn": "90d"
   }'`} />
-            </EndpointCard>
-
-            <Box sx={{ display: 'flex', gap: 1.5, p: 2.5, bgcolor: '#EFF6FF', border: '1px solid #BFDBFE', borderLeft: '4px solid #2563eb', borderRadius: 2, my: 3 }}>
-              <AlertCircle size={18} color="#2563eb" style={{ flexShrink: 0, marginTop: 2 }} />
-              <Typography sx={{ fontSize: '0.875rem', color: '#1E40AF', lineHeight: 1.6 }}>
-                <strong>Security Best Practice:</strong> Include the API key in the <code>X-API-Key</code> header
-                for all requests. Never expose API keys in client-side code.
-              </Typography>
-            </Box>
-
-            <CodeBlock id="api-key-usage" language="bash" code={`curl -X GET https://api.cerulea.app/v1/workspaces \\
+        </EndpointCard>
+        <Note><strong>Security Best Practice:</strong> Include the API key in the <IC>X-API-Key</IC> header for all requests. Never expose API keys in client-side code.</Note>
+        <CodeBlock language="bash" code={`curl -X GET https://api.cerulea.app/v1/workspaces \\
   -H "X-API-Key: crla_live_xxxxxxxxxxxxxxxxxxx"`} />
+      </Subsection>
 
-            <SubTitle>OAuth 2.0</SubTitle>
-            <Description>For user-facing applications and third-party integrations.</Description>
-
-            <CodeBlock id="oauth-flow" language="bash" code={`# Step 1: Redirect user to authorization endpoint
+      <Subsection title="OAuth 2.0">
+        <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 14 }}>For user-facing applications and third-party integrations.</p>
+        <CodeBlock language="bash" code={`# Step 1: Redirect user to authorization endpoint
 https://api.cerulea.app/v1/oauth/authorize?
   client_id=YOUR_CLIENT_ID&
   redirect_uri=YOUR_CALLBACK_URL&
@@ -385,28 +387,34 @@ curl -X POST https://api.cerulea.app/v1/oauth/token \\
   -d "redirect_uri=YOUR_CALLBACK_URL" \\
   -d "client_id=YOUR_CLIENT_ID" \\
   -d "client_secret=YOUR_CLIENT_SECRET"`} />
+      </Subsection>
 
-            <SubTitle>Available Scopes</SubTitle>
-            <Table headers={['Scope', 'Description']} rows={[
-              [<code>workspace:read</code>,    'Read workspace data'],
-              [<code>workspace:write</code>,   'Create/modify workspaces'],
-              [<code>blockchain:read</code>,   'Query blockchain data'],
-              [<code>blockchain:write</code>,  'Deploy/manage blockchains'],
-              [<code>blockchain:deploy</code>, 'Deploy smart contracts'],
-              [<code>validator:read</code>,    'View validators'],
-              [<code>validator:write</code>,   'Manage validators'],
-              [<code>governance:read</code>,   'View proposals'],
-              [<code>governance:write</code>,  'Create/vote on proposals'],
-              [<code>admin</code>,             'Full administrative access'],
-            ]} />
-          </Box>
+      <Subsection title="Available Scopes">
+        <DataTable headers={["Scope", "Description"]} rows={[
+          [<IC>workspace:read</IC>,    "Read workspace data"],
+          [<IC>workspace:write</IC>,   "Create and modify workspaces"],
+          [<IC>blockchain:read</IC>,   "Query blockchain data"],
+          [<IC>blockchain:write</IC>,  "Deploy and manage blockchains"],
+          [<IC>blockchain:deploy</IC>, "Deploy smart contracts"],
+          [<IC>validator:read</IC>,    "View validators"],
+          [<IC>validator:write</IC>,   "Manage validators"],
+          [<IC>governance:read</IC>,   "View governance proposals"],
+          [<IC>governance:write</IC>,  "Create and vote on proposals"],
+          [<IC>admin</IC>,             "Full administrative access"],
+        ]} />
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* REST API */}
-          <Box component="section" id="rest-api" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Core REST API</SectionTitle>
+function RestApiSection() {
+  return (
+    <section id="rest-api" style={{ marginBottom: 80 }}>
+      <SectionHeader num="III" title="Core REST API" />
 
-            <SubTitle>Standard Response Format</SubTitle>
-            <CodeBlock id="response-format" language="json" code={`{
+      <Subsection title="Standard Response Format">
+        <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 14 }}>All API responses follow a consistent envelope structure.</p>
+        <CodeBlock language="json" code={`{
   "success": true,
   "data": { /* resource data */ },
   "meta": {
@@ -414,26 +422,24 @@ curl -X POST https://api.cerulea.app/v1/oauth/token \\
     "timestamp": "2025-02-25T10:30:00Z"
   }
 }`} />
+      </Subsection>
 
-            <SubTitle>Pagination</SubTitle>
-            <EndpointCard method="GET" path="/resources?page=1&limit=50&sort=created_at:desc" description="List resources with pagination and sorting">
-              <CodeBlock id="pagination-response" language="json" code={`{
+      <Subsection title="Pagination">
+        <EndpointCard method="GET" path="/resources?page=1&limit=50&sort=created_at:desc" description="List resources with pagination and sorting">
+          <CodeBlock language="json" code={`{
   "success": true,
   "data": [...],
   "pagination": {
-    "page": 1,
-    "limit": 50,
-    "total": 250,
-    "totalPages": 5,
-    "hasNext": true,
-    "hasPrev": false
+    "page": 1, "limit": 50, "total": 250,
+    "totalPages": 5, "hasNext": true, "hasPrev": false
   }
 }`} />
-            </EndpointCard>
+        </EndpointCard>
+      </Subsection>
 
-            <SubTitle>Health Check</SubTitle>
-            <EndpointCard method="GET" path="/health" description="Check API health and service status">
-              <CodeBlock id="health-check" language="json" code={`{
+      <Subsection title="Health Check">
+        <EndpointCard method="GET" path="/health" description="Check API health and service status">
+          <CodeBlock language="json" code={`{
   "status": "operational",
   "version": "1.0.0",
   "uptime": 99.99,
@@ -443,16 +449,22 @@ curl -X POST https://api.cerulea.app/v1/oauth/token \\
     "storage": "healthy"
   }
 }`} />
-            </EndpointCard>
-          </Box>
+        </EndpointCard>
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* RPC METHODS */}
-          <Box component="section" id="rpc-methods" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>RPC Methods</SectionTitle>
-            <Description>JSON-RPC 2.0 endpoint for direct blockchain interactions.</Description>
+function RpcMethodsSection() {
+  return (
+    <section id="rpc-methods" style={{ marginBottom: 80 }}>
+      <SectionHeader num="IV" title="RPC Methods" />
+      <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 24 }}>
+        JSON-RPC 2.0 endpoint for direct blockchain interactions. All RPC calls are sent as <IC>POST /rpc</IC> with a JSON body.
+      </p>
 
-            <EndpointCard method="POST" path="/rpc" description="Execute JSON-RPC methods">
-              <CodeBlock id="rpc-request" language="json" code={`{
+      <EndpointCard method="POST" path="/rpc" description="Execute a JSON-RPC 2.0 method">
+        <CodeBlock language="json" code={`{
   "jsonrpc": "2.0",
   "method": "blockchain.getBlock",
   "params": {
@@ -461,27 +473,33 @@ curl -X POST https://api.cerulea.app/v1/oauth/token \\
   },
   "id": 1
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <SubTitle>Available Methods</SubTitle>
-            <BulletList items={[
-              <><code>blockchain.getBlock</code> — Get block by number or hash</>,
-              <><code>blockchain.getTransaction</code> — Get transaction details</>,
-              <><code>blockchain.getBalance</code> — Get account balance</>,
-              <><code>transaction.send</code> — Send signed transaction</>,
-              <><code>transaction.simulate</code> — Simulate transaction execution</>,
-              <><code>contract.call</code> — Read-only contract call</>,
-              <><code>contract.execute</code> — Execute contract method</>,
-            ]} />
-          </Box>
+      <Subsection title="Available Methods">
+        <BulletList items={[
+          <><IC>blockchain.getBlock</IC> — Get block by number or hash</>,
+          <><IC>blockchain.getTransaction</IC> — Get transaction details and status</>,
+          <><IC>blockchain.getBalance</IC> — Get account balance at a given block</>,
+          <><IC>transaction.send</IC> — Broadcast a signed transaction</>,
+          <><IC>transaction.simulate</IC> — Dry-run a transaction without broadcasting</>,
+          <><IC>contract.call</IC> — Read-only contract call (no gas)</>,
+          <><IC>contract.execute</IC> — Execute a state-changing contract method</>,
+        ]} />
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* WEBHOOKS */}
-          <Box component="section" id="webhooks" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Webhooks</SectionTitle>
-            <Description>Receive real-time notifications when events occur in your blockchain infrastructure.</Description>
+function WebhooksSection() {
+  return (
+    <section id="webhooks" style={{ marginBottom: 80 }}>
+      <SectionHeader num="V" title="Webhooks" />
+      <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 24 }}>
+        Receive real-time signed payloads when events occur in your blockchain infrastructure. Cerulea delivers <IC>HTTP POST</IC> requests to your endpoint with a HMAC-SHA256 signature for verification.
+      </p>
 
-            <EndpointCard method="POST" path="/webhooks" description="Create a new webhook">
-              <CodeBlock id="webhook-create" language="json" code={`{
+      <EndpointCard method="POST" path="/webhooks" description="Register a new webhook subscription">
+        <CodeBlock language="json" code={`{
   "url": "https://your-domain.com/webhook",
   "events": [
     "blockchain.block.created",
@@ -491,24 +509,23 @@ curl -X POST https://api.cerulea.app/v1/oauth/token \\
   ],
   "secret": "whsec_xxxxxxxxxxxxxxxx",
   "enabled": true,
-  "filters": {
-    "blockchainId": "bc_abc123"
-  }
+  "filters": { "blockchainId": "bc_abc123" }
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <SubTitle>Webhook Events</SubTitle>
-            <Table headers={['Event Type', 'Description']} rows={[
-              [<code>blockchain.block.created</code>,         'New block mined'],
-              [<code>blockchain.transaction.confirmed</code>, 'Transaction confirmed'],
-              [<code>contract.deployed</code>,                'Smart contract deployed'],
-              [<code>contract.event.emitted</code>,           'Contract event emitted'],
-              [<code>validator.status.changed</code>,         'Validator status changed'],
-              [<code>governance.proposal.created</code>,      'New proposal created'],
-            ]} />
+      <Subsection title="Webhook Events">
+        <DataTable headers={["Event Type", "Description"]} rows={[
+          [<IC>blockchain.block.created</IC>,         "New block added to the chain"],
+          [<IC>blockchain.transaction.confirmed</IC>, "Transaction confirmed on-chain"],
+          [<IC>contract.deployed</IC>,                "Smart contract successfully deployed"],
+          [<IC>contract.event.emitted</IC>,           "Contract event emitted"],
+          [<IC>validator.status.changed</IC>,         "Validator joined, left, or changed status"],
+          [<IC>governance.proposal.created</IC>,      "New governance proposal submitted"],
+        ]} />
+      </Subsection>
 
-            <SubTitle>Signature Verification</SubTitle>
-            <CodeBlock id="webhook-verify" language="javascript" code={`const crypto = require('crypto');
+      <Subsection title="Signature Verification">
+        <CodeBlock language="javascript" code={`const crypto = require('crypto');
 
 function verifyWebhook(payload, signature, secret) {
   const hmac = crypto.createHmac('sha256', secret);
@@ -518,15 +535,21 @@ function verifyWebhook(payload, signature, secret) {
     Buffer.from(digest)
   );
 }`} />
-          </Box>
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* WORKSPACES */}
-          <Box component="section" id="workspaces" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Workspace & Project Management</SectionTitle>
-            <Description>Organise your blockchain infrastructure into workspaces and projects.</Description>
+function WorkspacesSection() {
+  return (
+    <section id="workspaces" style={{ marginBottom: 80 }}>
+      <SectionHeader num="VI" title="Workspaces" />
+      <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 24 }}>
+        Organise your blockchain infrastructure into workspaces and projects. A workspace is the top-level container for all resources, team members, and billing.
+      </p>
 
-            <EndpointCard method="POST" path="/workspaces" description="Create a new workspace">
-              <CodeBlock id="workspace-create" language="json" code={`{
+      <EndpointCard method="POST" path="/workspaces" description="Create a new workspace">
+        <CodeBlock language="json" code={`{
   "name": "Production Environment",
   "description": "Production blockchain infrastructure",
   "settings": {
@@ -537,10 +560,10 @@ function verifyWebhook(payload, signature, secret) {
     { "email": "admin@company.com", "role": "admin" }
   ]
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <EndpointCard method="POST" path="/workspaces/:workspaceId/projects" description="Create a new project within a workspace">
-              <CodeBlock id="project-create" language="json" code={`{
+      <EndpointCard method="POST" path="/workspaces/:workspaceId/projects" description="Create a new project within a workspace">
+        <CodeBlock language="json" code={`{
   "name": "DeFi Exchange",
   "type": "dapp",
   "template": "defi-dex",
@@ -550,16 +573,21 @@ function verifyWebhook(payload, signature, secret) {
     "features": ["swap", "liquidity-pools", "staking"]
   }
 }`} />
-            </EndpointCard>
-          </Box>
+      </EndpointCard>
+    </section>
+  );
+}
 
-          {/* DAPP BUILDER */}
-          <Box component="section" id="dapp-builder" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>dApp Builder API</SectionTitle>
-            <Description>Build complete decentralised applications with no code required.</Description>
+function DappBuilderSection() {
+  return (
+    <section id="dapp-builder" style={{ marginBottom: 80 }}>
+      <SectionHeader num="VII" title="dApp Builder" />
+      <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 24 }}>
+        Build complete decentralised applications with no code required. The dApp Builder API composes components into a fully deployable application with frontend, contracts, and backend logic.
+      </p>
 
-            <EndpointCard method="POST" path="/dapps" description="Create a new dApp">
-              <CodeBlock id="dapp-create" language="json" code={`{
+      <EndpointCard method="POST" path="/dapps" description="Create and configure a new dApp">
+        <CodeBlock language="json" code={`{
   "name": "MyDeFi Platform",
   "workspaceId": "ws_xxxxxxxx",
   "template": "defi-platform",
@@ -579,28 +607,34 @@ function verifyWebhook(payload, signature, secret) {
   ],
   "frontend": { "theme": "modern-dark", "customDomain": "mydefi.com" }
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <SubTitle>Available Components</SubTitle>
-            <Table headers={['Component', 'Description']} rows={[
-              [<code>token</code>,         'Fungible or non-fungible tokens'],
-              [<code>staking</code>,       'Token staking mechanism'],
-              [<code>liquidity-pool</code>,'DEX liquidity pools'],
-              [<code>lending</code>,       'Lending/borrowing protocol'],
-              [<code>governance</code>,    'DAO governance system'],
-              [<code>nft-marketplace</code>,'NFT marketplace'],
-              [<code>auction</code>,       'Auction mechanism'],
-              [<code>multisig</code>,      'Multi-signature wallet'],
-            ]} />
-          </Box>
+      <Subsection title="Available Components">
+        <DataTable headers={["Component", "Description"]} rows={[
+          [<IC>token</IC>,          "Fungible or non-fungible tokens"],
+          [<IC>staking</IC>,        "Token staking mechanism with configurable rewards"],
+          [<IC>liquidity-pool</IC>, "DEX liquidity pools"],
+          [<IC>lending</IC>,        "Lending and borrowing protocol"],
+          [<IC>governance</IC>,     "DAO governance system"],
+          [<IC>nft-marketplace</IC>,"NFT marketplace with royalty support"],
+          [<IC>auction</IC>,        "Auction mechanism"],
+          [<IC>multisig</IC>,       "Multi-signature wallet"],
+        ]} />
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* PRIVATE BLOCKCHAINS */}
-          <Box component="section" id="blockchains" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Private Blockchain Networks</SectionTitle>
-            <Description>Deploy and manage custom private blockchain networks with full control.</Description>
+function BlockchainsSection() {
+  return (
+    <section id="blockchains" style={{ marginBottom: 80 }}>
+      <SectionHeader num="VIII" title="Private Blockchains" />
+      <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 24 }}>
+        Deploy and manage custom private blockchain networks with full control over consensus, validators, and runtime configuration.
+      </p>
 
-            <EndpointCard method="POST" path="/blockchains" description="Create a new private blockchain">
-              <CodeBlock id="blockchain-create" language="json" code={`{
+      <EndpointCard method="POST" path="/blockchains" description="Create a new private blockchain network">
+        <CodeBlock language="json" code={`{
   "name": "Enterprise Blockchain",
   "type": "private",
   "consensus": "proof-of-authority",
@@ -608,77 +642,94 @@ function verifyWebhook(payload, signature, secret) {
   "config": {
     "blockTime": "5s",
     "blockGasLimit": "30000000",
-    "nativeToken": { "name": "Enterprise Coin", "symbol": "ENT", "premine": "1000000000" }
+    "nativeToken": {
+      "name": "Enterprise Coin", "symbol": "ENT", "premine": "1000000000"
+    }
   },
   "validators": [{ "address": "0x1234...", "name": "Validator Node 1" }],
   "features": ["smart-contracts", "permissions", "privacy"]
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <SubTitle>Consensus Mechanisms</SubTitle>
-            <BulletList items={[
-              <><code>proof-of-authority (PoA)</code> — Permissioned validators</>,
-              <><code>proof-of-stake (PoS)</code> — Stake-based validation</>,
-              <><code>delegated-proof-of-stake (DPoS)</code> — Elected validators</>,
-              <><code>pbft</code> — Practical Byzantine Fault Tolerance</>,
-              <><code>raft</code> — Raft consensus for private networks</>,
-            ]} />
-          </Box>
+      <Subsection title="Consensus Mechanisms">
+        <BulletList items={[
+          <><IC>proof-of-authority (PoA)</IC> — Permissioned validators; standard for enterprise deployments</>,
+          <><IC>proof-of-stake (PoS)</IC> — Stake-based validator selection</>,
+          <><IC>delegated-proof-of-stake (DPoS)</IC> — Community-elected validator set</>,
+          <><IC>pbft</IC> — Practical Byzantine Fault Tolerance for high-throughput private networks</>,
+          <><IC>raft</IC> — Raft consensus for private networks requiring simple, stable leader election</>,
+        ]} />
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* SMART CONTRACTS */}
-          <Box component="section" id="contracts" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Smart Contract Management</SectionTitle>
+function ContractsSection() {
+  return (
+    <section id="contracts" style={{ marginBottom: 80 }}>
+      <SectionHeader num="IX" title="Smart Contracts" />
 
-            <EndpointCard method="POST" path="/contracts/deploy" description="Deploy a smart contract from template">
-              <CodeBlock id="contract-deploy" language="json" code={`{
+      <EndpointCard method="POST" path="/contracts/deploy" description="Deploy a smart contract from a managed template">
+        <CodeBlock language="json" code={`{
   "blockchainId": "bc_abc123",
   "template": "erc20-token",
-  "params": { "name": "My Token", "symbol": "MTK", "totalSupply": "1000000", "decimals": 18 },
+  "params": {
+    "name": "My Token", "symbol": "MTK",
+    "totalSupply": "1000000", "decimals": 18
+  },
   "from": "0x1234...",
   "gasLimit": "2000000"
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <SubTitle>Contract Templates</SubTitle>
-            <Table headers={['Template', 'Description']} rows={[
-              [<code>erc20-token</code>,    'Standard fungible token'],
-              [<code>erc721-nft</code>,     'Non-fungible token'],
-              [<code>erc1155-multi</code>,  'Multi-token standard'],
-              [<code>governance-dao</code>, 'DAO with voting'],
-              [<code>staking-pool</code>,   'Staking rewards'],
-              [<code>marketplace</code>,    'NFT marketplace'],
-            ]} />
-          </Box>
+      <Subsection title="Contract Templates">
+        <DataTable headers={["Template", "Description"]} rows={[
+          [<IC>erc20-token</IC>,    "Standard fungible token (ERC-20)"],
+          [<IC>erc721-nft</IC>,     "Non-fungible token (ERC-721)"],
+          [<IC>erc1155-multi</IC>,  "Multi-token standard (ERC-1155)"],
+          [<IC>governance-dao</IC>, "DAO with on-chain voting"],
+          [<IC>staking-pool</IC>,   "Token staking with reward distribution"],
+          [<IC>marketplace</IC>,    "NFT marketplace with royalties"],
+        ]} />
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* VALIDATORS */}
-          <Box component="section" id="validators" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Validator Management</SectionTitle>
+function ValidatorsSection() {
+  return (
+    <section id="validators" style={{ marginBottom: 80 }}>
+      <SectionHeader num="X" title="Validators" />
 
-            <EndpointCard method="POST" path="/blockchains/:blockchainId/validators" description="Add a new validator to the network">
-              <CodeBlock id="validator-add" language="json" code={`{
+      <EndpointCard method="POST" path="/blockchains/:blockchainId/validators" description="Add a new validator to the network">
+        <CodeBlock language="json" code={`{
   "address": "0xabcdef123456...",
   "name": "Node-US-East-1",
   "stake": "100000",
   "commission": "5",
   "metadata": { "location": "US-East", "provider": "AWS" }
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <SubTitle>Validator Operations</SubTitle>
-            <BulletList items={[
-              <><code>GET /validators/:id/status</code> — Get validator status</>,
-              <><code>PUT /validators/:id/stake</code> — Update stake amount</>,
-              <><code>POST /validators/:id/slash</code> — Slash validator (penalty)</>,
-              <><code>DELETE /validators/:id</code> — Remove validator</>,
-            ]} />
-          </Box>
+      <Subsection title="Validator Operations">
+        <BulletList items={[
+          <><IC>GET /validators/:id/status</IC> — Get real-time validator status and uptime</>,
+          <><IC>PUT /validators/:id/stake</IC> — Update validator stake amount</>,
+          <><IC>POST /validators/:id/slash</IC> — Apply slash penalty for misbehaviour</>,
+          <><IC>DELETE /validators/:id</IC> — Remove a validator from the active set</>,
+        ]} />
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* GOVERNANCE */}
-          <Box component="section" id="governance" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Governance Proposals</SectionTitle>
+function GovernanceSection() {
+  return (
+    <section id="governance" style={{ marginBottom: 80 }}>
+      <SectionHeader num="XI" title="Governance" />
 
-            <EndpointCard method="POST" path="/governance/proposals" description="Create a new governance proposal">
-              <CodeBlock id="proposal-create" language="json" code={`{
+      <EndpointCard method="POST" path="/governance/proposals" description="Create a new on-chain governance proposal">
+        <CodeBlock language="json" code={`{
   "blockchainId": "bc_abc123",
   "title": "Increase Block Size",
   "description": "Proposal to increase block size from 2MB to 4MB",
@@ -688,24 +739,29 @@ function verifyWebhook(payload, signature, secret) {
   "quorum": "50",
   "threshold": "66.67"
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <EndpointCard method="POST" path="/governance/proposals/:proposalId/vote" description="Vote on a proposal">
-              <CodeBlock id="proposal-vote" language="json" code={`{
+      <EndpointCard method="POST" path="/governance/proposals/:proposalId/vote" description="Submit a vote on an active proposal">
+        <CodeBlock language="json" code={`{
   "vote": "yes",
   "weight": "1000000",
   "reason": "This change will improve network throughput"
 }`} />
-            </EndpointCard>
-          </Box>
+      </EndpointCard>
+    </section>
+  );
+}
 
-          {/* MODULES */}
-          <Box component="section" id="modules" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Module Configuration</SectionTitle>
-            <Description>Enable and configure blockchain modules for specific functionality.</Description>
+function ModulesSection() {
+  return (
+    <section id="modules" style={{ marginBottom: 80 }}>
+      <SectionHeader num="XII" title="Modules" />
+      <p style={{ fontSize: 15, lineHeight: 1.8, color: "#374151", marginBottom: 24 }}>
+        Enable and configure blockchain modules to add specific capabilities to a deployed network. Modules are provisioned at genesis or via governance upgrade.
+      </p>
 
-            <EndpointCard method="POST" path="/blockchains/:blockchainId/modules" description="Enable a module on your blockchain">
-              <CodeBlock id="module-enable" language="json" code={`{
+      <EndpointCard method="POST" path="/blockchains/:blockchainId/modules" description="Enable a module on your blockchain">
+        <CodeBlock language="json" code={`{
   "module": "defi",
   "config": {
     "features": ["dex", "lending", "staking"],
@@ -713,27 +769,31 @@ function verifyWebhook(payload, signature, secret) {
     "liquidationThreshold": "75"
   }
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <SubTitle>Available Modules</SubTitle>
-            <Table headers={['Module', 'Features']} rows={[
-              [<code>defi</code>,     'DeFi protocols (DEX, lending, staking)'],
-              [<code>nft</code>,      'NFT minting and marketplace'],
-              [<code>dao</code>,      'DAO governance and voting'],
-              [<code>bridge</code>,   'Cross-chain bridge functionality'],
-              [<code>oracle</code>,   'Price oracle integration'],
-              [<code>identity</code>, 'Decentralised identity (DID)'],
-              [<code>privacy</code>,  'Zero-knowledge proofs'],
-              [<code>storage</code>,  'Decentralised storage (IPFS)'],
-            ]} />
-          </Box>
+      <Subsection title="Available Modules">
+        <DataTable headers={["Module", "Features"]} rows={[
+          [<IC>defi</IC>,     "DeFi protocols — DEX, lending, staking"],
+          [<IC>nft</IC>,      "NFT minting and marketplace infrastructure"],
+          [<IC>dao</IC>,      "DAO governance and on-chain voting"],
+          [<IC>bridge</IC>,   "Cross-chain bridge functionality"],
+          [<IC>oracle</IC>,   "Price oracle integration (Chainlink-compatible)"],
+          [<IC>identity</IC>, "Decentralised identity (DID) framework"],
+          [<IC>privacy</IC>,  "Zero-knowledge proof support"],
+          [<IC>storage</IC>,  "Decentralised storage (IPFS-compatible)"],
+        ]} />
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* TOKENS */}
-          <Box component="section" id="tokens" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Token Management</SectionTitle>
+function TokensSection() {
+  return (
+    <section id="tokens" style={{ marginBottom: 80 }}>
+      <SectionHeader num="XIII" title="Tokens" />
 
-            <EndpointCard method="POST" path="/tokens" description="Create a new token">
-              <CodeBlock id="token-create" language="json" code={`{
+      <EndpointCard method="POST" path="/tokens" description="Create and configure a new token on a deployed blockchain">
+        <CodeBlock language="json" code={`{
   "blockchainId": "bc_abc123",
   "standard": "ERC20",
   "name": "Platform Token",
@@ -749,23 +809,27 @@ function verifyWebhook(payload, signature, secret) {
     }
   ]
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <SubTitle>Token Standards</SubTitle>
-            <BulletList items={[
-              <><code>ERC20</code> — Fungible tokens</>,
-              <><code>ERC721</code> — Non-fungible tokens (NFTs)</>,
-              <><code>ERC1155</code> — Multi-token standard</>,
-              <><code>ERC4626</code> — Tokenised vaults</>,
-            ]} />
-          </Box>
+      <Subsection title="Token Standards">
+        <BulletList items={[
+          <><IC>ERC20</IC> — Fungible tokens; standard for utility and governance tokens</>,
+          <><IC>ERC721</IC> — Non-fungible tokens (NFTs); unique digital assets</>,
+          <><IC>ERC1155</IC> — Multi-token standard; fungible and non-fungible in a single contract</>,
+          <><IC>ERC4626</IC> — Tokenised vault standard for yield-bearing assets</>,
+        ]} />
+      </Subsection>
+    </section>
+  );
+}
 
-          {/* MONITORING */}
-          <Box component="section" id="monitoring" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Monitoring & Analytics</SectionTitle>
+function MonitoringSection() {
+  return (
+    <section id="monitoring" style={{ marginBottom: 80 }}>
+      <SectionHeader num="XIV" title="Monitoring" />
 
-            <EndpointCard method="GET" path="/blockchains/:blockchainId/metrics" description="Get real-time blockchain metrics">
-              <CodeBlock id="metrics" language="json" code={`{
+      <EndpointCard method="GET" path="/blockchains/:blockchainId/metrics" description="Get real-time blockchain metrics">
+        <CodeBlock language="json" code={`{
   "currentBlock": 123456,
   "blockTime": 5.2,
   "transactionsPerSecond": 150,
@@ -774,21 +838,22 @@ function verifyWebhook(payload, signature, secret) {
   "networkHashrate": "500 TH/s",
   "averageGasPrice": "25 gwei"
 }`} />
-            </EndpointCard>
+      </EndpointCard>
 
-            <EndpointCard method="GET" path="/analytics/timeseries" description="Query historical data">
-              <Typography sx={{ fontSize: '0.875rem', color: '#64748B' }}>
-                Example: <code>?blockchainId=bc_abc123&metric=transactions&from=2025-02-01&to=2025-02-25&granularity=1h</code>
-              </Typography>
-            </EndpointCard>
-          </Box>
+      <EndpointCard method="GET" path="/analytics/timeseries" description="Query historical time-series blockchain data">
+        <Note>Example: <IC>?blockchainId=bc_abc123&metric=transactions&from=2025-02-01&to=2025-02-25&granularity=1h</IC></Note>
+      </EndpointCard>
+    </section>
+  );
+}
 
-          {/* ERRORS */}
-          <Box component="section" id="errors" sx={{ mb: 8, scrollMarginTop: '5rem' }}>
-            <SectionTitle>Error Handling</SectionTitle>
+function ErrorsSection() {
+  return (
+    <section id="errors" style={{ marginBottom: 80 }}>
+      <SectionHeader num="XV" title="Error Handling" />
 
-            <SubTitle>Error Response Format</SubTitle>
-            <CodeBlock id="error-format" language="json" code={`{
+      <Subsection title="Error Response Format">
+        <CodeBlock language="json" code={`{
   "success": false,
   "error": {
     "code": "INSUFFICIENT_BALANCE",
@@ -801,41 +866,233 @@ function verifyWebhook(payload, signature, secret) {
     "timestamp": "2025-02-25T10:30:00Z"
   }
 }`} />
+      </Subsection>
 
-            <SubTitle>Common Error Codes</SubTitle>
-            <Table headers={['HTTP Code', 'Error Code', 'Description']} rows={[
-              ['400', <code>BAD_REQUEST</code>,       'Invalid request parameters'],
-              ['401', <code>UNAUTHORIZED</code>,      'Invalid or missing authentication'],
-              ['403', <code>FORBIDDEN</code>,         'Insufficient permissions'],
-              ['404', <code>NOT_FOUND</code>,         'Resource not found'],
-              ['422', <code>VALIDATION_ERROR</code>,  'Validation failed'],
-              ['429', <code>RATE_LIMITED</code>,      'Rate limit exceeded'],
-              ['500', <code>INTERNAL_ERROR</code>,    'Internal server error'],
-            ]} />
-          </Box>
-
-          {/* FOOTER */}
-          <Box sx={{ pt: 6, borderTop: '1px solid #E2E8F0', textAlign: 'center' }}>
-            <Typography sx={{ color: '#94A3B8', fontSize: '0.875rem' }}>
-              © 2025 Cerulea · API v1.0.0 · Last updated February 2025
-            </Typography>
-            <Stack direction="row" spacing={3} justifyContent="center" sx={{ mt: 2 }}>
-              {[
-                { label: 'Docs',       href: '/developers/docs' },
-                { label: 'Whitepaper', href: '/developers/whitepaper' },
-                { label: 'Contact',    href: '/company/contact' },
-              ].map(({ label, href }) => (
-                <Box key={label} component="a" href={href} sx={{ color: '#2563eb', fontSize: '0.875rem', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                  {label}
-                </Box>
-              ))}
-            </Stack>
-          </Box>
-
-        </Box>
-      </Box>
-    </Box>
+      <Subsection title="Common Error Codes">
+        <DataTable headers={["HTTP Code", "Error Code", "Description"]} rows={[
+          ["400", <IC>BAD_REQUEST</IC>,      "Invalid request parameters"],
+          ["401", <IC>UNAUTHORIZED</IC>,     "Invalid or missing authentication"],
+          ["403", <IC>FORBIDDEN</IC>,        "Insufficient permissions for the requested operation"],
+          ["404", <IC>NOT_FOUND</IC>,        "Resource not found"],
+          ["422", <IC>VALIDATION_ERROR</IC>, "Request body failed validation"],
+          ["429", <IC>RATE_LIMITED</IC>,     "Rate limit exceeded — retry after the indicated delay"],
+          ["500", <IC>INTERNAL_ERROR</IC>,   "Internal server error"],
+        ]} />
+      </Subsection>
+    </section>
   );
-};
+}
 
-export default CeruleaAPIDocs;
+// ─── Sidebar ───────────────────────────────────────────────────────────────────
+
+function Sidebar({ activeSection, onNavigate, searchQuery, setSearchQuery, collapsed, onCollapse }) {
+  const filtered = SECTIONS.filter(s =>
+    !searchQuery || s.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <aside style={{
+      position: "fixed", top: 64, left: 0,
+      width: collapsed ? 64 : 272, height: "calc(100vh - 64px)",
+      background: "linear-gradient(160deg, #0f2544 0%, #1A3C6B 60%, #1e4d8c 100%)",
+      display: "flex", flexDirection: "column", zIndex: 100,
+      transition: "width 0.3s ease", overflow: "hidden",
+      boxShadow: "4px 0 24px rgba(0,0,0,0.15)"
+    }}>
+      {/* Brand */}
+      <div style={{ padding: "24px 18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ overflow: "hidden" }}>
+            {!collapsed && <>
+              <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", letterSpacing: "0.1em", fontFamily: "'DM Serif Display', Georgia, serif" }}>CERULEA</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: "0.06em", textTransform: "uppercase", marginTop: 2 }}>API Reference v1.0</div>
+            </>}
+          </div>
+          <button onClick={() => onCollapse(!collapsed)} style={{
+            background: "rgba(255,255,255,0.08)", border: "none", color: "rgba(255,255,255,0.6)",
+            width: 28, height: 28, borderRadius: 6, cursor: "pointer", fontSize: 12,
+            display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
+          }}>{collapsed ? "›" : "‹"}</button>
+        </div>
+      </div>
+
+      {/* Base URL */}
+      {!collapsed && (
+        <div style={{ padding: "10px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
+          <div style={{
+            background: "rgba(46,117,182,0.2)", border: "1px solid rgba(96,165,250,0.25)",
+            borderRadius: 8, padding: "6px 12px",
+            fontFamily: '"Fira Code","Fira Mono",ui-monospace,monospace',
+            fontSize: 11, color: "#93C5FD"
+          }}>api.cerulea.app/v1</div>
+        </div>
+      )}
+
+      {/* Search */}
+      {!collapsed && (
+        <div style={{ padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)", flexShrink: 0 }}>
+          <input
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Search API docs..."
+            style={{
+              width: "100%", padding: "8px 12px",
+              background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 8, color: "#fff", fontSize: 12.5, outline: "none",
+              fontFamily: "'DM Sans', sans-serif"
+            }}
+          />
+        </div>
+      )}
+
+      {/* Nav */}
+      <nav style={{ flex: 1, overflowY: "auto", padding: "12px 0", scrollbarWidth: "none" }}>
+        {filtered.map(s => {
+          const isActive = activeSection === s.id;
+          return (
+            <a key={s.id} href={`#${s.id}`}
+              onClick={e => { e.preventDefault(); onNavigate(s.id); }}
+              title={collapsed ? `${s.num}. ${s.title}` : ""}
+              style={{
+                display: "flex", alignItems: "center", gap: 10,
+                padding: collapsed ? "10px 18px" : "9px 18px",
+                textDecoration: "none", fontSize: 12.5, fontFamily: "'DM Sans', sans-serif",
+                color: isActive ? "#fff" : "rgba(255,255,255,0.55)",
+                background: isActive ? "rgba(255,255,255,0.1)" : "transparent",
+                borderLeft: `3px solid ${isActive ? "#60A5FA" : "transparent"}`,
+                transition: "all 0.15s ease", whiteSpace: "nowrap", overflow: "hidden"
+              }}
+            >
+              <span style={{
+                fontSize: 10, fontWeight: 800, color: isActive ? "#93C5FD" : "rgba(255,255,255,0.3)",
+                letterSpacing: "0.06em", minWidth: 22, flexShrink: 0
+              }}>{s.num}</span>
+              {!collapsed && <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{s.title}</span>}
+            </a>
+          );
+        })}
+      </nav>
+
+      {/* Footer */}
+      {!collapsed && (
+        <div style={{ padding: "12px 18px", borderTop: "1px solid rgba(255,255,255,0.08)", fontSize: 11, color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
+          June 2026 &nbsp;·&nbsp; API v1.0
+        </div>
+      )}
+    </aside>
+  );
+}
+
+// ─── App ────────────────────────────────────────────────────────────────────────
+
+export default function CeruleaAPIDocs() {
+  const [activeSection, setActiveSection] = useActiveSection();
+  const [collapsed, setCollapsed] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const progress = useScrollProgress();
+  const sidebarWidth = collapsed ? 64 : 272;
+
+  const navigate = useCallback((id) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  return (
+    <div style={{ fontFamily: "'DM Sans','Segoe UI',sans-serif", background: "#fff", minHeight: "100vh" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+        * { box-sizing: border-box; }
+        body { margin: 0; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(26,60,107,0.2); border-radius: 4px; }
+        p { margin: 0 0 14px; }
+        a { text-decoration: none; }
+      `}</style>
+
+      {/* Reading progress bar */}
+      <div style={{
+        position: "fixed", top: 64, left: 0, height: 3, zIndex: 200,
+        background: "linear-gradient(90deg, #2E75B6, #60A5FA)",
+        width: `${progress}%`, transition: "width 0.1s linear"
+      }} />
+
+      <Sidebar
+        activeSection={activeSection}
+        onNavigate={navigate}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+      />
+
+      {/* Main content */}
+      <main style={{ marginLeft: sidebarWidth, transition: "margin-left 0.3s ease", minHeight: "100vh", paddingBottom: 80 }}>
+        {/* Breadcrumb bar */}
+        <div style={{
+          position: "sticky", top: 64,
+          background: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)",
+          borderBottom: "1px solid #F3F4F6", padding: "14px 52px",
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          zIndex: 50
+        }}>
+          <div style={{ fontSize: 13, color: "#9CA3AF" }}>
+            Cerulea &rsaquo; <span style={{ color: "#1A3C6B", fontWeight: 600 }}>
+              {SECTIONS.find(s => s.id === activeSection)?.title || "API Reference"}
+            </span>
+          </div>
+          <div style={{ fontSize: 12, color: "#9CA3AF" }}>API v1.0 &nbsp;·&nbsp; June 2026</div>
+        </div>
+
+        <div style={{ maxWidth: 860, padding: "60px 52px 0", width: "100%" }}>
+          {/* Hero */}
+          <div style={{
+            background: "linear-gradient(135deg, #0f2544 0%, #1A3C6B 55%, #2563ab 100%)",
+            borderRadius: 20, padding: "56px 52px", marginBottom: 72,
+            position: "relative", overflow: "hidden"
+          }}>
+            <div style={{
+              position: "absolute", top: -80, right: -80, width: 320, height: 320,
+              background: "radial-gradient(circle, rgba(96,165,250,0.12) 0%, transparent 70%)",
+              borderRadius: "50%", pointerEvents: "none"
+            }} />
+            <Tag>API Reference</Tag>
+            <h1 style={{
+              fontSize: 54, fontWeight: 700, color: "#fff", margin: "18px 0 12px",
+              letterSpacing: "-0.03em", lineHeight: 1.05,
+              fontFamily: "'DM Serif Display', Georgia, serif"
+            }}>API Documentation</h1>
+            <p style={{ fontSize: 17, color: "rgba(255,255,255,0.7)", maxWidth: 500, lineHeight: 1.65, marginBottom: 36 }}>
+              Full programmatic access to the Cerulea platform. REST for resource management, JSON-RPC 2.0 for direct blockchain interaction.
+            </p>
+            <div style={{ display: "flex", gap: 28, fontSize: 13, color: "rgba(255,255,255,0.45)" }}>
+              {[["15", "Sections"], ["REST + RPC", "Protocols"], ["Enterprise", "Grade"]].map(([n, l]) => (
+                <div key={l}>
+                  <span style={{ fontSize: 20, fontWeight: 700, color: "rgba(255,255,255,0.85)", display: "block", fontFamily: "'DM Serif Display', serif" }}>{n}</span>
+                  <span>{l}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Sections */}
+          <IntroductionSection />
+          <AuthenticationSection />
+          <RestApiSection />
+          <RpcMethodsSection />
+          <WebhooksSection />
+          <WorkspacesSection />
+          <DappBuilderSection />
+          <BlockchainsSection />
+          <ContractsSection />
+          <ValidatorsSection />
+          <GovernanceSection />
+          <ModulesSection />
+          <TokensSection />
+          <MonitoringSection />
+          <ErrorsSection />
+        </div>
+      </main>
+    </div>
+  );
+}
