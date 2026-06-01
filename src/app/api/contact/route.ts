@@ -3,9 +3,8 @@ import { NextResponse } from 'next/server';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Change CONTACT_TO_EMAIL env var to switch recipients without a redeploy
-const TO      = process.env.CONTACT_TO_EMAIL  || 'aswin@cbytechains.com';
-const FROM    = process.env.CONTACT_FROM_EMAIL || 'Cerulea Contact <onboarding@resend.dev>';
+const TO   = ['anirudh@cbytechains.com', 'durga@cbytechains.com', 'aswin@cbytechains.com'];
+const FROM = process.env.CONTACT_FROM_EMAIL || 'Cerulea Contact <onboarding@resend.dev>';
 
 export async function POST(req: Request) {
   try {

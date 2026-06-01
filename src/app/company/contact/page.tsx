@@ -156,41 +156,21 @@ export default function ContactPage() {
               )}
             </Box>
 
-            {/* RIGHT: CONTACT ROUTING */}
-            <Box>
-              <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#172554', mb: 4 }}>
-                Direct Contacts
+            {/* RIGHT: CONTACT INFO */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+                <EmailOutlinedIcon sx={{ color: '#2563eb', fontSize: 28 }} />
+                <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#172554' }}>
+                  Contact Us
+                </Typography>
+              </Box>
+              <Typography
+                component="a"
+                href="mailto:contact@cbytechains.com"
+                sx={{ color: '#2563eb', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+              >
+                contact@cbytechains.com
               </Typography>
-
-              <Stack spacing={5}>
-                <Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                    <ChatBubbleOutlineIcon sx={{ color: '#2563eb', fontSize: 20 }} />
-                    <Typography sx={{ fontWeight: 700, color: '#172554', fontSize: '1.05rem' }}>Sales</Typography>
-                  </Box>
-                  <Typography sx={{ color: '#475569', mb: 1, fontSize: '0.95rem', lineHeight: 1.6 }}>
-                    For pricing, private chain architecture, and volume deployments.
-                  </Typography>
-                  <Typography component="a" href="mailto:sales@cerulea.io" sx={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                    sales@cerulea.io
-                  </Typography>
-                </Box>
-
-                <Divider sx={{ borderColor: '#E2E8F0' }} />
-
-                <Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                    <EmailOutlinedIcon sx={{ color: '#2563eb', fontSize: 20 }} />
-                    <Typography sx={{ fontWeight: 700, color: '#172554', fontSize: '1.05rem' }}>General Support</Typography>
-                  </Box>
-                  <Typography sx={{ color: '#475569', mb: 1, fontSize: '0.95rem', lineHeight: 1.6 }}>
-                    For technical assistance with Cerulea Studio or your L1 deployments.
-                  </Typography>
-                  <Typography component="a" href="mailto:support@cerulea.io" sx={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                    support@cerulea.io
-                  </Typography>
-                </Box>
-              </Stack>
             </Box>
 
           </Box>
