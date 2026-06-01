@@ -68,7 +68,7 @@ export default function CeruleaPublicL1Page() {
                   transition: 'all 0.2s'
                 }}
               >
-                Deploy to Mainnet
+                Contact Us
               </Button>
             </Stack>
           </motion.div>

@@ -136,7 +136,7 @@ export default function CybersecuritySolutionPage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Contact Enterprise Sales
+                Contact Us
               </Button>
             </Stack>
           </motion.div>

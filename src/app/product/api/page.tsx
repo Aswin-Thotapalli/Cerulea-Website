@@ -17,6 +17,7 @@ import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
 
 const LINKS = {
   docs: '/developers/docs',
+  apiDocs: '/developers/api',
   dashboard: 'https://dashboard.cerulea.io',
 };
 
@@ -85,13 +86,12 @@ export default function CeruleaApiPageLight() {
                   transition: 'all 0.2s'
                 }}
               >
-                Contact Enterprise Sales
+                Contact Us
               </Button>
-              <Button 
-                href={LINKS.docs}
-                target="_blank"
-                variant="outlined" 
-                sx={{ 
+              <Button
+                href={LINKS.apiDocs}
+                variant="outlined"
+                sx={{
                   borderColor: '#CBD5E1', color: '#172554', px: 4, py: 2, fontSize: '1rem', fontWeight: 700, borderRadius: 2,
                   '&:hover': { borderColor: '#94A3B8', bgcolor: 'rgba(0,0,0,0.02)' }
                 }}

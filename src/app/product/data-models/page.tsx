@@ -93,7 +93,7 @@ export default function CeruleaDataModelsPageLight() {
                   transition: 'all 0.2s'
                 }}
               >
-                Contact Enterprise Sales
+                Contact Us
               </Button>
               <Button 
                 href={LINKS.docs}

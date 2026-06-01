@@ -79,7 +79,7 @@ export default function CeruleaDashboardPage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Contact Enterprise Sales
+                Contact Us
               </Button>
               <Button 
                 href={LINKS.docs}

@@ -83,7 +83,7 @@ export default function CeruleaPrivateChainsPage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Contact Enterprise Sales
+                Contact Us
               </Button>
               <Button 
                 href={LINKS.docs}
