@@ -159,18 +159,18 @@ export const headerNav: Array<
             {
               label: 'Cerulea Docs',
               description: 'Structured documentation mapping the Cerulea build, deploy, and operate workflow.',
-              href: getSubdomainUrl('docs'),
+              href: getMainUrl('/developers/docs'),
             },
             {
               label: 'API Reference',
               description: 'REST and RPC endpoints for system integration and enterprise automation.',
-              href: getSubdomainUrl('api'),
+              href: getMainUrl('/developers/api'),
               tag: 'API',
             },
             {
               label: 'Whitepaper',
               description: 'Architectural, cryptographic, and economic design rationale for the network.',
-              href: getSubdomainUrl('whitepaper'),
+              href: getMainUrl('/developers/whitepaper'),
             },
           ],
         },

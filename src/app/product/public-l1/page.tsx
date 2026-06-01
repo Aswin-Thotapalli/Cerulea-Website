@@ -17,8 +17,7 @@ import { Variants } from 'framer-motion';
 
 const LINKS = {
   studio: 'https://studio.cerulea.io',
-  docs: 'https://cerulea.io/docs',
-  explorer: 'https://explorer.cerulea.io',
+  docs: '/developers/docs',
 };
 
 const fadeUp: Variants = {
@@ -70,17 +69,6 @@ export default function CeruleaPublicL1Page() {
                 }}
               >
                 Deploy to Mainnet
-              </Button>
-              <Button 
-                href={LINKS.explorer}
-                target="_blank"
-                variant="outlined" 
-                sx={{ 
-                  borderColor: '#CBD5E1', color: '#172554', px: 4, py: 2, fontSize: '1rem', fontWeight: 700, borderRadius: 2,
-                  '&:hover': { borderColor: '#94A3B8', bgcolor: 'rgba(0,0,0,0.02)' }
-                }}
-              >
-                View Block Explorer
               </Button>
             </Stack>
           </motion.div>

@@ -229,7 +229,7 @@ export default function DecentralizedIdentityUseCasePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Deploy Identity Frameworks
+                Contact Us
               </Button>
             </Stack>
           </motion.div>

@@ -230,7 +230,7 @@ export default function TokenizedAssetsUseCasePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Deploy Asset Contracts
+                Contact Us
               </Button>
             </Stack>
           </motion.div>

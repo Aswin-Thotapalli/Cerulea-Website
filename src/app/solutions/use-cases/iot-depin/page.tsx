@@ -229,7 +229,7 @@ export default function IotDepinUseCasePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Deploy DePIN Infrastructure
+                Contact Us
               </Button>
             </Stack>
           </motion.div>
