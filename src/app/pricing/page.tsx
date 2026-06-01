@@ -51,7 +51,7 @@ const TIERS = [
   {
     id: 'developer',
     name: 'Developer',
-    eyebrow: 'Public L1',
+    eyebrow: null,
     priceLine: null,
     periodLine: 'usage-based',
     description:
@@ -73,7 +73,7 @@ const TIERS = [
   {
     id: 'pro',
     name: 'Pro',
-    eyebrow: 'Public L1',
+    eyebrow: null,
     priceLine: null,
     periodLine: 'usage-based',
     description:
@@ -95,7 +95,7 @@ const TIERS = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    eyebrow: 'Private Chain',
+    eyebrow: null,
     priceLine: null,
     periodLine: 'annual licensing',
     description:
@@ -241,9 +241,11 @@ export default function PricingPage() {
                   )}
 
                   {/* Eyebrow */}
-                  <Typography sx={{ color: tier.accent, fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', mb: 1, mt: 1.5 }}>
-                    {tier.eyebrow}
-                  </Typography>
+                  {tier.eyebrow && (
+                    <Typography sx={{ color: tier.accent, fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', mb: 1, mt: 1.5 }}>
+                      {tier.eyebrow}
+                    </Typography>
+                  )}
 
                   {/* Name */}
                   <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.01em' }}>
