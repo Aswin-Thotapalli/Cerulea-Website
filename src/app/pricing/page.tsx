@@ -200,12 +200,12 @@ export default function PricingPage() {
       </Box>
 
       {/* TIER CARDS */}
-      <Container maxWidth="xl" sx={{ mb: 20 }}>
+      <Container maxWidth="lg" sx={{ mb: 20 }}>
         <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
           <Box sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)', xl: 'repeat(4, 1fr)' },
-            gap: 3,
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
+            gap: 2.5,
             alignItems: 'stretch',
           }}>
             {TIERS.map((tier) => (
@@ -319,7 +319,7 @@ export default function PricingPage() {
       </Container>
 
       {/* COMPARISON TABLE */}
-      <Container maxWidth="xl" sx={{ mb: 20 }}>
+      <Container maxWidth="lg" sx={{ mb: 20 }}>
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }} variants={fadeUp}>
           <Box sx={{ textAlign: 'center', mb: 8 }}>
             <Typography variant="h2" sx={{ fontSize: '2.2rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.02em' }}>
