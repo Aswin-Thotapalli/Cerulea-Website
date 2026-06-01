@@ -125,8 +125,8 @@ export default function ContactSalesPage() {
                     </Typography>
 
                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3, mb: 3 }}>
-                      <TextField label="Full Name *" required value={form.name} onChange={set('name')} sx={textFieldSx} />
-                      <TextField label="Work Email *" type="email" required value={form.email} onChange={set('email')} sx={textFieldSx} />
+                      <TextField label="Full Name" required value={form.name} onChange={set('name')} sx={textFieldSx} />
+                      <TextField label="Work Email" type="email" required value={form.email} onChange={set('email')} sx={textFieldSx} />
                       <TextField label="Phone Number" value={form.phone} onChange={set('phone')} sx={textFieldSx} />
                       <TextField label="Company / Organization" value={form.company} onChange={set('company')} sx={textFieldSx} />
                       <TextField label="Your Role / Title" value={form.role} onChange={set('role')} sx={{ ...textFieldSx, gridColumn: { sm: 'span 2' } }} />
@@ -137,7 +137,7 @@ export default function ContactSalesPage() {
                     </Typography>
 
                     <TextField
-                      label="Project Description *"
+                      label="Project Description"
                       required
                       multiline
                       minRows={4}
@@ -147,7 +147,7 @@ export default function ContactSalesPage() {
                       sx={{ ...textFieldSx, width: '100%', mb: 3 }}
                     />
                     <TextField
-                      label="Project Requirements *"
+                      label="Project Requirements"
                       required
                       multiline
                       minRows={4}
@@ -215,10 +215,10 @@ export default function ContactSalesPage() {
                 </Typography>
                 <Typography
                   component="a"
-                  href="mailto:contact@cbytechains.com"
+                  href="mailto:sales@cbytechains.com"
                   sx={{ color: '#4F46E5', fontWeight: 600, fontSize: '0.95rem', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
                 >
-                  contact@cbytechains.com
+                  sales@cbytechains.com
                 </Typography>
               </Box>
             </Box>
