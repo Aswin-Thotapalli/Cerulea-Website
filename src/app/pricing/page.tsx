@@ -52,7 +52,7 @@ const TIERS = [
     id: 'developer',
     name: 'Developer',
     eyebrow: 'Public L1',
-    priceLine: 'Contact Sales',
+    priceLine: null,
     periodLine: 'usage-based',
     description:
       'For teams ready to go live. Deploy production applications to the Cerulea Public L1 and integrate with real-world systems.',
@@ -74,7 +74,7 @@ const TIERS = [
     id: 'pro',
     name: 'Pro',
     eyebrow: 'Public L1',
-    priceLine: 'Contact Sales',
+    priceLine: null,
     periodLine: 'usage-based',
     description:
       'For scaling applications. Dedicated infrastructure, higher limits, and hands-on architecture support from our engineering team.',
@@ -96,7 +96,7 @@ const TIERS = [
     id: 'enterprise',
     name: 'Enterprise',
     eyebrow: 'Private Chain',
-    priceLine: 'Contact Sales',
+    priceLine: null,
     periodLine: 'annual licensing',
     description:
       'For organisations deploying sovereign Private Chains with complete governance control, compliance requirements, and dedicated engineering support.',
@@ -252,10 +252,12 @@ export default function PricingPage() {
 
                   {/* Price */}
                   <Box sx={{ mb: 1 }}>
-                    <Typography sx={{ fontSize: tier.priceLine === 'Free' ? '2.2rem' : '1.35rem', fontWeight: 800, color: tier.priceLine === 'Free' ? '#059669' : '#172554', lineHeight: 1, letterSpacing: '-0.02em' }}>
-                      {tier.priceLine}
-                    </Typography>
-                    <Typography sx={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 600, mt: 0.5 }}>
+                    {tier.priceLine && (
+                      <Typography sx={{ fontSize: tier.priceLine === 'Free' ? '2.2rem' : '1.35rem', fontWeight: 800, color: tier.priceLine === 'Free' ? '#059669' : '#172554', lineHeight: 1, letterSpacing: '-0.02em' }}>
+                        {tier.priceLine}
+                      </Typography>
+                    )}
+                    <Typography sx={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 600, mt: tier.priceLine ? 0.5 : 0 }}>
                       {tier.periodLine}
                     </Typography>
                   </Box>
@@ -269,19 +271,14 @@ export default function PricingPage() {
                   <Box sx={{ mb: 4 }}>
                     <Link href={tier.buttonHref} style={{ textDecoration: 'none', display: 'block' }} {...(tier.buttonHref.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
                       <Button
-                        variant={tier.highlight ? 'contained' : 'outlined'}
+                        variant="outlined"
                         fullWidth
                         endIcon={<ArrowForwardIcon sx={{ fontSize: '1rem !important' }} />}
                         sx={{
                           py: 1.5, fontSize: '0.9rem', fontWeight: 700, borderRadius: 2,
-                          ...(tier.highlight
-                            ? { bgcolor: '#2563eb', color: '#FFFFFF', border: 'none', '&:hover': { bgcolor: '#1d4ed8' }, boxShadow: 'none' }
-                            : {
-                                borderColor: tier.accent,
-                                color: tier.accent,
-                                '&:hover': { borderColor: tier.accent, bgcolor: `${tier.accent}08` },
-                              }
-                          ),
+                          borderColor: tier.accent,
+                          color: tier.accent,
+                          '&:hover': { borderColor: tier.accent, bgcolor: `${tier.accent}08` },
                         }}
                       >
                         {tier.buttonText}
