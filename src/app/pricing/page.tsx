@@ -240,34 +240,39 @@ export default function PricingPage() {
                     </Box>
                   )}
 
-                  {/* Eyebrow */}
-                  {tier.eyebrow && (
-                    <Typography sx={{ color: tier.accent, fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', mb: 1, mt: 1.5 }}>
-                      {tier.eyebrow}
-                    </Typography>
-                  )}
+                  {/* Top section — grows to push CTA to a consistent level */}
+                  <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
 
-                  {/* Name */}
-                  <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.01em' }}>
-                    {tier.name}
-                  </Typography>
-
-                  {/* Price */}
-                  <Box sx={{ mb: 1 }}>
-                    {tier.priceLine && (
-                      <Typography sx={{ fontSize: tier.priceLine === 'Free' ? '2.2rem' : '1.35rem', fontWeight: 800, color: tier.priceLine === 'Free' ? '#059669' : '#172554', lineHeight: 1, letterSpacing: '-0.02em' }}>
-                        {tier.priceLine}
+                    {/* Eyebrow */}
+                    {tier.eyebrow && (
+                      <Typography sx={{ color: tier.accent, fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', mb: 1, mt: 1.5 }}>
+                        {tier.eyebrow}
                       </Typography>
                     )}
-                    <Typography sx={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 600, mt: tier.priceLine ? 0.5 : 0 }}>
-                      {tier.periodLine}
-                    </Typography>
-                  </Box>
 
-                  {/* Description */}
-                  <Typography sx={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, mb: 4, mt: 2, flexGrow: 0, minHeight: { xl: 80 } }}>
-                    {tier.description}
-                  </Typography>
+                    {/* Name */}
+                    <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.01em' }}>
+                      {tier.name}
+                    </Typography>
+
+                    {/* Price */}
+                    <Box sx={{ mb: 1 }}>
+                      {tier.priceLine && (
+                        <Typography sx={{ fontSize: tier.priceLine === 'Free' ? '2.2rem' : '1.35rem', fontWeight: 800, color: tier.priceLine === 'Free' ? '#059669' : '#172554', lineHeight: 1, letterSpacing: '-0.02em' }}>
+                          {tier.priceLine}
+                        </Typography>
+                      )}
+                      <Typography sx={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 600, mt: tier.priceLine ? 0.5 : 0 }}>
+                        {tier.periodLine}
+                      </Typography>
+                    </Box>
+
+                    {/* Description — flexGrow pushes CTA to same level across all cards */}
+                    <Typography sx={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, mb: 4, mt: 2, flexGrow: 1 }}>
+                      {tier.description}
+                    </Typography>
+
+                  </Box>
 
                   {/* CTA */}
                   <Box sx={{ mb: 4 }}>
