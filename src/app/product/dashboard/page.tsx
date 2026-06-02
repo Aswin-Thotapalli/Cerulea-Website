@@ -15,8 +15,8 @@ import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore
 import { Variants } from 'framer-motion';
 
 const LINKS = {
-  dashboard: 'https://dashboard.cerulea.app',
-  docs: 'https://cerulea.app/docs',
+  dashboard: 'https://dashboard.cerulea.io',
+  docs: '/developers/docs',
 };
 
 const fadeUp: Variants = {
@@ -33,6 +33,15 @@ const staggerContainer: Variants = {
 };
 
 export default function CeruleaDashboardPage() {
+  const [copied, setCopied] = React.useState(false);
+  const apiEndpoint = 'https://api.cerulea.net/v1/net-44a9b';
+  const handleCopy = () => {
+    navigator.clipboard.writeText(apiEndpoint).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <Box sx={{ bgcolor: 'background.default', color: 'text.primary', overflowX: 'hidden', pb: 0 }}>
       
@@ -70,7 +79,7 @@ export default function CeruleaDashboardPage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Contact Enterprise Sales
+                Contact Us
               </Button>
               <Button 
                 href={LINKS.docs}
@@ -437,8 +446,10 @@ export default function CeruleaDashboardPage() {
                       <Box sx={{ mb: 4 }}>
                         <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', mb: 1, fontWeight: 700 }}>PRIMARY REST API ENDPOINT</Typography>
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 1.5, bgcolor: '#F8FAFC', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
-                          <Typography sx={{ fontSize: '0.85rem', color: '#2563eb', fontFamily: 'monospace', fontWeight: 600 }}>https://api.cerulea.net/v1/net-44a9b</Typography>
-                          <Button size="small" sx={{ color: 'text.primary', minWidth: 'auto', p: 0.5, fontWeight: 700 }}>Copy</Button>
+                          <Typography sx={{ fontSize: '0.85rem', color: '#2563eb', fontFamily: 'monospace', fontWeight: 600 }}>{apiEndpoint}</Typography>
+                          <Button size="small" onClick={handleCopy} sx={{ color: copied ? '#059669' : 'text.primary', minWidth: 'auto', p: 0.5, fontWeight: 700, transition: 'color 0.2s' }}>
+                            {copied ? 'Copied!' : 'Copy'}
+                          </Button>
                         </Box>
                       </Box>
                       <Box>

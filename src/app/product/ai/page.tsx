@@ -11,8 +11,8 @@ import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import { Variants } from 'framer-motion';
 
 const LINKS = {
-  studio: 'https://studio.cerulea.app',
-  docs: 'https://cerulea.app/docs',
+  studio: 'https://studio.cerulea.io',
+  docs: '/developers/docs',
 };
 
 const fadeUp: Variants = {

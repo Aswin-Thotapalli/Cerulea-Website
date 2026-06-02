@@ -136,7 +136,7 @@ export default function MiningSolutionPage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Contact Enterprise Sales
+                Contact Us
               </Button>
             </Stack>
           </motion.div>

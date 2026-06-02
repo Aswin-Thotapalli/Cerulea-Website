@@ -16,9 +16,8 @@ import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { Variants } from 'framer-motion';
 
 const LINKS = {
-  studio: 'https://studio.cerulea.app',
-  docs: 'https://cerulea.app/docs',
-  explorer: 'https://explorer.cerulea.app',
+  studio: 'https://studio.cerulea.io',
+  docs: '/developers/docs',
 };
 
 const fadeUp: Variants = {
@@ -69,18 +68,7 @@ export default function CeruleaPublicL1Page() {
                   transition: 'all 0.2s'
                 }}
               >
-                Deploy to Mainnet
-              </Button>
-              <Button 
-                href={LINKS.explorer}
-                target="_blank"
-                variant="outlined" 
-                sx={{ 
-                  borderColor: '#CBD5E1', color: '#172554', px: 4, py: 2, fontSize: '1rem', fontWeight: 700, borderRadius: 2,
-                  '&:hover': { borderColor: '#94A3B8', bgcolor: 'rgba(0,0,0,0.02)' }
-                }}
-              >
-                View Block Explorer
+                Contact Us
               </Button>
             </Stack>
           </motion.div>

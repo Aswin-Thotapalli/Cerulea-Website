@@ -7,6 +7,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { Variants } from 'framer-motion';
+import { track } from '@/lib/track';
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -28,18 +29,39 @@ export default function ContactPage() {
   const [formData, setFormData] = React.useState({ name: '', email: '', company: '', message: '' });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [submitError, setSubmitError] = React.useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Mock API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+    setSubmitError('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Something went wrong. Please try again.');
+      }
+
+      // Identify visitor and record in PostHog
+      track.contactFormSubmitted(formData);
+
       setIsSubmitted(true);
       setFormData({ name: '', email: '', company: '', message: '' });
-    }, 1200);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Failed to send. Please email us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  // Track when user first interacts with the form
+  const handleFormFocus = () => track.contactFormStarted();
 
   return (
     <Box sx={{ bgcolor: '#FAFAFA', minHeight: '100vh', pb: 20 }}>
@@ -77,7 +99,7 @@ export default function ContactPage() {
                   </Button>
                 </Box>
               ) : (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} onFocus={handleFormFocus}>
                   <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 3, mb: 3 }}>
                     <TextField 
                       label="Full Name" 
@@ -125,45 +147,30 @@ export default function ContactPage() {
                   >
                     {isSubmitting ? 'Sending...' : 'Submit Message'}
                   </Button>
+                  {submitError && (
+                    <Typography sx={{ mt: 2, color: '#dc2626', fontSize: '0.875rem' }}>
+                      {submitError}
+                    </Typography>
+                  )}
                 </form>
               )}
             </Box>
 
-            {/* RIGHT: CONTACT ROUTING */}
-            <Box>
-              <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#172554', mb: 4 }}>
-                Direct Contacts
+            {/* RIGHT: CONTACT INFO */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
+                <EmailOutlinedIcon sx={{ color: '#2563eb', fontSize: 28 }} />
+                <Typography sx={{ fontSize: '1.25rem', fontWeight: 800, color: '#172554' }}>
+                  Contact Us
+                </Typography>
+              </Box>
+              <Typography
+                component="a"
+                href="mailto:contact@cbytechains.com"
+                sx={{ color: '#2563eb', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+              >
+                contact@cbytechains.com
               </Typography>
-
-              <Stack spacing={5}>
-                <Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                    <ChatBubbleOutlineIcon sx={{ color: '#2563eb', fontSize: 20 }} />
-                    <Typography sx={{ fontWeight: 700, color: '#172554', fontSize: '1.05rem' }}>Sales</Typography>
-                  </Box>
-                  <Typography sx={{ color: '#475569', mb: 1, fontSize: '0.95rem', lineHeight: 1.6 }}>
-                    For pricing, private chain architecture, and volume deployments.
-                  </Typography>
-                  <Typography component="a" href="mailto:sales@cerulea.app" sx={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                    sales@cerulea.app
-                  </Typography>
-                </Box>
-
-                <Divider sx={{ borderColor: '#E2E8F0' }} />
-
-                <Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                    <EmailOutlinedIcon sx={{ color: '#2563eb', fontSize: 20 }} />
-                    <Typography sx={{ fontWeight: 700, color: '#172554', fontSize: '1.05rem' }}>General Support</Typography>
-                  </Box>
-                  <Typography sx={{ color: '#475569', mb: 1, fontSize: '0.95rem', lineHeight: 1.6 }}>
-                    For technical assistance with Cerulea Studio or your L1 deployments.
-                  </Typography>
-                  <Typography component="a" href="mailto:support@cerulea.app" sx={{ color: '#2563eb', fontWeight: 600, textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
-                    support@cerulea.app
-                  </Typography>
-                </Box>
-              </Stack>
             </Box>
 
           </Box>

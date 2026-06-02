@@ -228,7 +228,7 @@ export default function CrossBorderSettlementsUseCasePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Deploy Settlement Contracts
+                Contact Us
               </Button>
             </Stack>
           </motion.div>

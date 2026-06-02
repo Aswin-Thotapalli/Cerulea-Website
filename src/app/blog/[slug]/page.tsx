@@ -8,6 +8,7 @@ import { createServerSupabaseClient } from '@/lib/supabase-server';
 import { isAdmin } from '@/lib/auth';
 import AdminControls from '@/components/blog/AdminControls';
 import BlogRenderer from '@/components/blog/BlogRenderer';
+import BlogViewTracker from '@/components/analytics/BlogViewTracker';
 import type { Metadata } from 'next';
 
 export const revalidate = 0;
@@ -165,6 +166,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </Link>
         </Box>
       </Container>
+
+      {/* Track blog post view in PostHog */}
+      <BlogViewTracker slug={slug} title={post.title} category={post.category ?? undefined} />
 
       {/* Floating admin controls */}
       <AdminControls postSlug={slug} />

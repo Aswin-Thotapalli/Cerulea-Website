@@ -12,8 +12,8 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import { Variants } from 'framer-motion';
 
 const LINKS = {
-  studio: 'https://studio.cerulea.app',
-  docs: 'https://cerulea.app/docs',
+  studio: 'https://studio.cerulea.io',
+  docs: '/developers/docs',
 };
 
 const fadeUp: Variants = {
@@ -79,7 +79,7 @@ export default function CeruleaGovernancePage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Contact Enterprise Sales
+                Contact Us
               </Button>
               <Button 
                 href={LINKS.docs}

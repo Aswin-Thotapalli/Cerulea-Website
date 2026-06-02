@@ -2,218 +2,211 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Box, Container, Typography, Grid, Stack, Button, Accordion, AccordionSummary, AccordionDetails, Divider } from '@mui/material';
+import { Box, Container, Typography, Stack, Button, Accordion, AccordionSummary, AccordionDetails, Divider } from '@mui/material';
 import { motion } from 'framer-motion';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RemoveIcon from '@mui/icons-material/Remove';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Variants } from 'framer-motion';
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const staggerContainer: Variants = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15 }
-  }
+  visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
 };
 
-// --- MOCK PRICING DATA ---
-
+// ─────────────────────────────────────────────
+// TIER DATA
+// ─────────────────────────────────────────────
 const TIERS = [
+  {
+    id: 'sandbox',
+    name: 'Sandbox',
+    eyebrow: 'Free',
+    priceLine: 'Free',
+    periodLine: 'forever · no credit card',
+    description:
+      'Explore the full Cerulea platform on the testnet. Build, test, and validate your entire architecture with zero cost and zero commitment.',
+    buttonText: 'Start Building',
+    buttonHref: 'https://studio.cerulea.io',
+    highlight: false,
+    accent: '#059669',
+    badge: null,
+    footerNote: 'Testnet only — no mainnet or live deployments.',
+    features: [
+      'Full Cerulea Studio access',
+      'Cerulea Intelligence (AI)',
+      'Testnet deployments (unlimited)',
+      'Dashboard (testnet view)',
+      'Community support',
+    ],
+  },
   {
     id: 'developer',
     name: 'Developer',
-    price: '₹14,999',
-    period: 'per month',
-    description: 'For individuals and small teams building public dApps and executing production pilots.',
-    buttonText: 'Start Building',
-    buttonVariant: 'outlined' as const,
-    href: '/company/contact',
+    eyebrow: null,
+    priceLine: null,
+    periodLine: 'usage-based',
+    description:
+      'For teams ready to go live. Deploy production applications to the Cerulea Public L1 and integrate with real-world systems.',
+    buttonText: 'Contact Sales',
+    buttonHref: '/company/contact-sales',
     highlight: false,
+    accent: '#2563eb',
+    badge: null,
+    footerNote: null,
     features: [
-      'Access to Cerulea Studio',
-      'Deploy to Cerulea Public L1',
-      '100,000 RPC requests per day',
-      'Standard community governance',
-      'Community Discord support'
-    ]
+      'Everything in Sandbox',
+      'Public L1 mainnet deployments',
+      'Production RPC access',
+      'Standard telemetry dashboard',
+      'Email support',
+    ],
   },
   {
     id: 'pro',
     name: 'Pro',
-    price: '₹55,000',
-    period: 'per month',
-    description: 'For scaling applications requiring dedicated indexing and staging environments.',
-    buttonText: 'Upgrade to Pro',
-    buttonVariant: 'contained' as const,
-    href: '/company/contact',
+    eyebrow: null,
+    priceLine: null,
+    periodLine: 'usage-based',
+    description:
+      'For scaling applications. Dedicated infrastructure, higher limits, and hands-on architecture support from our engineering team.',
+    buttonText: 'Contact Sales',
+    buttonHref: '/company/contact-sales',
     highlight: true,
+    accent: '#2563eb',
+    badge: null,
+    footerNote: null,
     features: [
       'Everything in Developer',
-      'Unlimited RPC requests',
       'Dedicated indexing nodes',
-      'Staging and testnet environments',
-      'Priority email support'
-    ]
+      'Unlimited RPC requests',
+      'Advanced telemetry dashboard',
+      'Architecture consultations',
+    ],
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
-    price: 'Custom',
-    period: 'yearly licensing',
-    description: 'For organizations deploying sovereign Private Chains with strict compliance rules.',
+    eyebrow: null,
+    priceLine: null,
+    periodLine: 'annual licensing',
+    description:
+      'For organisations deploying sovereign Private Chains with complete governance control, compliance requirements, and dedicated engineering support.',
     buttonText: 'Contact Sales',
-    buttonVariant: 'outlined' as const,
-    href: '/company/contact',
+    buttonHref: '/company/contact-sales',
     highlight: false,
+    accent: '#7c3aed',
+    badge: null,
+    footerNote: null,
     features: [
       'Sovereign Private Chain deployment',
       'Bring your own cloud (AWS, GCP)',
-      'Custom compliance and RBAC modules',
+      'Custom compliance & RBAC modules',
       'Node architecture review',
-      '24/7 dedicated engineering SLA'
-    ]
-  }
+      '24/7 dedicated engineering SLA',
+    ],
+  },
 ];
 
+// ─────────────────────────────────────────────
+// COMPARISON TABLE
+// ─────────────────────────────────────────────
 const COMPARISON_DATA = [
   {
     category: 'Infrastructure & Execution',
     rows: [
-      { feature: 'Deployment Model', dev: 'Public L1', pro: 'Public L1', ent: 'Private Chain' },
-      { feature: 'Infrastructure Hosting', dev: 'Network Validators', pro: 'Dedicated Nodes', ent: 'Cloud / On-Premise' },
-      { feature: 'RPC Rate Limits', dev: '100,000 / day', pro: 'Unlimited', ent: 'Custom' },
-      { feature: 'Staging & Testnets', dev: false, pro: true, ent: true },
-    ]
+      { feature: 'Deployment Model',        sandbox: 'Testnet Only',   dev: 'Public L1',          pro: 'Public L1',            ent: 'Private Chain' },
+      { feature: 'Infrastructure Hosting',  sandbox: 'Shared Testnet', dev: 'Network Validators', pro: 'Dedicated Nodes',      ent: 'Cloud / On-Premise' },
+      { feature: 'Live / Mainnet Deploy',   sandbox: false,            dev: true,                 pro: true,                   ent: true },
+      { feature: 'Staging & Testnets',      sandbox: true,             dev: true,                 pro: true,                   ent: true },
+    ],
   },
   {
     category: 'Cerulea Studio & Governance',
     rows: [
-      { feature: 'Visual Architecture Builder', dev: true, pro: true, ent: true },
-      { feature: 'Cerulea Intelligence (AI)', dev: true, pro: true, ent: true },
-      { feature: 'Governance Model', dev: 'Token-Weighted', pro: 'Token-Weighted', ent: 'Authority / Custom' },
-      { feature: 'Compliance Modules', dev: false, pro: false, ent: true },
-    ]
+      { feature: 'Visual Architecture Builder', sandbox: true,     dev: true,                 pro: true,              ent: true },
+      { feature: 'Cerulea Intelligence (AI)',    sandbox: true,     dev: true,                 pro: true,              ent: true },
+      { feature: 'Governance Model',            sandbox: 'Testnet', dev: 'Token-Weighted',     pro: 'Token-Weighted',  ent: 'Authority / Custom' },
+      { feature: 'Compliance Modules',          sandbox: false,     dev: false,                pro: false,             ent: true },
+    ],
   },
   {
     category: 'Support & Operations',
     rows: [
-      { feature: 'Telemetry Dashboard', dev: 'Standard', pro: 'Advanced', ent: 'Enterprise Logging' },
-      { feature: 'Architecture Review', dev: false, pro: false, ent: true },
-      { feature: 'Support Channel', dev: 'Community', pro: 'Priority Email', ent: 'Dedicated SLA' },
-    ]
-  }
+      { feature: 'Telemetry Dashboard',   sandbox: 'Basic', dev: 'Standard', pro: 'Advanced', ent: 'Enterprise Logging' },
+      { feature: 'Architecture Review',   sandbox: false,   dev: false,       pro: false,       ent: true },
+      { feature: 'Support Channel',       sandbox: 'Community', dev: 'Email', pro: 'Priority Email', ent: 'Dedicated SLA' },
+    ],
+  },
 ];
 
+// ─────────────────────────────────────────────
+// FAQs
+// ─────────────────────────────────────────────
 const FAQS = [
   {
-    q: 'Do I need to pay for infrastructure costs on the Public L1?',
-    a: 'No. When deploying to the Cerulea Public L1, the infrastructure is maintained by decentralized network validators. Your Developer or Pro subscription covers platform access, tooling, and guaranteed RPC bandwidth. You only pay standard network gas fees for state changes.'
+    q: 'What can I build on the free Sandbox tier?',
+    a: 'Everything. The Sandbox gives you full access to Cerulea Studio, Cerulea Intelligence, and the Dashboard — all on the testnet. You can design data models, configure governance rules, compile and deploy contracts, and simulate transactions. The only restriction is that deployments stay on the testnet; no mainnet or live-production traffic is allowed on the free tier.',
   },
   {
-    q: 'How does Private Chain pricing work?',
-    a: 'Private Chain deployments are highly custom. Pricing depends on the number of validator nodes you intend to run, specific integration requirements, and SLA expectations. Because you host the physical infrastructure on your own AWS, GCP, or On-Premise servers, Cerulea charges a software licensing and orchestration fee starting at roughly ₹8,00,000 per year.'
+    q: 'How does pricing work for the paid tiers?',
+    a: 'Paid tiers are priced based on your usage — the environments you deploy to, transaction volumes, RPC bandwidth, and operational requirements. Because every team\'s footprint is different, we discuss pricing directly rather than publishing fixed numbers. Reach out via the Contact Sales form and we\'ll put together a clear proposal.',
   },
   {
-    q: 'Can we upgrade from Public L1 to a Private Chain later?',
-    a: 'Yes. Cerulea Studio allows you to export your data models and application logic. However, migrating live state from a public environment to a sovereign private environment requires a formal migration and bridging protocol, which our Enterprise team will facilitate.'
+    q: 'How does Private Chain (Enterprise) pricing work?',
+    a: 'Private Chain deployments are custom by nature. Pricing depends on the number of validator nodes, your hosting environment (AWS, GCP, or on-premise), compliance requirements, and SLA expectations. Since you host the infrastructure, Cerulea charges a software licensing and orchestration fee. Get in touch to discuss your specific setup.',
   },
   {
-    q: 'What forms of payment do you accept?',
-    a: 'For Developer and Pro tiers, we accept major credit cards via Stripe. For Enterprise agreements, we accept bank wire transfers (RTGS/NEFT) and USDC/USDT stablecoin settlements.'
-  }
+    q: 'Can I upgrade from Sandbox to a paid tier later?',
+    a: 'Yes — your Studio projects and compiled schemas carry forward. When you\'re ready to deploy to mainnet, simply contact our sales team and we\'ll get you set up on the right plan without starting from scratch.',
+  },
 ];
 
+// ─────────────────────────────────────────────
+// PAGE
+// ─────────────────────────────────────────────
 export default function PricingPage() {
   return (
     <Box sx={{ bgcolor: '#FAFAFA', minHeight: '100vh', pb: 16 }}>
-      
-      {/* 1. LIGHT THEME HERO SECTION */}
+
+      {/* HERO */}
       <Box sx={{ pt: { xs: 16, md: 24 }, pb: { xs: 12, md: 16 }, position: 'relative' }}>
-        <Box sx={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '80%', height: '500px', background: 'radial-gradient(ellipse at top, rgba(37, 99, 235, 0.1), transparent 70%)', pointerEvents: 'none' }} />
-        
+        <Box sx={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '80%', height: '500px', background: 'radial-gradient(ellipse at top, rgba(37,99,235,0.1), transparent 70%)', pointerEvents: 'none' }} />
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
           <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2, py: 1, borderRadius: 2, bgcolor: 'rgba(37, 99, 235, 0.1)', border: '1px solid rgba(37, 99, 235, 0.2)', mb: 4 }}>
+            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2, py: 1, borderRadius: 2, bgcolor: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', mb: 4 }}>
               <PaymentsOutlinedIcon sx={{ color: '#2563eb', fontSize: 20 }} />
               <Typography sx={{ color: '#2563eb', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.75rem' }}>
                 Transparent Licensing
               </Typography>
             </Box>
-            
-            <Typography variant="h1" sx={{ fontWeight: 800, fontSize: { xs: '3rem', md: '4.5rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4, mx: 'auto', maxWidth: 1000, color: '#172554' }}>
-              Infrastructure pricing<br />
-              <span style={{ color: '#64748B' }}>without the guesswork.</span>
+            <Typography variant="h1" sx={{ fontWeight: 800, fontSize: { xs: '3rem', md: '4.5rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4, mx: 'auto', maxWidth: 900, color: '#172554' }}>
+              Start free.<br />
+              <span style={{ color: '#64748B' }}>Scale with confidence.</span>
             </Typography>
-            
-            <Typography sx={{ color: '#475569', fontSize: { xs: '1.1rem', md: '1.25rem' }, maxWidth: 700, lineHeight: 1.6, mb: 6, mx: 'auto', fontWeight: 400 }}>
-              Predictable costs for public application deployments. Sovereign licensing models for enterprise private chains. Build with absolute clarity.
+            <Typography sx={{ color: '#475569', fontSize: { xs: '1.1rem', md: '1.25rem' }, maxWidth: 680, lineHeight: 1.6, mb: 2, mx: 'auto' }}>
+              Build and experiment for free on the testnet. When you&rsquo;re ready to go live, our team will put together a plan that fits your exact requirements.
             </Typography>
           </motion.div>
         </Container>
       </Box>
 
-      {/* LAUNCH PRICING BANNER */}
-      <Container maxWidth="lg" sx={{ mb: 6 }}>
-        <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: { xs: 1.5, md: 2 },
-            flexWrap: 'wrap',
-            px: { xs: 3, md: 5 },
-            py: 2.5,
-            borderRadius: 3,
-            background: 'linear-gradient(135deg, #172554 0%, #1e3a8a 50%, #1d4ed8 100%)',
-            border: '1px solid rgba(96, 165, 250, 0.25)',
-            boxShadow: '0 8px 32px -8px rgba(37, 99, 235, 0.3)',
-            position: 'relative',
-            overflow: 'hidden',
-          }}>
-            <Box sx={{
-              position: 'absolute', inset: 0,
-              background: 'radial-gradient(ellipse at 60% 50%, rgba(96,165,250,0.12) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }} />
-            <Box sx={{
-              display: 'inline-flex', alignItems: 'center', gap: 1,
-              px: 1.5, py: 0.5, borderRadius: 10,
-              bgcolor: 'rgba(96,165,250,0.15)', border: '1px solid rgba(96,165,250,0.35)',
-              flexShrink: 0,
-            }}>
-              <Box sx={{ width: 7, height: 7, borderRadius: '50%', bgcolor: '#60A5FA', boxShadow: '0 0 6px #60A5FA' }} />
-              <Typography sx={{ color: '#93C5FD', fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                Launch Offer
-              </Typography>
-            </Box>
-            <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: { xs: '0.95rem', md: '1.05rem' }, textAlign: 'center', position: 'relative' }}>
-              14-day free trial on all plans — starting{' '}
-              <Box component="span" sx={{ color: '#93C5FD', fontWeight: 800 }}>19 April 2026</Box>
-            </Typography>
-            <Typography sx={{ color: 'rgba(255,255,255,0.55)', fontSize: '0.85rem', display: { xs: 'none', md: 'block' }, position: 'relative' }}>
-              Credit card required.
-            </Typography>
-          </Box>
-        </motion.div>
-      </Container>
-
-      {/* 2. THREE-COLUMN PRICING CARDS (STRICT CSS GRID) */}
-      <Container maxWidth="lg" sx={{ mb: 24 }}>
+      {/* TIER CARDS */}
+      <Container maxWidth="lg" sx={{ mb: 20 }}>
         <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
-          <Box sx={{ 
-            display: 'grid', 
-            gridTemplateColumns: { xs: '1fr', lg: 'repeat(3, 1fr)' }, 
-            gap: 4, 
-            alignItems: 'stretch' 
+          <Box sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' },
+            gap: 2.5,
+            alignItems: 'stretch',
           }}>
             {TIERS.map((tier) => (
               <motion.div variants={fadeUp} key={tier.id} style={{ display: 'flex' }}>
@@ -221,63 +214,78 @@ export default function PricingPage() {
                   width: '100%',
                   bgcolor: '#FFFFFF',
                   borderRadius: 4,
-                  p: { xs: 4, lg: 5 },
+                  p: 4,
                   border: '1px solid',
                   borderColor: tier.highlight ? '#BFDBF7' : '#E2E8F0',
-                  boxShadow: tier.highlight ? '0 20px 40px -10px rgba(37, 99, 235, 0.15)' : '0 10px 30px -10px rgba(0,0,0,0.05)',
+                  boxShadow: tier.highlight
+                    ? '0 20px 40px -10px rgba(37,99,235,0.15)'
+                    : '0 8px 24px -8px rgba(0,0,0,0.06)',
                   display: 'flex',
                   flexDirection: 'column',
                   position: 'relative',
-                  transition: 'all 0.2s',
-                  transform: tier.highlight ? { lg: 'scale(1.03)' } : 'none',
-                  zIndex: tier.highlight ? 2 : 1,
+                  transition: 'box-shadow 0.2s',
                   '&:hover': {
-                    boxShadow: tier.highlight ? '0 30px 50px -10px rgba(37, 99, 235, 0.2)' : '0 20px 40px -10px rgba(0,0,0,0.08)'
-                  }
+                    boxShadow: tier.highlight
+                      ? '0 28px 48px -10px rgba(37,99,235,0.2)'
+                      : '0 16px 36px -8px rgba(0,0,0,0.1)',
+                  },
                 }}>
-                  {/* Glowing Top Accent for Highlighted Card */}
-                  {tier.highlight && (
-                    <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 6, background: 'linear-gradient(90deg, #3b82f6, #1d4ed8)' }} />
-                  )}
+                  {/* Top accent bar */}
+                  <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, borderRadius: '4px 4px 0 0', bgcolor: tier.accent, opacity: tier.highlight ? 1 : 0.5 }} />
 
-                  {/* Popular Badge */}
-                  {tier.highlight && (
-                    <Box sx={{ position: 'absolute', top: 16, right: 20, bgcolor: 'rgba(37, 99, 235, 0.1)', color: '#2563eb', px: 1.5, py: 0.5, borderRadius: 10, fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                      Most Popular
+                  {/* Badge */}
+                  {tier.badge && (
+                    <Box sx={{ position: 'absolute', top: 14, right: 16, bgcolor: 'rgba(37,99,235,0.1)', color: '#2563eb', px: 1.5, py: 0.5, borderRadius: 10, fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                      {tier.badge}
                     </Box>
                   )}
 
-                  <Typography sx={{ color: tier.highlight ? '#2563eb' : '#64748B', fontSize: '0.85rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', mb: 2, mt: tier.highlight ? 2 : 0 }}>
-                    {tier.name}
-                  </Typography>
+                  {/* Top section — grows to push CTA to a consistent level */}
+                  <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
 
-                  <Box sx={{ mb: 2 }}>
-                    <Typography sx={{ fontSize: '2.5rem', fontWeight: 800, color: '#172554', lineHeight: 1, mb: 1, letterSpacing: '-0.02em' }}>
-                      {tier.price}
+                    {/* Eyebrow */}
+                    {tier.eyebrow && (
+                      <Typography sx={{ color: tier.accent, fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', mb: 1, mt: 1.5 }}>
+                        {tier.eyebrow}
+                      </Typography>
+                    )}
+
+                    {/* Name */}
+                    <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.01em' }}>
+                      {tier.name}
                     </Typography>
-                    <Typography sx={{ fontSize: '0.9rem', fontWeight: 600, color: '#64748B' }}>
-                      {tier.period}
+
+                    {/* Price */}
+                    <Box sx={{ mb: 1 }}>
+                      {tier.priceLine && (
+                        <Typography sx={{ fontSize: tier.priceLine === 'Free' ? '2.2rem' : '1.35rem', fontWeight: 800, color: tier.priceLine === 'Free' ? '#059669' : '#172554', lineHeight: 1, letterSpacing: '-0.02em' }}>
+                          {tier.priceLine}
+                        </Typography>
+                      )}
+                      <Typography sx={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 600, mt: tier.priceLine ? 0.5 : 0 }}>
+                        {tier.periodLine}
+                      </Typography>
+                    </Box>
+
+                    {/* Description — flexGrow pushes CTA to same level across all cards */}
+                    <Typography sx={{ color: '#475569', fontSize: '0.9rem', lineHeight: 1.6, mb: 4, mt: 2, flexGrow: 1 }}>
+                      {tier.description}
                     </Typography>
+
                   </Box>
 
-                  <Typography sx={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.6, mb: 4, minHeight: { lg: 70 } }}>
-                    {tier.description}
-                  </Typography>
-
+                  {/* CTA */}
                   <Box sx={{ mb: 4 }}>
-                    <Link href={tier.href} style={{ textDecoration: 'none', width: '100%', display: 'block' }}>
-                      <Button 
-                        variant={tier.buttonVariant}
+                    <Link href={tier.buttonHref} style={{ textDecoration: 'none', display: 'block' }} {...(tier.buttonHref.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+                      <Button
+                        variant="outlined"
                         fullWidth
+                        endIcon={<ArrowForwardIcon sx={{ fontSize: '1rem !important' }} />}
                         sx={{
-                          py: 1.5,
-                          fontSize: '0.95rem',
-                          fontWeight: 700,
-                          borderRadius: 2,
-                          ...(tier.highlight 
-                            ? { bgcolor: '#2563eb', color: '#FFFFFF', '&:hover': { bgcolor: '#1d4ed8' }, boxShadow: 'none' }
-                            : { borderColor: '#CBD5E1', color: '#172554', '&:hover': { borderColor: '#172554', bgcolor: 'transparent' } }
-                          )
+                          py: 1.5, fontSize: '0.9rem', fontWeight: 700, borderRadius: 2,
+                          borderColor: tier.accent,
+                          color: tier.accent,
+                          '&:hover': { borderColor: tier.accent, bgcolor: `${tier.accent}08` },
                         }}
                       >
                         {tier.buttonText}
@@ -285,23 +293,28 @@ export default function PricingPage() {
                     </Link>
                   </Box>
 
-                  <Divider sx={{ mb: 4, borderColor: '#E2E8F0' }} />
+                  <Divider sx={{ mb: 3, borderColor: '#F1F5F9' }} />
 
-                  <Typography sx={{ color: '#172554', fontSize: '0.85rem', fontWeight: 800, mb: 3, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    Included Features
-                  </Typography>
-
-                  <Stack spacing={2.5} sx={{ flexGrow: 1 }}>
-                    {tier.features.map((feature, i) => (
+                  {/* Features */}
+                  <Stack spacing={2} sx={{ flexGrow: 1 }}>
+                    {tier.features.map((f, i) => (
                       <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-                        <CheckCircleIcon sx={{ fontSize: 20, color: tier.highlight ? '#2563eb' : '#94A3B8', mt: 0.1 }} />
-                        <Typography sx={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.5, fontWeight: 500 }}>
-                          {feature}
+                        <CheckCircleIcon sx={{ fontSize: 18, color: tier.accent, mt: 0.15, flexShrink: 0 }} />
+                        <Typography sx={{ color: '#475569', fontSize: '0.88rem', lineHeight: 1.5, fontWeight: 500 }}>
+                          {f}
                         </Typography>
                       </Box>
                     ))}
                   </Stack>
 
+                  {/* Footer note (Sandbox only) */}
+                  {tier.footerNote && (
+                    <Box sx={{ mt: 3, pt: 2.5, borderTop: '1px solid #F1F5F9' }}>
+                      <Typography sx={{ fontSize: '0.78rem', color: '#94A3B8', fontStyle: 'italic' }}>
+                        {tier.footerNote}
+                      </Typography>
+                    </Box>
+                  )}
                 </Box>
               </motion.div>
             ))}
@@ -309,78 +322,62 @@ export default function PricingPage() {
         </motion.div>
       </Container>
 
-      {/* 3. FEATURE COMPARISON MATRIX */}
-      <Container maxWidth="lg" sx={{ mb: 24 }}>
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp}>
+      {/* COMPARISON TABLE */}
+      <Container maxWidth="lg" sx={{ mb: 20 }}>
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }} variants={fadeUp}>
           <Box sx={{ textAlign: 'center', mb: 8 }}>
-            <Typography variant="h2" sx={{ fontSize: '2.5rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.02em' }}>
-              Compare Capabilities
+            <Typography variant="h2" sx={{ fontSize: '2.2rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.02em' }}>
+              Compare all tiers
             </Typography>
-            <Typography sx={{ color: '#475569', fontSize: '1.1rem' }}>
-              A detailed breakdown of platform features across all architectural tiers.
+            <Typography sx={{ color: '#475569', fontSize: '1rem' }}>
+              A full breakdown of platform capabilities across every plan.
             </Typography>
           </Box>
 
           <Box sx={{ overflowX: 'auto' }}>
-            <Box sx={{ minWidth: 800, border: '1px solid #E2E8F0', borderRadius: 4, bgcolor: '#FFFFFF', overflow: 'hidden', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.03)' }}>
-              
-              {/* Header Row */}
+            <Box sx={{ minWidth: 860, border: '1px solid #E2E8F0', borderRadius: 4, bgcolor: '#FFFFFF', overflow: 'hidden', boxShadow: '0 8px 24px -8px rgba(0,0,0,0.04)' }}>
+
+              {/* Header */}
               <Box sx={{ display: 'flex', bgcolor: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
-                <Box sx={{ width: '40%', p: 3 }} />
-                <Box sx={{ width: '20%', p: 3, textAlign: 'center', borderLeft: '1px solid #E2E8F0' }}>
-                  <Typography sx={{ fontWeight: 800, color: '#64748B' }}>Developer</Typography>
-                </Box>
-                <Box sx={{ width: '20%', p: 3, textAlign: 'center', bgcolor: 'rgba(37, 99, 235, 0.03)', borderLeft: '1px solid #E2E8F0' }}>
-                  <Typography sx={{ fontWeight: 800, color: '#2563eb' }}>Pro</Typography>
-                </Box>
-                <Box sx={{ width: '20%', p: 3, textAlign: 'center', borderLeft: '1px solid #E2E8F0' }}>
-                  <Typography sx={{ fontWeight: 800, color: '#172554' }}>Enterprise</Typography>
-                </Box>
+                <Box sx={{ width: '28%', p: 3 }} />
+                {[
+                  { label: 'Sandbox', color: '#059669' },
+                  { label: 'Developer', color: '#2563eb' },
+                  { label: 'Pro', color: '#2563eb', highlight: true },
+                  { label: 'Enterprise', color: '#7c3aed' },
+                ].map(({ label, color, highlight }, i) => (
+                  <Box key={label} sx={{ width: '18%', p: 3, textAlign: 'center', borderLeft: '1px solid #E2E8F0', bgcolor: highlight ? 'rgba(37,99,235,0.03)' : 'transparent' }}>
+                    <Typography sx={{ fontWeight: 800, color: color, fontSize: '0.9rem' }}>{label}</Typography>
+                  </Box>
+                ))}
               </Box>
 
-              {/* Data Rows */}
+              {/* Rows */}
               {COMPARISON_DATA.map((section, sIdx) => (
                 <React.Fragment key={sIdx}>
-                  <Box sx={{ bgcolor: '#F1F5F9', p: 2.5, borderBottom: '1px solid #E2E8F0', borderTop: sIdx > 0 ? '1px solid #E2E8F0' : 'none' }}>
-                    <Typography sx={{ fontSize: '0.8rem', fontWeight: 800, color: '#64748B', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  <Box sx={{ bgcolor: '#F1F5F9', px: 3, py: 2, borderBottom: '1px solid #E2E8F0', borderTop: sIdx > 0 ? '1px solid #E2E8F0' : 'none' }}>
+                    <Typography sx={{ fontSize: '0.75rem', fontWeight: 800, color: '#64748B', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                       {section.category}
                     </Typography>
                   </Box>
-                  
                   {section.rows.map((row, rIdx) => (
-                    <Box key={rIdx} sx={{ display: 'flex', borderBottom: '1px solid #E2E8F0', '&:last-child': { borderBottom: 'none' } }}>
-                      
-                      <Box sx={{ width: '40%', p: 3, display: 'flex', alignItems: 'center' }}>
-                        <Typography sx={{ color: '#172554', fontWeight: 600, fontSize: '0.95rem' }}>{row.feature}</Typography>
+                    <Box key={rIdx} sx={{ display: 'flex', borderBottom: '1px solid #F1F5F9', '&:last-child': { borderBottom: 'none' } }}>
+                      <Box sx={{ width: '28%', p: 3, display: 'flex', alignItems: 'center' }}>
+                        <Typography sx={{ color: '#172554', fontWeight: 600, fontSize: '0.9rem' }}>{row.feature}</Typography>
                       </Box>
-                      
-                      {/* Developer Column */}
-                      <Box sx={{ width: '20%', p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', borderLeft: '1px solid #E2E8F0' }}>
-                        {typeof row.dev === 'boolean' ? (
-                          row.dev ? <CheckCircleOutlineIcon sx={{ color: '#94A3B8', fontSize: 22 }} /> : <RemoveIcon sx={{ color: '#CBD5E1' }} />
-                        ) : (
-                          <Typography sx={{ color: '#475569', fontSize: '0.9rem', textAlign: 'center', fontWeight: 500 }}>{row.dev}</Typography>
-                        )}
-                      </Box>
-
-                      {/* Pro Column */}
-                      <Box sx={{ width: '20%', p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'rgba(37, 99, 235, 0.02)', borderLeft: '1px solid #E2E8F0' }}>
-                        {typeof row.pro === 'boolean' ? (
-                          row.pro ? <CheckCircleIcon sx={{ color: '#2563eb', fontSize: 22 }} /> : <RemoveIcon sx={{ color: '#CBD5E1' }} />
-                        ) : (
-                          <Typography sx={{ color: '#1d4ed8', fontSize: '0.9rem', textAlign: 'center', fontWeight: 700 }}>{row.pro}</Typography>
-                        )}
-                      </Box>
-
-                      {/* Enterprise Column */}
-                      <Box sx={{ width: '20%', p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', borderLeft: '1px solid #E2E8F0' }}>
-                        {typeof row.ent === 'boolean' ? (
-                          row.ent ? <CheckCircleOutlineIcon sx={{ color: '#172554', fontSize: 22 }} /> : <RemoveIcon sx={{ color: '#CBD5E1' }} />
-                        ) : (
-                          <Typography sx={{ color: '#172554', fontSize: '0.9rem', textAlign: 'center', fontWeight: 700 }}>{row.ent}</Typography>
-                        )}
-                      </Box>
-
+                      {(['sandbox', 'dev', 'pro', 'ent'] as const).map((key, i) => (
+                        <Box key={key} sx={{ width: '18%', p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', borderLeft: '1px solid #F1F5F9', bgcolor: key === 'pro' ? 'rgba(37,99,235,0.015)' : 'transparent' }}>
+                          {typeof row[key] === 'boolean' ? (
+                            row[key]
+                              ? <CheckCircleOutlineIcon sx={{ color: key === 'sandbox' ? '#059669' : key === 'ent' ? '#7c3aed' : '#2563eb', fontSize: 22 }} />
+                              : <RemoveIcon sx={{ color: '#CBD5E1' }} />
+                          ) : (
+                            <Typography sx={{ color: key === 'pro' ? '#1d4ed8' : '#475569', fontSize: '0.85rem', textAlign: 'center', fontWeight: key === 'pro' ? 700 : 500 }}>
+                              {row[key] as string}
+                            </Typography>
+                          )}
+                        </Box>
+                      ))}
                     </Box>
                   ))}
                 </React.Fragment>
@@ -391,46 +388,43 @@ export default function PricingPage() {
         </motion.div>
       </Container>
 
-      {/* 4. FAQ SECTION */}
-      <Container maxWidth="md" sx={{ mb: 20 }}>
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp}>
+      {/* FAQ */}
+      <Container maxWidth="md" sx={{ mb: 16 }}>
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }} variants={fadeUp}>
           <Box sx={{ textAlign: 'center', mb: 8 }}>
-            <Typography variant="h2" sx={{ fontSize: '2.5rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.02em' }}>
+            <Typography variant="h2" sx={{ fontSize: '2.2rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.02em' }}>
               Frequently Asked Questions
             </Typography>
-            <Typography sx={{ color: '#475569', fontSize: '1.1rem' }}>
-              Details on infrastructure billing, private chain scaling, and payment methods.
+            <Typography sx={{ color: '#475569', fontSize: '1rem' }}>
+              Common questions about the Sandbox tier, paid plans, and private chain licensing.
             </Typography>
           </Box>
 
-          <Box sx={{ bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 4, overflow: 'hidden', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.03)' }}>
+          <Box sx={{ bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 4, overflow: 'hidden', boxShadow: '0 8px 24px -8px rgba(0,0,0,0.04)' }}>
             {FAQS.map((faq, index) => (
-              <Accordion 
-                key={index} 
-                disableGutters 
-                elevation={0} 
-                sx={{ 
+              <Accordion
+                key={index}
+                disableGutters
+                elevation={0}
+                sx={{
                   bgcolor: 'transparent',
                   borderBottom: index === FAQS.length - 1 ? 'none' : '1px solid #E2E8F0',
                   '&:before': { display: 'none' },
-                  '&.Mui-expanded': { m: 0 }
+                  '&.Mui-expanded': { m: 0 },
                 }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: '#2563eb' }} />} sx={{ px: { xs: 3, md: 4 }, py: 2 }}>
-                  <Typography sx={{ fontSize: '1.05rem', fontWeight: 700, color: '#172554' }}>
-                    {faq.q}
-                  </Typography>
+                  <Typography sx={{ fontSize: '1rem', fontWeight: 700, color: '#172554' }}>{faq.q}</Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ px: { xs: 3, md: 4 }, pb: 4, pt: 0 }}>
-                  <Typography sx={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.7 }}>
-                    {faq.a}
-                  </Typography>
+                  <Typography sx={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.7 }}>{faq.a}</Typography>
                 </AccordionDetails>
               </Accordion>
             ))}
           </Box>
         </motion.div>
       </Container>
+
     </Box>
   );
 }

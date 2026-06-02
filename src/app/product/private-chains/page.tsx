@@ -17,7 +17,7 @@ import { Variants } from 'framer-motion';
 
 const LINKS = {
   contact: '/company/contact',
-  docs: 'https://cerulea.app/docs',
+  docs: '/developers/docs',
 };
 
 const fadeUp: Variants = {
@@ -83,7 +83,7 @@ export default function CeruleaPrivateChainsPage() {
                   transition: 'all 0.2s'
                 }}
               >
-                Contact Enterprise Sales
+                Contact Us
               </Button>
               <Button 
                 href={LINKS.docs}

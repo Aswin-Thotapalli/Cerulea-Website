@@ -258,7 +258,7 @@ export default function SiteHeader() {
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, alignItems: 'center' }}>
             <Link href={getMainUrl('/company/contact')} style={{ textDecoration: 'none' }}>
               <Button variant="contained" sx={{ bgcolor: '#0A192F', color: '#FFFFFF', fontWeight: 700, fontSize: '0.8rem', px: 2, py: 0.75, '&:hover': { bgcolor: '#1E2B4D' } }}>
-                Contact Sales
+                Contact Us
               </Button>
             </Link>
           </Box>
