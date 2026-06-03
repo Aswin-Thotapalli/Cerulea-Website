@@ -1130,27 +1130,79 @@ function SecuritySection() {
   return (
     <section id="security" style={{ marginBottom: 80 }}>
       <SectionHeader num="XI" title="Security Model" />
+      <P>The Cerulea security model operates across three distinct layers: architectural, contractual, and cryptographic. Of these, the architectural layer is the most consequential. Architecture cannot be overridden by a policy change, a contractual amendment, or a compromised employee. The design choices described here are not promises. They are the way the system is built.</P>
+
+      <Subsection title="Architectural Isolation">
+        <P>Private Chain deployments run on isolated infrastructure. This is not a logical separation enforced by access control lists. It is a physical separation. A customer's private chain does not share validator nodes, execution environments, or chain state with any other tenant or with Cerulea Public L1.</P>
+        <P>The specific guarantees this produces:</P>
+        <BulletList items={[
+          "No shared validator keys across any two deployments",
+          "No shared execution environment between any two private chains",
+          "No shared state between a private chain and the public chain",
+          "A compromised node on one deployment cannot read or affect another customer's chain",
+        ]} />
+        <Note>Cross-tenant data access is not a misconfiguration risk in Cerulea. It is an architectural impossibility. There is no pathway, authorised or otherwise, by which one tenant's deployment can access another's chain state.</Note>
+      </Subsection>
+
+      <Subsection title="The Metering Layer">
+        <P>The only operational touchpoint between Cerulea's systems and a customer's private chain after deployment is the metering layer. What metering nodes observe is precisely defined and does not change based on deployment tier or contract terms.</P>
+        <TwoCol
+          leftTitle="Metering nodes observe"
+          rightTitle="Metering nodes do not observe"
+          left={["Block height", "Block hash", "Block timestamp", "Transaction count per block"]}
+          right={["Transaction payloads or contents", "Wallet addresses involved in transactions", "Smart contract state or stored data", "Any application-layer data"]}
+        />
+        <Note>The metering layer is a billing heartbeat. It confirms the chain is running and counts billable activity. It has no visibility into what those transactions contain. This is a technical constraint built into the metering node design, not a policy commitment subject to future revision.</Note>
+      </Subsection>
+
+      <Subsection title="Validator Key Sovereignty">
+        <P>Validator keys are generated and transferred to the customer at deployment. Cerulea's ongoing operational systems do not require access to validator private keys after this point. There is no workflow within Cerulea's operations that requires the platform to hold or use a customer's validator private key.</P>
+        <P>For enterprise buyers with a formal requirement for zero-knowledge key ceremonies, this can be arranged as part of the deployment process. The standard deployment flow transfers keys securely. The zero-knowledge variant adds a structured ceremony in which Cerulea personnel have no visibility into the keys at any stage of generation or transfer.</P>
+      </Subsection>
+
+      <Subsection title="Network Exposure Model">
+        <P>Standard private chain deployments are internet-facing with defined access controls. The default configuration includes:</P>
+        <BulletList items={[
+          "Protected RPC and API endpoints requiring authentication",
+          "Node-to-node gossip traffic restricted to a defined, customer-controlled peer set",
+          "API key and IP allowlist controls on all RPC access points",
+          "Customer-configurable network exposure boundaries",
+        ]} />
+        <P>VPN-isolated deployments and private network peering via AWS PrivateLink or Azure Private Link are available for deployments with stricter network isolation requirements. These configurations are handled as custom deployment scope. Organisations that require full network air-gapping or private peering should raise this in the scoping conversation rather than assuming it is included in a standard deployment.</P>
+      </Subsection>
+
       <Subsection title="Operational vs. Data Control Boundary">
         <TwoCol
           leftTitle="Cerulea manages"
           rightTitle="Enterprise owns"
-          left={["Deployment orchestration", "Upgrade management", "Monitoring surface provisioning", "Lifecycle control tooling"]}
-          right={["Transaction execution and state", "Smart contract state", "Validator key management", "All enterprise data within the deployed system"]}
+          left={["Deployment orchestration", "Upgrade management", "Monitoring surface provisioning", "Lifecycle control tooling", "Metering telemetry (block-level only)"]}
+          right={["Transaction execution and state", "Smart contract state", "Validator key management", "All enterprise data within the deployed system", "Network exposure and API access policy"]}
         />
         <Note>Cerulea does not read transaction payloads, access smart contract state, or control enterprise validator keys. This boundary is enforced architecturally, not by policy.</Note>
       </Subsection>
-      <Subsection title="Enterprise Data Sovereignty">
-        <P>Organisations retain exclusive control over transaction content, validator key management, network exposure boundaries, governance participation, and all infrastructure decisions.</P>
-      </Subsection>
-      <Subsection title="Compliance Positioning">
+
+      <Subsection title="Compliance Compatibility">
+        <P>Cerulea is framework-agnostic by design. The architecture is built around the technical controls that major compliance frameworks require, without holding certifications against any specific framework at this stage. The structural controls in place are compatible with the technical requirements of GDPR, SOC 2, and ISO 27001:</P>
         <BulletList items={[
+          "Data isolation at the infrastructure level, not only at the access control level",
+          "Defined and auditable data boundaries between Cerulea and the enterprise",
           "Role-based access control for permissioned participation",
-          "Governance-controlled upgrade and change management",
-          "Audit trails for all governance actions and configuration changes",
+          "Immutable audit trails for all governance actions and configuration changes",
           "Enterprise-defined compliance rule enforcement at the module level",
           "Cross-border governance adaptability for multi-jurisdiction deployments",
         ]} />
-        <Note>Cerulea provides the structural controls through which organisations can implement their own compliance requirements — not legal compliance certifications.</Note>
+        <Note>Cerulea provides the structural controls through which organisations can implement and enforce their own compliance requirements. Cerulea does not provide legal compliance certifications and does not currently hold certifications against any of the frameworks listed above.</Note>
+      </Subsection>
+
+      <Subsection title="Threat Model">
+        <P>The Cerulea architecture is explicitly designed to resist the following attack profiles:</P>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {[
+            ["Cross-Tenant Access", "Isolated infrastructure with no shared state means an attacker who compromises one deployment cannot read or affect any other customer's chain. There is no shared layer to pivot through."],
+            ["Unauthorized Chain Manipulation", "The DCF consensus mechanism requires validator quorum for any state change. A single compromised validator node cannot rewrite chain state. Quorum requirements are configurable but enforced at the protocol level."],
+            ["API Abuse", "All RPC and REST endpoints require authentication. IP allowlisting and API key controls limit the exposure surface. Unauthenticated access to chain internals is not available in the default configuration."],
+          ].map(([tag, body], i) => <StrategyStep key={tag} tag={tag} body={body} index={i} />)}
+        </div>
       </Subsection>
     </section>
   );
@@ -1160,16 +1212,56 @@ function IntelligenceSection() {
   return (
     <section id="intelligence" style={{ marginBottom: 80 }}>
       <SectionHeader num="XII" title="Cerulea Intelligence" />
-      <P>Cerulea Intelligence is an embedded guidance layer inside Studio that provides contextual recommendations and risk-aware signals during the design and configuration phase only. It cannot take autonomous action.</P>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, margin: "20px 0" }}>
-        {[
-          { icon: "◎", title: "Configuration Guidance", body: "Explains configuration implications, highlights structural gaps, and suggests governance alignment based on architecture intent." },
-          { icon: "△", title: "Risk Signals", body: "Surfaces missing configuration, conflicting governance settings, incomplete integrations, and infrastructure issues before deployment." },
-          { icon: "◉", title: "Use Case Example", body: "A Private Chain user with compliance modules enabled receives governance suggestions tailored to authority-based models and regulated infrastructure." },
-          { icon: "✗", title: "Intentionally Constrained", body: "Cannot deploy systems, change config without user action, execute governance proposals, manage validators, or access transaction data." },
-        ].map((c, i) => <Card key={i} {...c} delay={i * 80} />)}
-      </div>
-      <Note>Cerulea Intelligence is an advisory system, not an autonomous agent. Every action remains under explicit user and governance control.</Note>
+      <P>Cerulea Intelligence is an embedded guidance layer inside Studio that provides contextual recommendations and risk-aware signals during the design and configuration phase. It is a hybrid system, combining structured rule evaluation with contextual AI reasoning. It operates only while a user is actively configuring a deployment. It cannot take autonomous action at any point.</P>
+
+      <Subsection title="Why Advisory-Only Is a Design Decision, Not a Limitation">
+        <P>Cerulea Intelligence is intentionally constrained to advisory mode. This is a permanent design commitment, not a temporary limitation waiting to be lifted in a future release. The reasoning has three layers, all of which are real and deliberate:</P>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {[
+            ["Trust", "Enterprise customers deploying production blockchain infrastructure need to be the decision-makers of record. If Intelligence silently modified a chain configuration, there would be no clear accountability for the resulting system. The human who built the deployment must own the decisions that produced it."],
+            ["Liability", "If an automated system applied a configuration change that resulted in a security incident or data loss, the question of whether the customer or Cerulea bears responsibility becomes genuinely complicated. Advisory mode preserves a clean accountability boundary: Intelligence recommended, the user decided, the user acted."],
+            ["Philosophy", "Blockchain configuration is consequential in ways that most software decisions are not. A misconfigured chain is not like a misconfigured UI preference. It affects live validator behaviour, governance authority, data access boundaries, and infrastructure exposure. These decisions carry a weight that should not be automated away. Keeping Intelligence advisory is a deliberate statement that Cerulea respects that weight and does not substitute machine judgment for human judgment on decisions of this kind."],
+          ].map(([tag, body], i) => <StrategyStep key={tag} tag={tag} body={body} index={i} />)}
+        </div>
+      </Subsection>
+
+      <Subsection title="What Intelligence Sees">
+        <P>Intelligence operates on the configuration state the user has built inside Studio. Its inputs are scoped to the current session only:</P>
+        <BulletList items={[
+          "Industry and use case selection",
+          "Modules added to the deployment and their configuration state",
+          "Consensus mechanism selection and associated parameters",
+          "Access control and permissioning settings configured so far",
+          "Named parameters the user has set across all configuration surfaces",
+        ]} />
+        <P>Intelligence does not have access to wallet private keys, transaction data from any deployed chain, external business data the user has not entered into Studio, or configuration data from any other user's session. Its reasoning is scoped entirely to the active configuration.</P>
+      </Subsection>
+
+      <Subsection title="What Intelligence Surfaces">
+        <P>Intelligence evaluates the active configuration against five categories of signal. Every signal is presented as a recommendation. None result in automatic changes to the deployment configuration.</P>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {[
+            ["Completeness Gaps", "Required configuration fields that are empty or set to defaults that are inappropriate for the selected use case. Example: a supply chain deployment with no role-based access configured is flagged before deployment becomes available."],
+            ["Consistency Conflicts", "Module combinations or parameter pairings that contradict each other. Example: selecting a public consensus mechanism for a deployment tagged as private or enterprise-grade triggers a conflict signal."],
+            ["Compliance Alignment", "When a user selects an industry with known regulatory requirements, Intelligence flags configurations missing the modules typically associated with those requirements. Example: a healthcare use case without audit logging enabled receives a specific signal tied to that gap."],
+            ["Performance vs. Security Tradeoffs", "Configurations where the user has optimised for one dimension at the expense of another in ways that may not be intentional. Example: a very low validator count improves throughput but reduces fault tolerance below recommended thresholds for production deployments."],
+            ["Best Practice Deviations", "Configuration patterns that are technically functional but not recommended for production environments. Example: test-appropriate parameter values left in place on a deployment marked as production."],
+          ].map(([tag, body], i) => <StrategyStep key={tag} tag={tag} body={body} index={i} />)}
+        </div>
+      </Subsection>
+
+      <Subsection title="Intentional Constraints">
+        <P>The following actions are outside the scope of what Intelligence can do, by design:</P>
+        <BulletList items={[
+          "Deploy or trigger deployment of any system",
+          "Modify configuration without explicit user action",
+          "Execute governance proposals",
+          "Manage, rotate, or access validator keys",
+          "Access transaction data from any deployed chain",
+          "Operate outside the active configuration session",
+        ]} />
+        <Note>Cerulea Intelligence is an advisory system. Every action remains under explicit user and governance control. Advisory-only is a permanent design commitment, not a capability gap. Enterprise buyers should treat it as a feature of the product's accountability model, not a shortcoming of its AI layer.</Note>
+      </Subsection>
     </section>
   );
 }
@@ -1241,19 +1333,49 @@ function EnterpriseSection() {
   return (
     <section id="enterprise" style={{ marginBottom: 80 }}>
       <SectionHeader num="XV" title="Enterprise Operating Model" />
-      <P>Private Chain deployments are sovereign blockchain environments. The deploying organisation owns the system, controls the infrastructure, and bears operational responsibility. Cerulea provides the orchestration platform and operational tooling.</P>
-      <TwoCol
-        leftTitle="Enterprise Controls"
-        rightTitle="Cerulea Provides"
-        left={["All validator nodes and hosting environment", "Governance authority and participant roles", "Infrastructure scaling, redundancy, and uptime", "Exclusive access to transaction data and chain state", "Network exposure and API access policies"]}
-        right={["Configuration framework and Studio environment", "Deployment orchestration and lifecycle tooling", "Upgrade coordination support", "Monitoring surfaces and observability", "Usage metering (usage data only, no payload access)"]}
-      />
-      {[
-        { title: "Validator Ownership", body: "Validator node ownership belongs entirely to the enterprise. Cerulea may deploy a limited number of nodes solely for licensing enforcement and usage metering. These nodes have no access to transaction payloads, smart contract state, or enterprise data." },
-        { title: "Enterprise Upgrade Model", body: "No upgrade can be applied by Cerulea without the deploying organisation triggering the process through their own governance. Enterprises schedule upgrades to align with maintenance windows, compliance review cycles, or change management processes." },
-      ].map(({ title, body }) => (
-        <Subsection key={title} title={title}><P>{body}</P></Subsection>
-      ))}
+      <P>A Cerulea Private Chain deployment is a sovereign blockchain environment. The distinction matters: the enterprise does not gain access to infrastructure that Cerulea controls. The enterprise owns and operates the infrastructure outright. Cerulea provides the platform and tooling used to build and maintain it. What runs belongs to the enterprise. What built it belongs to Cerulea.</P>
+
+      <Subsection title="Ownership Boundaries">
+        <TwoCol
+          leftTitle="Enterprise Controls"
+          rightTitle="Cerulea Provides"
+          left={["All validator nodes and hosting environment", "Governance authority and participant roles", "Infrastructure scaling, redundancy, and uptime", "Exclusive access to transaction data and chain state", "Network exposure and API access policies"]}
+          right={["Configuration framework and Studio environment", "Deployment orchestration and lifecycle tooling", "Monitoring surfaces and observability", "Usage metering (block-level telemetry only)", "Upgrade coordination support"]}
+        />
+      </Subsection>
+
+      <Subsection title="Infrastructure Sovereignty After Deployment">
+        <P>Once a Private Chain is deployed, it does not depend on a live connection to Cerulea's systems to continue operating. The chain software runs on the enterprise's infrastructure. Validator keys are held by the enterprise. Consensus is reached between the enterprise's validators. The chain does not communicate back to Cerulea's systems to produce blocks.</P>
+        <P>This is genuine infrastructure sovereignty, not a contractual promise. The chain's continued operation is a function of the enterprise's validator set, not of Cerulea's uptime. An enterprise evaluating long-term infrastructure risk should note that Cerulea's operational continuity is not a dependency for chain continuity after deployment.</P>
+      </Subsection>
+
+      <Subsection title="Validator Ownership and Metering">
+        <P>Validator nodes are owned and operated by the enterprise. Cerulea may deploy a small number of nodes within the network for licensing enforcement and usage metering purposes only.</P>
+        <TwoCol
+          leftTitle="Cerulea-operated nodes observe"
+          rightTitle="They do not observe"
+          left={["Block height", "Block hash", "Block timestamp", "Transaction count per block"]}
+          right={["Transaction payloads", "Wallet addresses", "Smart contract state", "Any application-layer data"]}
+        />
+        <Note>Enterprises retain the right to audit and verify the behaviour of any Cerulea-operated nodes within their network at any time. The metering node scope is a technical boundary built into its design, not a policy commitment subject to renegotiation.</Note>
+      </Subsection>
+
+      <Subsection title="Dynamic Consensus Framework">
+        <P>The DCF is a consensus mechanism developed by Caerulean Bytechains. It is not a renamed or repackaged version of an existing open-source protocol. The DCF is purpose-built around the specific requirements of enterprise private chain deployments: permissioned validator sets, policy-based validator rotation, identity-verified participation, and governance-integrated upgrade authority.</P>
+        <P>Key properties of the DCF for enterprise deployments:</P>
+        <BulletList items={[
+          "Validator admission is governance-controlled, not stake-weighted",
+          "Policy-based rotation rather than probabilistic validator selection",
+          "Identity verification is a validator eligibility condition, not an optional setting",
+          "Reputation and uptime performance feed into continued eligibility",
+          "All 8 DCF policies are fully configurable by the deploying enterprise",
+          "No token required for validator participation or governance authority",
+        ]} />
+      </Subsection>
+
+      <Subsection title="Platform Status">
+        <P>Cerulea Public L1 is live with 5 active validators. Private Chain deployments are in active development, with the platform available for evaluation and scoping conversations with enterprise buyers.</P>
+      </Subsection>
     </section>
   );
 }
