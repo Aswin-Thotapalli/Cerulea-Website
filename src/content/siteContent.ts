@@ -167,16 +167,12 @@ export const headerNav: Array<
               href: getMainUrl('/developers/api'),
               tag: 'API',
             },
-            {
-              label: 'Whitepaper',
-              description: 'Architectural, cryptographic, and economic design rationale for the network.',
-              href: getMainUrl('/developers/whitepaper'),
-            },
           ],
         },
       ],
     },
   },
+  { type: 'link', label: 'Whitepaper', href: getMainUrl('/developers/whitepaper') },
   { type: 'link', label: 'Blog', href: getMainUrl('/blog') },
   { type: 'link', label: 'Pricing', href: getMainUrl('/pricing') },
   {
