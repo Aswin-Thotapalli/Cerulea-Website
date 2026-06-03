@@ -408,8 +408,11 @@ function ArchDiagramContent() {
   <g class="g-wasm"><rect x="130" y="372" width="355" height="52" rx="7" fill="#3A7CA5"/><text x="307" y="393" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">WASM Runtime</text><text x="307" y="411" text-anchor="middle" font-size="10" fill="#CCE4F5">WebAssembly · Studio-Generated Contracts</text></g>
   <g class="g-evm"><rect x="475" y="372" width="355" height="52" rx="7" fill="#3A7CA5"/><text x="652" y="393" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">EVM Runtime</text><text x="652" y="411" text-anchor="middle" font-size="10" fill="#CCE4F5">Ethereum Virtual Machine · Solidity Contracts</text></g>
   <g class="g-conn4">
-    <line x1="240" y1="424" x2="240" y2="454" stroke="#888" stroke-width="1.5" marker-end="url(#arch-arr)"/>
-    <line x1="720" y1="424" x2="720" y2="454" stroke="#888" stroke-width="1.5" marker-end="url(#arch-arr)"/>
+    <line x1="307" y1="424" x2="307" y2="440" stroke="#3A7CA5" stroke-width="1.5"/>
+    <line x1="652" y1="424" x2="652" y2="440" stroke="#3A7CA5" stroke-width="1.5"/>
+    <line x1="230" y1="440" x2="730" y2="440" stroke="#3A7CA5" stroke-width="1.5"/>
+    <line x1="230" y1="440" x2="230" y2="454" stroke="#3A7CA5" stroke-width="1.5" marker-end="url(#arch-arr)"/>
+    <line x1="730" y1="440" x2="730" y2="454" stroke="#3A7CA5" stroke-width="1.5" marker-end="url(#arch-arr)"/>
   </g>
   <g class="g-pub">
     <rect x="20" y="455" width="420" height="195" rx="9" fill="#EAF6FB" stroke="#489FB5" stroke-width="2"/>
