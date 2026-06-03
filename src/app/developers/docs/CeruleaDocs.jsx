@@ -955,9 +955,7 @@ function GlossarySection({ searchQuery }) {
 
 // ─── Sidebar ───────────────────────────────────────────────────────────────────
 
-function Sidebar({ activeSection, onNavigate, searchQuery, setSearchQuery }) {
-  const [collapsed, setCollapsed] = useState(false);
-
+function Sidebar({ activeSection, onNavigate, searchQuery, setSearchQuery, collapsed, onCollapse }) {
   return (
     <aside style={{
       position: "fixed", top: 64, left: 0,
@@ -976,7 +974,7 @@ function Sidebar({ activeSection, onNavigate, searchQuery, setSearchQuery }) {
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: "0.06em", textTransform: "uppercase", marginTop: 2 }}>Platform Documentation v1.0</div>
             </>}
           </div>
-          <button onClick={() => setCollapsed(!collapsed)} style={{
+          <button onClick={() => onCollapse(!collapsed)} style={{
             background: "rgba(255,255,255,0.08)", border: "none", color: "rgba(255,255,255,0.6)",
             width: 28, height: 28, borderRadius: 6, cursor: "pointer", fontSize: 12,
             display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0
@@ -1078,6 +1076,8 @@ export default function CeruleaDocs() {
         onNavigate={navigate}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        collapsed={sidebarCollapsed}
+        onCollapse={setSidebarCollapsed}
       />
 
       {/* Main content */}
@@ -1118,7 +1118,7 @@ export default function CeruleaDocs() {
               fontSize: 54, fontWeight: 700, color: "#fff", margin: "18px 0 12px",
               letterSpacing: "-0.03em", lineHeight: 1.05,
               fontFamily: "'DM Serif Display', Georgia, serif"
-            }}>Cerulea</h1>
+            }}>Cerulea Docs</h1>
             <p style={{ fontSize: 17, color: "rgba(255,255,255,0.7)", maxWidth: 500, lineHeight: 1.65, marginBottom: 36 }}>
               A fully no-code blockchain infrastructure platform. Build, deploy, and operate complete blockchain systems without writing a single line of code.
             </p>

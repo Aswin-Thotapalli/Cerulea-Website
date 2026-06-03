@@ -1365,7 +1365,7 @@ export default function CeruleaWhitepaper() {
               No-Code Blockchain Infrastructure Platform — Public L1 &amp; Private Chains.
             </p>
             <div style={{ display: "flex", gap: 28, fontSize: 13, color: "rgba(255,255,255,0.45)" }}>
-              {[["17", "Sections"], ["9", "Lifecycle Stages"], ["7", "Diagrams"]].map(([n, l]) => (
+              {[["17", "Sections"], ["9", "Lifecycle Stages"], ["8", "Diagrams"]].map(([n, l]) => (
                 <div key={l}>
                   <span style={{ fontSize: 20, fontWeight: 700, color: "rgba(255,255,255,0.85)", display: "block", fontFamily: "'DM Serif Display', serif" }}>{n}</span>
                   <span>{l}</span>
