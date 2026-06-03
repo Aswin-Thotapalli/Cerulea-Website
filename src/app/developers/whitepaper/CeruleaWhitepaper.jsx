@@ -1360,7 +1360,7 @@ export default function CeruleaWhitepaper() {
           <div style={{ background: "linear-gradient(135deg, #0f2544 0%, #1A3C6B 55%, #2563ab 100%)", borderRadius: 20, padding: "56px 52px", marginBottom: 72, position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: -80, right: -80, width: 320, height: 320, background: "radial-gradient(circle, rgba(96,165,250,0.12) 0%, transparent 70%)", borderRadius: "50%", pointerEvents: "none" }} />
             <Tag>Platform Whitepaper</Tag>
-            <h1 style={{ fontSize: 54, fontWeight: 700, color: "#fff", margin: "18px 0 12px", letterSpacing: "-0.03em", lineHeight: 1.05, fontFamily: "'DM Serif Display', Georgia, serif" }}>Cerulea</h1>
+            <h1 style={{ fontSize: 54, fontWeight: 700, color: "#fff", margin: "18px 0 12px", letterSpacing: "-0.03em", lineHeight: 1.05, fontFamily: "'DM Serif Display', Georgia, serif" }}>Cerulea Whitepaper</h1>
             <p style={{ fontSize: 17, color: "rgba(255,255,255,0.7)", maxWidth: 500, lineHeight: 1.65, marginBottom: 36 }}>
               No-Code Blockchain Infrastructure Platform — Public L1 &amp; Private Chains.
             </p>
