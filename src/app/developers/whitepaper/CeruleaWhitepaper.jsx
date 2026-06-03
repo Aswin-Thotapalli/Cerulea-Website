@@ -294,38 +294,38 @@ function LifecycleDiagramContent() {
   <g class="g-turn1">
     <line x1="728" y1="115" x2="786" y2="115" stroke="#489FB5" stroke-width="2"/>
     <line x1="786" y1="115" x2="786" y2="298" stroke="#489FB5" stroke-width="2"/>
-    <line x1="786" y1="298" x2="768" y2="298" stroke="#489FB5" stroke-width="2" marker-end="url(#lc-la)"/>
+    <line x1="786" y1="298" x2="728" y2="298" stroke="#489FB5" stroke-width="2" marker-end="url(#lc-la)"/>
   </g>
   <g class="g-s9">
     <rect x="602" y="262" width="126" height="74" rx="7" fill="#1B5E7B"/>
-    <text x="665" y="285" text-anchor="middle" font-size="9" fill="#AEDBE8">09</text>
-    <text x="665" y="302" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">RETIRE</text>
-    <text x="665" y="319" text-anchor="middle" font-size="9" fill="#AEDBE8">Governed decom-</text>
-    <text x="665" y="331" text-anchor="middle" font-size="9" fill="#AEDBE8">missioning</text>
+    <text x="665" y="285" text-anchor="middle" font-size="9" fill="#AEDBE8">06</text>
+    <text x="665" y="302" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">UPGRADE</text>
+    <text x="665" y="319" text-anchor="middle" font-size="9" fill="#AEDBE8">Rolling / Canary /</text>
+    <text x="665" y="331" text-anchor="middle" font-size="9" fill="#AEDBE8">Blue-Green</text>
     <line x1="602" y1="299" x2="584" y2="299" stroke="#1B5E7B" stroke-width="2" marker-end="url(#lc-la)"/>
   </g>
   <g class="g-s8">
     <rect x="456" y="262" width="126" height="74" rx="7" fill="#2E86AB"/>
-    <text x="519" y="285" text-anchor="middle" font-size="9" fill="#D0EEFA">08</text>
-    <text x="519" y="302" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">MONITOR</text>
-    <text x="519" y="319" text-anchor="middle" font-size="9" fill="#D0EEFA">Validators, txns,</text>
-    <text x="519" y="331" text-anchor="middle" font-size="9" fill="#D0EEFA">governance, infra</text>
+    <text x="519" y="285" text-anchor="middle" font-size="9" fill="#D0EEFA">07</text>
+    <text x="519" y="302" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">EXPAND</text>
+    <text x="519" y="319" text-anchor="middle" font-size="9" fill="#D0EEFA">Add validators,</text>
+    <text x="519" y="331" text-anchor="middle" font-size="9" fill="#D0EEFA">modules, bridges</text>
     <line x1="456" y1="299" x2="438" y2="299" stroke="#2E86AB" stroke-width="2" marker-end="url(#lc-la)"/>
   </g>
   <g class="g-s7">
     <rect x="310" y="262" width="126" height="74" rx="7" fill="#16697A"/>
-    <text x="373" y="285" text-anchor="middle" font-size="9" fill="#AADDE5">07</text>
-    <text x="373" y="302" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">EXPAND</text>
-    <text x="373" y="319" text-anchor="middle" font-size="9" fill="#AADDE5">Add validators,</text>
-    <text x="373" y="331" text-anchor="middle" font-size="9" fill="#AADDE5">modules, bridges</text>
+    <text x="373" y="285" text-anchor="middle" font-size="9" fill="#AADDE5">08</text>
+    <text x="373" y="302" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">MONITOR</text>
+    <text x="373" y="319" text-anchor="middle" font-size="9" fill="#AADDE5">Validators, txns,</text>
+    <text x="373" y="331" text-anchor="middle" font-size="9" fill="#AADDE5">governance, infra</text>
     <line x1="310" y1="299" x2="292" y2="299" stroke="#16697A" stroke-width="2" marker-end="url(#lc-la)"/>
   </g>
   <g class="g-s6">
     <rect x="164" y="262" width="126" height="74" rx="7" fill="#3A7CA5"/>
-    <text x="227" y="285" text-anchor="middle" font-size="9" fill="#CCE3F5">06</text>
-    <text x="227" y="302" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">UPGRADE</text>
-    <text x="227" y="319" text-anchor="middle" font-size="9" fill="#CCE3F5">Rolling / Canary /</text>
-    <text x="227" y="331" text-anchor="middle" font-size="9" fill="#CCE3F5">Blue-Green</text>
+    <text x="227" y="285" text-anchor="middle" font-size="9" fill="#CCE3F5">09</text>
+    <text x="227" y="302" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">RETIRE</text>
+    <text x="227" y="319" text-anchor="middle" font-size="9" fill="#CCE3F5">Governed decom-</text>
+    <text x="227" y="331" text-anchor="middle" font-size="9" fill="#CCE3F5">missioning</text>
   </g>
   <g class="g-turn2">
     <line x1="164" y1="299" x2="36" y2="299" stroke="#3A7CA5" stroke-width="2"/>
@@ -942,25 +942,10 @@ function ProblemSection() {
 }
 
 function SolutionSection() {
-  const [ref, visible] = useReveal(0.05);
   return (
     <section id="solution" style={{ marginBottom: 80 }}>
       <SectionHeader num="IV" title="The Cerulea Solution" />
       <P>Cerulea replaces the fragmented blockchain engineering process with a unified, no-code configuration framework. Architecture becomes structured. Infrastructure becomes intentional. Governance becomes explicit. Deployment becomes atomic.</P>
-      <div ref={ref} style={{ background: "linear-gradient(135deg, #EBF3FB 0%, #F0F7FF 100%)", border: "1px solid #BFDBF7", borderRadius: 14, padding: "22px 24px", margin: "24px 0", opacity: visible ? 1 : 0, transition: "opacity 0.6s ease" }}>
-        <div style={{ fontSize: 11, fontWeight: 700, color: "#2E75B6", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 16 }}>Build Lifecycle</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 0, alignItems: "center", justifyContent: "space-between" }}>
-          {["Create","Configure","Deploy","Operate","Govern","Upgrade","Expand","Monitor","Retire"].map((label, i) => (
-            <div key={label} style={{ display: "flex", alignItems: "center" }}>
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <div style={{ width: 38, height: 38, background: "#fff", border: "1.5px solid #BFDBF7", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, color: "#2E75B6", fontWeight: 700, boxShadow: "0 2px 8px rgba(46,117,182,0.1)" }}>{String(i+1).padStart(2,"0")}</div>
-                <span style={{ fontSize: 10, fontWeight: 600, color: "#2E75B6", letterSpacing: "0.04em" }}>{label}</span>
-              </div>
-              {i < 8 && <span style={{ color: "#93C5FD", fontSize: 16, margin: "0 4px", marginBottom: 14 }}>›</span>}
-            </div>
-          ))}
-        </div>
-      </div>
       <LifecycleDiagram />
       <Subsection title="What Cerulea Deploys">
         <P>When a deployment is triggered, Cerulea generates and provisions:</P>
