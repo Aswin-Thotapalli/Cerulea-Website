@@ -586,52 +586,52 @@ function DCFDiagramContent() {
     <text x="420" y="292" text-anchor="middle" font-size="9" fill="#AEDBE8">Coordination</text>
   </g>
   <g class="g-n1">
-    <line x1="420" y1="198" x2="420" y2="130" stroke="#2E86AB" stroke-width="1.5" stroke-dasharray="4,3"/>
-    <rect x="322" y="76" width="196" height="50" rx="7" fill="#2E86AB"/>
-    <text x="420" y="96" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Approved Validator Registry</text>
-    <text x="420" y="111" text-anchor="middle" font-size="9" fill="#D0EEFA">Only registered nodes may validate</text>
+    <line x1="420" y1="198" x2="420" y2="116" stroke="#2E86AB" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <rect x="328" y="66" width="184" height="50" rx="7" fill="#2E86AB"/>
+    <text x="420" y="86" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Approved Validator Registry</text>
+    <text x="420" y="101" text-anchor="middle" font-size="9" fill="#D0EEFA">Only registered nodes may validate</text>
   </g>
   <g class="g-n2">
-    <line x1="468" y1="218" x2="546" y2="170" stroke="#2E86AB" stroke-width="1.5" stroke-dasharray="4,3"/>
-    <rect x="540" y="120" width="185" height="50" rx="7" fill="#2E86AB"/>
-    <text x="632" y="140" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Identity-Verified Operators</text>
-    <text x="632" y="155" text-anchor="middle" font-size="9" fill="#D0EEFA">Companies, institutions, approved orgs</text>
+    <line x1="471" y1="219" x2="529" y2="161" stroke="#2E86AB" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <rect x="529" y="111" width="184" height="50" rx="7" fill="#2E86AB"/>
+    <text x="621" y="131" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Identity-Verified Operators</text>
+    <text x="621" y="146" text-anchor="middle" font-size="9" fill="#D0EEFA">Companies, institutions, approved orgs</text>
   </g>
   <g class="g-n3">
-    <line x1="486" y1="270" x2="558" y2="270" stroke="#16697A" stroke-width="1.5" stroke-dasharray="4,3"/>
-    <rect x="560" y="245" width="170" height="50" rx="7" fill="#16697A"/>
-    <text x="645" y="265" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Uptime + Performance</text>
-    <text x="645" y="280" text-anchor="middle" font-size="9" fill="#AADDE5">Thresholds, sync health, latency</text>
+    <line x1="492" y1="270" x2="574" y2="270" stroke="#16697A" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <rect x="574" y="245" width="184" height="50" rx="7" fill="#16697A"/>
+    <text x="666" y="265" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Uptime + Performance</text>
+    <text x="666" y="280" text-anchor="middle" font-size="9" fill="#AADDE5">Thresholds, sync health, latency</text>
   </g>
   <g class="g-n4">
-    <line x1="468" y1="322" x2="544" y2="370" stroke="#16697A" stroke-width="1.5" stroke-dasharray="4,3"/>
-    <rect x="544" y="368" width="192" height="50" rx="7" fill="#16697A"/>
-    <text x="640" y="388" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Reputation + Behaviour</text>
-    <text x="640" y="403" text-anchor="middle" font-size="9" fill="#AADDE5">Missed blocks, misbehaviour score</text>
+    <line x1="471" y1="321" x2="529" y2="379" stroke="#16697A" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <rect x="529" y="379" width="184" height="50" rx="7" fill="#16697A"/>
+    <text x="621" y="399" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Reputation + Behaviour</text>
+    <text x="621" y="414" text-anchor="middle" font-size="9" fill="#AADDE5">Missed blocks, misbehaviour score</text>
   </g>
   <g class="g-n5">
-    <line x1="420" y1="336" x2="420" y2="408" stroke="#3A7CA5" stroke-width="1.5" stroke-dasharray="4,3"/>
-    <rect x="320" y="408" width="200" height="50" rx="7" fill="#3A7CA5"/>
-    <text x="420" y="428" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Policy-Based Rotation</text>
-    <text x="420" y="443" text-anchor="middle" font-size="9" fill="#CCE3F5">Eligibility, fairness, availability</text>
+    <line x1="420" y1="342" x2="420" y2="424" stroke="#3A7CA5" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <rect x="328" y="424" width="184" height="50" rx="7" fill="#3A7CA5"/>
+    <text x="420" y="444" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Policy-Based Rotation</text>
+    <text x="420" y="459" text-anchor="middle" font-size="9" fill="#CCE3F5">Eligibility, fairness, availability</text>
   </g>
   <g class="g-n6">
-    <line x1="372" y1="322" x2="220" y2="393" stroke="#3A7CA5" stroke-width="1.5" stroke-dasharray="4,3"/>
-    <rect x="18" y="368" width="202" height="50" rx="7" fill="#3A7CA5"/>
-    <text x="119" y="388" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Governance-Permissioned</text>
-    <text x="119" y="403" text-anchor="middle" font-size="9" fill="#CCE3F5">Admission, suspension, reinstate</text>
+    <line x1="369" y1="321" x2="311" y2="379" stroke="#3A7CA5" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <rect x="127" y="379" width="184" height="50" rx="7" fill="#3A7CA5"/>
+    <text x="219" y="399" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Governance-Permissioned</text>
+    <text x="219" y="414" text-anchor="middle" font-size="9" fill="#CCE3F5">Admission, suspension, reinstate</text>
   </g>
   <g class="g-n7">
-    <line x1="354" y1="270" x2="188" y2="270" stroke="#489FB5" stroke-width="1.5" stroke-dasharray="4,3"/>
-    <rect x="18" y="245" width="170" height="50" rx="7" fill="#489FB5"/>
-    <text x="103" y="265" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Security Compliance</text>
-    <text x="103" y="280" text-anchor="middle" font-size="9" fill="#E0F5FA">Key mgmt, patched systems</text>
+    <line x1="348" y1="270" x2="266" y2="270" stroke="#489FB5" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <rect x="82" y="245" width="184" height="50" rx="7" fill="#489FB5"/>
+    <text x="174" y="265" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Security Compliance</text>
+    <text x="174" y="280" text-anchor="middle" font-size="9" fill="#E0F5FA">Key mgmt, patched systems</text>
   </g>
   <g class="g-n8">
-    <line x1="372" y1="218" x2="208" y2="145" stroke="#489FB5" stroke-width="1.5" stroke-dasharray="4,3"/>
-    <rect x="18" y="120" width="190" height="50" rx="7" fill="#489FB5"/>
-    <text x="113" y="140" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Infrastructure Requirements</text>
-    <text x="113" y="155" text-anchor="middle" font-size="9" fill="#E0F5FA">Hardware, network, node config</text>
+    <line x1="369" y1="219" x2="311" y2="161" stroke="#489FB5" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <rect x="127" y="111" width="184" height="50" rx="7" fill="#489FB5"/>
+    <text x="219" y="131" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">Infrastructure Requirements</text>
+    <text x="219" y="146" text-anchor="middle" font-size="9" fill="#E0F5FA">Hardware, network, node config</text>
   </g>
   <g class="g-note">
     <rect x="248" y="498" width="344" height="28" rx="7" fill="#16697A" fill-opacity=".15" stroke="#16697A" stroke-width="1"/>
