@@ -143,7 +143,7 @@ export default function AboutPage() {
                   <Box sx={{ borderTop: '1px solid #E2E8F0', pt: 4 }}>
                     <Typography sx={{ fontSize: '1.75rem', fontWeight: 800, color: '#172554', mb: 1 }}>Anirudh Thotapalli</Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                      <Typography sx={{ color: '#2563eb', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.85rem' }}>Co-Founder & Director of Operations</Typography>
+                      <Typography sx={{ color: '#2563eb', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '0.85rem' }}>Co-Founder & Director of Business Development</Typography>
                       <Typography sx={{ color: '#CBD5E1' }}>•</Typography>
                       <Typography sx={{ color: '#64748B', fontWeight: 600, fontSize: '0.85rem' }}>B.Com, PGCF</Typography>
                     </Box>
