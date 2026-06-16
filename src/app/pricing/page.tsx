@@ -10,6 +10,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Variants } from 'framer-motion';
 
 const fadeUp: Variants = {
@@ -27,93 +29,93 @@ const staggerContainer: Variants = {
 // ─────────────────────────────────────────────
 const TIERS = [
   {
-    id: 'sandbox',
-    name: 'Sandbox',
-    eyebrow: 'Free',
-    priceLine: 'Free',
-    periodLine: 'forever · no credit card',
-    description:
-      'Explore the full Cerulea platform on the testnet. Build, test, and validate your entire architecture with zero cost and zero commitment.',
-    buttonText: 'Start Building',
+    id: 'public-dapps',
+    name: 'Public Dapps',
+    priceLine: '$40',
+    periodLine: '/month',
+    description: 'Deploy your application to the Cerulea Public L1 with dedicated validator and RPC capacity from day one.',
+    buttonText: 'Get Started',
     buttonHref: 'https://studio.cerulea.io',
     highlight: false,
-    accent: '#059669',
-    badge: null,
-    footerNote: 'Testnet only — no mainnet or live deployments.',
+    accent: '#2563eb',
     features: [
-      'Full Cerulea Studio access',
+      '7 validators + 2 dedicated RPC nodes',
+      '100,000 transactions/month',
+      '30 GB storage',
+      'Deploy to Cerulea Public L1',
+      'Cerulea Studio access — Public Dapps',
       'Cerulea Intelligence (AI)',
-      'Testnet deployments (unlimited)',
-      'Dashboard (testnet view)',
-      'Community support',
+      'Standard dashboard & monitoring',
     ],
   },
   {
-    id: 'developer',
-    name: 'Developer',
-    eyebrow: null,
-    priceLine: null,
-    periodLine: 'usage-based',
-    description:
-      'For teams ready to go live. Deploy production applications to the Cerulea Public L1 and integrate with real-world systems.',
-    buttonText: 'Contact Sales',
-    buttonHref: '/company/contact-sales',
+    id: 'private-dapps',
+    name: 'Private Dapps',
+    priceLine: '$30',
+    periodLine: '/month',
+    description: 'Launch a sovereign, fully isolated private chain with dedicated validator infrastructure.',
+    buttonText: 'Get Started',
+    buttonHref: 'https://studio.cerulea.io',
     highlight: false,
-    accent: '#2563eb',
-    badge: null,
-    footerNote: null,
+    accent: '#7c3aed',
     features: [
-      'Everything in Sandbox',
-      'Public L1 mainnet deployments',
-      'Production RPC access',
-      'Standard telemetry dashboard',
-      'Email support',
+      '3 validators (tolerates 1 node failure)',
+      'Shared RPC access',
+      '50,000 transactions/month',
+      '15 GB storage',
+      'Sovereign, fully isolated private chain',
+      'Cerulea Studio access — Private Dapps',
+      'Cerulea Intelligence (AI)',
     ],
   },
   {
-    id: 'pro',
-    name: 'Pro',
-    eyebrow: null,
-    priceLine: null,
-    periodLine: 'usage-based',
-    description:
-      'For scaling applications. Dedicated infrastructure, higher limits, and hands-on architecture support from our engineering team.',
-    buttonText: 'Contact Sales',
-    buttonHref: '/company/contact-sales',
+    id: 'private-dapps-pro',
+    name: 'Private Dapps Pro',
+    priceLine: '$60',
+    periodLine: '/month',
+    description: 'Higher validator redundancy and a dedicated RPC node for growing private chain deployments.',
+    buttonText: 'Get Started',
+    buttonHref: 'https://studio.cerulea.io',
     highlight: true,
-    accent: '#2563eb',
-    badge: null,
-    footerNote: null,
+    accent: '#7c3aed',
     features: [
-      'Everything in Developer',
-      'Dedicated indexing nodes',
-      'Unlimited RPC requests',
-      'Advanced telemetry dashboard',
-      'Architecture consultations',
+      '6 validators (tolerates 2 node failures)',
+      '1 dedicated RPC node included',
+      '100,000 transactions/month',
+      '40 GB storage',
+      'Sovereign, fully isolated private chain',
+      'Cerulea Studio access — Private Dapps',
+      'Cerulea Intelligence (AI)',
     ],
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
-    eyebrow: null,
     priceLine: null,
-    periodLine: 'annual licensing',
-    description:
-      'For organisations deploying sovereign Private Chains with complete governance control, compliance requirements, and dedicated engineering support.',
-    buttonText: 'Contact Sales',
+    periodLine: 'Contact us',
+    description: 'For organisations needing custom architecture, compliance, and dedicated engineering support.',
+    buttonText: 'Contact Us',
     buttonHref: '/company/contact-sales',
     highlight: false,
-    accent: '#7c3aed',
-    badge: null,
-    footerNote: null,
+    accent: '#172554',
     features: [
-      'Sovereign Private Chain deployment',
-      'Bring your own cloud (AWS, GCP)',
+      'Custom validator count & architecture',
+      'Bring your own cloud (AWS, GCP, on-premise)',
       'Custom compliance & RBAC modules',
-      'Node architecture review',
-      '24/7 dedicated engineering SLA',
+      'Dedicated engineering SLA',
+      'Architecture review & support',
     ],
   },
+];
+
+// ─────────────────────────────────────────────
+// ADD-ON PREVIEW (full list lives on /pricing/addons)
+// ─────────────────────────────────────────────
+const ADDON_PREVIEW = [
+  { name: '+1 Validator', price: '$10/mo' },
+  { name: 'Dedicated RPC Node', price: '$12/mo' },
+  { name: 'Custom Domain', price: '$35 one-time' },
+  { name: 'Additional Studio Seat', price: '$10/mo' },
 ];
 
 // ─────────────────────────────────────────────
@@ -121,52 +123,63 @@ const TIERS = [
 // ─────────────────────────────────────────────
 const COMPARISON_DATA = [
   {
-    category: 'Infrastructure & Execution',
+    category: 'Infrastructure',
     rows: [
-      { feature: 'Deployment Model',        sandbox: 'Testnet Only',   dev: 'Public L1',          pro: 'Public L1',            ent: 'Private Chain' },
-      { feature: 'Infrastructure Hosting',  sandbox: 'Shared Testnet', dev: 'Network Validators', pro: 'Dedicated Nodes',      ent: 'Cloud / On-Premise' },
-      { feature: 'Live / Mainnet Deploy',   sandbox: false,            dev: true,                 pro: true,                   ent: true },
-      { feature: 'Staging & Testnets',      sandbox: true,             dev: true,                 pro: true,                   ent: true },
+      { feature: 'Validators',      pub: '7',                 priv: '3',         pro: '6',                ent: 'Custom' },
+      { feature: 'RPC Access',      pub: '2 dedicated nodes', priv: 'Shared',    pro: '1 dedicated node', ent: 'Custom' },
+      { feature: 'Transaction Cap', pub: '100,000/mo',        priv: '50,000/mo', pro: '100,000/mo',       ent: 'Custom' },
+      { feature: 'Storage',         pub: '30 GB',             priv: '15 GB',     pro: '40 GB',            ent: 'Custom' },
     ],
   },
   {
-    category: 'Cerulea Studio & Governance',
+    category: 'Deployment & Governance',
     rows: [
-      { feature: 'Visual Architecture Builder', sandbox: true,     dev: true,                 pro: true,              ent: true },
-      { feature: 'Cerulea Intelligence (AI)',    sandbox: true,     dev: true,                 pro: true,              ent: true },
-      { feature: 'Governance Model',            sandbox: 'Testnet', dev: 'Token-Weighted',     pro: 'Token-Weighted',  ent: 'Authority / Custom' },
-      { feature: 'Compliance Modules',          sandbox: false,     dev: false,                pro: false,             ent: true },
+      { feature: 'Deployment Model',          pub: 'Public L1',      priv: 'Private Chain',   pro: 'Private Chain', ent: 'Private Chain' },
+      { feature: 'Governance',                pub: 'Token-Weighted', priv: 'Authority-Based', pro: 'Authority-Based', ent: 'Authority / Custom' },
+      { feature: 'Studio Access',             pub: 'Public Dapps',   priv: 'Private Dapps',   pro: 'Private Dapps', ent: 'Private Dapps' },
+      { feature: 'Cerulea Intelligence (AI)', pub: true,             priv: true,              pro: true,            ent: true },
     ],
   },
   {
-    category: 'Support & Operations',
+    category: 'Support',
     rows: [
-      { feature: 'Telemetry Dashboard',   sandbox: 'Basic', dev: 'Standard', pro: 'Advanced', ent: 'Enterprise Logging' },
-      { feature: 'Architecture Review',   sandbox: false,   dev: false,       pro: false,       ent: true },
-      { feature: 'Support Channel',       sandbox: 'Community', dev: 'Email', pro: 'Priority Email', ent: 'Dedicated SLA' },
+      { feature: 'Dashboard',       pub: 'Standard', priv: 'Standard', pro: 'Standard',        ent: 'Enterprise Logging' },
+      { feature: 'Support Channel', pub: 'Email',     priv: 'Email',    pro: 'Priority Email', ent: 'Dedicated SLA' },
     ],
   },
-];
+] as const;
 
 // ─────────────────────────────────────────────
 // FAQs
 // ─────────────────────────────────────────────
 const FAQS = [
   {
-    q: 'What can I build on the free Sandbox tier?',
-    a: 'Everything. The Sandbox gives you full access to Cerulea Studio, Cerulea Intelligence, and the Dashboard — all on the testnet. You can design data models, configure governance rules, compile and deploy contracts, and simulate transactions. The only restriction is that deployments stay on the testnet; no mainnet or live-production traffic is allowed on the free tier.',
+    q: 'How quickly will my chain be provisioned?',
+    a: 'Your chain is provisioned within 24 hours of signup, often much faster. Once provisioning completes, validator and RPC infrastructure is live and your genesis configuration is ready inside Studio.',
   },
   {
-    q: 'How does pricing work for the paid tiers?',
-    a: 'Paid tiers are priced based on your usage — the environments you deploy to, transaction volumes, RPC bandwidth, and operational requirements. Because every team\'s footprint is different, we discuss pricing directly rather than publishing fixed numbers. Reach out via the Contact Sales form and we\'ll put together a clear proposal.',
+    q: 'What happens if I exceed my transaction cap?',
+    a: 'If you\'re on Private Dapps and exceed your transaction cap, you\'ll be upgraded to Private Dapps Pro. If you\'re already on Private Dapps Pro or Public Dapps and exceed your cap, our team will reach out to discuss custom Enterprise pricing.',
   },
   {
-    q: 'How does Private Chain (Enterprise) pricing work?',
-    a: 'Private Chain deployments are custom by nature. Pricing depends on the number of validator nodes, your hosting environment (AWS, GCP, or on-premise), compliance requirements, and SLA expectations. Since you host the infrastructure, Cerulea charges a software licensing and orchestration fee. Get in touch to discuss your specific setup.',
+    q: 'Can I add more validators, storage, or RPC capacity later?',
+    a: 'Yes. Additional validators, storage, and dedicated RPC nodes are available as add-ons on top of your existing tier. See the full Add-Ons page for pricing and availability.',
   },
   {
-    q: 'Can I upgrade from Sandbox to a paid tier later?',
-    a: 'Yes — your Studio projects and compiled schemas carry forward. When you\'re ready to deploy to mainnet, simply contact our sales team and we\'ll get you set up on the right plan without starting from scratch.',
+    q: 'Can I use my own domain or a branded block explorer?',
+    a: 'Yes, for private chain customers. A custom domain for your Dapp frontend and a dedicated branded block explorer are both available as add-ons.',
+  },
+  {
+    q: 'Can I add more Studio seats or API keys?',
+    a: 'Additional Studio seats are available on every tier. Additional API keys beyond the included limit are available to private chain customers.',
+  },
+  {
+    q: 'Can I upgrade from one tier to another?',
+    a: 'Yes. Your Studio projects and configuration carry forward when you upgrade, whether moving from Private Dapps to Private Dapps Pro or to a custom Enterprise plan.',
+  },
+  {
+    q: 'How does Enterprise pricing work?',
+    a: 'Enterprise deployments are custom by nature. Pricing depends on validator count, hosting environment (AWS, GCP, or on-premise), compliance requirements, and SLA expectations. Get in touch to discuss your specific setup.',
   },
 ];
 
@@ -178,29 +191,39 @@ export default function PricingPage() {
     <Box sx={{ bgcolor: '#FAFAFA', minHeight: '100vh', pb: 16 }}>
 
       {/* HERO */}
-      <Box sx={{ pt: { xs: 16, md: 24 }, pb: { xs: 12, md: 16 }, position: 'relative' }}>
+      <Box sx={{ pt: { xs: 16, md: 24 }, pb: { xs: 8, md: 10 }, position: 'relative' }}>
         <Box sx={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '80%', height: '500px', background: 'radial-gradient(ellipse at top, rgba(37,99,235,0.1), transparent 70%)', pointerEvents: 'none' }} />
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
           <motion.div initial="hidden" animate="visible" variants={fadeUp}>
             <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2, py: 1, borderRadius: 2, bgcolor: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', mb: 4 }}>
               <PaymentsOutlinedIcon sx={{ color: '#2563eb', fontSize: 20 }} />
               <Typography sx={{ color: '#2563eb', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.75rem' }}>
-                Transparent Licensing
+                Transparent Pricing
               </Typography>
             </Box>
             <Typography variant="h1" sx={{ fontWeight: 800, fontSize: { xs: '3rem', md: '4.5rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4, mx: 'auto', maxWidth: 900, color: '#172554' }}>
-              Start free.<br />
-              <span style={{ color: '#64748B' }}>Scale with confidence.</span>
+              Deploy public or private.<br />
+              <span style={{ color: '#64748B' }}>Pick the chain that fits.</span>
             </Typography>
-            <Typography sx={{ color: '#475569', fontSize: { xs: '1.1rem', md: '1.25rem' }, maxWidth: 680, lineHeight: 1.6, mb: 2, mx: 'auto' }}>
-              Build and experiment for free on the testnet. When you&rsquo;re ready to go live, our team will put together a plan that fits your exact requirements.
+            <Typography sx={{ color: '#475569', fontSize: { xs: '1.1rem', md: '1.25rem' }, maxWidth: 680, lineHeight: 1.6, mb: 5, mx: 'auto' }}>
+              Fixed monthly pricing for public and private chain deployments. Need something larger or fully custom? Our Enterprise team will build a plan around your requirements.
             </Typography>
+          </motion.div>
+
+          {/* Provisioning banner */}
+          <motion.div initial="hidden" animate="visible" variants={fadeUp}>
+            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2.5, py: 1.25, borderRadius: 10, bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', boxShadow: '0 4px 12px -4px rgba(0,0,0,0.06)' }}>
+              <AccessTimeOutlinedIcon sx={{ color: '#059669', fontSize: 20 }} />
+              <Typography sx={{ color: '#172554', fontWeight: 700, fontSize: '0.9rem' }}>
+                Chains provisioned within 24 hours of signup
+              </Typography>
+            </Box>
           </motion.div>
         </Container>
       </Box>
 
       {/* TIER CARDS */}
-      <Container maxWidth="lg" sx={{ mb: 20 }}>
+      <Container maxWidth="lg" sx={{ mb: 12 }}>
         <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
           <Box sx={{
             display: 'grid',
@@ -233,36 +256,22 @@ export default function PricingPage() {
                   {/* Top accent bar */}
                   <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, borderRadius: '4px 4px 0 0', bgcolor: tier.accent, opacity: tier.highlight ? 1 : 0.5 }} />
 
-                  {/* Badge */}
-                  {tier.badge && (
-                    <Box sx={{ position: 'absolute', top: 14, right: 16, bgcolor: 'rgba(37,99,235,0.1)', color: '#2563eb', px: 1.5, py: 0.5, borderRadius: 10, fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
-                      {tier.badge}
-                    </Box>
-                  )}
-
                   {/* Top section — grows to push CTA to a consistent level */}
                   <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
 
-                    {/* Eyebrow */}
-                    {tier.eyebrow && (
-                      <Typography sx={{ color: tier.accent, fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', mb: 1, mt: 1.5 }}>
-                        {tier.eyebrow}
-                      </Typography>
-                    )}
-
                     {/* Name */}
-                    <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#172554', mb: 2, letterSpacing: '-0.01em' }}>
+                    <Typography sx={{ fontSize: '1.4rem', fontWeight: 800, color: '#172554', mb: 2, mt: 1.5, letterSpacing: '-0.01em' }}>
                       {tier.name}
                     </Typography>
 
                     {/* Price */}
-                    <Box sx={{ mb: 1 }}>
+                    <Box sx={{ mb: 1, display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
                       {tier.priceLine && (
-                        <Typography sx={{ fontSize: tier.priceLine === 'Free' ? '2.2rem' : '1.35rem', fontWeight: 800, color: tier.priceLine === 'Free' ? '#059669' : '#172554', lineHeight: 1, letterSpacing: '-0.02em' }}>
+                        <Typography sx={{ fontSize: '2rem', fontWeight: 800, color: '#172554', lineHeight: 1, letterSpacing: '-0.02em' }}>
                           {tier.priceLine}
                         </Typography>
                       )}
-                      <Typography sx={{ fontSize: '0.8rem', color: '#94A3B8', fontWeight: 600, mt: tier.priceLine ? 0.5 : 0 }}>
+                      <Typography sx={{ fontSize: tier.priceLine ? '0.95rem' : '1.35rem', color: tier.priceLine ? '#94A3B8' : '#172554', fontWeight: tier.priceLine ? 600 : 800 }}>
                         {tier.periodLine}
                       </Typography>
                     </Box>
@@ -306,18 +315,47 @@ export default function PricingPage() {
                       </Box>
                     ))}
                   </Stack>
-
-                  {/* Footer note (Sandbox only) */}
-                  {tier.footerNote && (
-                    <Box sx={{ mt: 3, pt: 2.5, borderTop: '1px solid #F1F5F9' }}>
-                      <Typography sx={{ fontSize: '0.78rem', color: '#94A3B8', fontStyle: 'italic' }}>
-                        {tier.footerNote}
-                      </Typography>
-                    </Box>
-                  )}
                 </Box>
               </motion.div>
             ))}
+          </Box>
+        </motion.div>
+      </Container>
+
+      {/* ADD-ONS PREVIEW */}
+      <Container maxWidth="lg" sx={{ mb: 20 }}>
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }} variants={fadeUp}>
+          <Box sx={{ bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 4, p: { xs: 4, md: 6 }, boxShadow: '0 8px 24px -8px rgba(0,0,0,0.04)' }}>
+            <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: { xs: 'flex-start', md: 'center' }, justifyContent: 'space-between', gap: 3, mb: 4 }}>
+              <Box>
+                <Typography sx={{ fontSize: '1.5rem', fontWeight: 800, color: '#172554', mb: 1, letterSpacing: '-0.01em' }}>
+                  Extend any tier
+                </Typography>
+                <Typography sx={{ color: '#475569', fontSize: '0.95rem' }}>
+                  Add validators, storage, RPC capacity, branding, and more on top of any plan.
+                </Typography>
+              </Box>
+              <Link href="/pricing/addons" style={{ textDecoration: 'none', flexShrink: 0 }}>
+                <Button
+                  variant="contained"
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: '1rem !important' }} />}
+                  sx={{ py: 1.25, px: 3, fontSize: '0.9rem', fontWeight: 700, borderRadius: 2, bgcolor: '#172554', '&:hover': { bgcolor: '#0f1b3d' } }}
+                >
+                  View All Add-Ons
+                </Button>
+              </Link>
+            </Box>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }, gap: 2 }}>
+              {ADDON_PREVIEW.map((addon) => (
+                <Box key={addon.name} sx={{ p: 2.5, borderRadius: 3, bgcolor: '#F8FAFC', border: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <AddCircleOutlineIcon sx={{ color: '#2563eb', fontSize: 20, flexShrink: 0 }} />
+                  <Box>
+                    <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, color: '#172554', lineHeight: 1.3 }}>{addon.name}</Typography>
+                    <Typography sx={{ fontSize: '0.78rem', color: '#64748B', fontWeight: 600 }}>{addon.price}</Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
           </Box>
         </motion.div>
       </Container>
@@ -341,12 +379,12 @@ export default function PricingPage() {
               <Box sx={{ display: 'flex', bgcolor: '#F8FAFC', borderBottom: '2px solid #E2E8F0' }}>
                 <Box sx={{ width: '28%', p: 3 }} />
                 {[
-                  { label: 'Sandbox', color: '#059669' },
-                  { label: 'Developer', color: '#2563eb' },
-                  { label: 'Pro', color: '#2563eb', highlight: true },
-                  { label: 'Enterprise', color: '#7c3aed' },
-                ].map(({ label, color, highlight }, i) => (
-                  <Box key={label} sx={{ width: '18%', p: 3, textAlign: 'center', borderLeft: '1px solid #E2E8F0', bgcolor: highlight ? 'rgba(37,99,235,0.03)' : 'transparent' }}>
+                  { label: 'Public Dapps', color: '#2563eb' },
+                  { label: 'Private Dapps', color: '#7c3aed' },
+                  { label: 'Private Dapps Pro', color: '#7c3aed', highlight: true },
+                  { label: 'Enterprise', color: '#172554' },
+                ].map(({ label, color, highlight }) => (
+                  <Box key={label} sx={{ width: '18%', p: 3, textAlign: 'center', borderLeft: '1px solid #E2E8F0', bgcolor: highlight ? 'rgba(124,58,237,0.03)' : 'transparent' }}>
                     <Typography sx={{ fontWeight: 800, color: color, fontSize: '0.9rem' }}>{label}</Typography>
                   </Box>
                 ))}
@@ -365,15 +403,15 @@ export default function PricingPage() {
                       <Box sx={{ width: '28%', p: 3, display: 'flex', alignItems: 'center' }}>
                         <Typography sx={{ color: '#172554', fontWeight: 600, fontSize: '0.9rem' }}>{row.feature}</Typography>
                       </Box>
-                      {(['sandbox', 'dev', 'pro', 'ent'] as const).map((key, i) => (
-                        <Box key={key} sx={{ width: '18%', p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', borderLeft: '1px solid #F1F5F9', bgcolor: key === 'pro' ? 'rgba(37,99,235,0.015)' : 'transparent' }}>
-                          {typeof row[key] === 'boolean' ? (
-                            row[key]
-                              ? <CheckCircleOutlineIcon sx={{ color: key === 'sandbox' ? '#059669' : key === 'ent' ? '#7c3aed' : '#2563eb', fontSize: 22 }} />
+                      {(['pub', 'priv', 'pro', 'ent'] as const).map((key) => (
+                        <Box key={key} sx={{ width: '18%', p: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', borderLeft: '1px solid #F1F5F9', bgcolor: key === 'pro' ? 'rgba(124,58,237,0.015)' : 'transparent' }}>
+                          {typeof row[key as keyof typeof row] === 'boolean' ? (
+                            row[key as keyof typeof row]
+                              ? <CheckCircleOutlineIcon sx={{ color: key === 'pub' ? '#2563eb' : key === 'ent' ? '#172554' : '#7c3aed', fontSize: 22 }} />
                               : <RemoveIcon sx={{ color: '#CBD5E1' }} />
                           ) : (
-                            <Typography sx={{ color: key === 'pro' ? '#1d4ed8' : '#475569', fontSize: '0.85rem', textAlign: 'center', fontWeight: key === 'pro' ? 700 : 500 }}>
-                              {row[key] as string}
+                            <Typography sx={{ color: key === 'pro' ? '#6d28d9' : '#475569', fontSize: '0.85rem', textAlign: 'center', fontWeight: key === 'pro' ? 700 : 500 }}>
+                              {row[key as keyof typeof row] as string}
                             </Typography>
                           )}
                         </Box>
@@ -396,7 +434,7 @@ export default function PricingPage() {
               Frequently Asked Questions
             </Typography>
             <Typography sx={{ color: '#475569', fontSize: '1rem' }}>
-              Common questions about the Sandbox tier, paid plans, and private chain licensing.
+              Common questions about tiers, transaction caps, add-ons, and Enterprise licensing.
             </Typography>
           </Box>
 
