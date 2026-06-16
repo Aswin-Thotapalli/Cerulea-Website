@@ -16,7 +16,7 @@ const fadeUp: Variants = {
 type Addon = { name: string; price: string; availableTo: string };
 
 const INFRA_ADDONS: Addon[] = [
-  { name: '+1 validator', price: '$10/mo', availableTo: 'Private Dapps' },
+  { name: '+1 validator', price: '$10/mo', availableTo: 'Private Dapps Only' },
   { name: 'Additional validators (up to +3)', price: '$10/mo each', availableTo: 'Private Dapps Pro only' },
   { name: '+10 GB storage', price: '$3/mo', availableTo: 'Either private tier' },
   { name: 'Dedicated RPC node', price: '$12/mo', availableTo: 'Private Dapps only' },
@@ -75,24 +75,29 @@ export default function AddonsPage() {
         <Box sx={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '80%', height: '500px', background: 'radial-gradient(ellipse at top, rgba(37,99,235,0.1), transparent 70%)', pointerEvents: 'none' }} />
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
           <motion.div initial="hidden" animate="visible" variants={fadeUp}>
-            <Link href="/pricing" style={{ textDecoration: 'none' }}>
-              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, mb: 4, color: '#2563eb', fontSize: '0.85rem', fontWeight: 700 }}>
-                <ArrowBackIcon sx={{ fontSize: 16 }} />
-                Back to Pricing
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: 3, mb: 4 }}>
+              <Link href="/pricing" style={{ textDecoration: 'none' }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1, color: '#2563eb', fontSize: '0.85rem', fontWeight: 700 }}>
+                  <ArrowBackIcon sx={{ fontSize: 16 }} />
+                  Back to Pricing
+                </Box>
+              </Link>
+              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2, py: 1, borderRadius: 2, bgcolor: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)' }}>
+                <LayersOutlinedIcon sx={{ color: '#2563eb', fontSize: 20 }} />
+                <Typography sx={{ color: '#2563eb', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.75rem' }}>
+                  Add-Ons
+                </Typography>
               </Box>
-            </Link>
-            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2, py: 1, borderRadius: 2, bgcolor: 'rgba(37,99,235,0.1)', border: '1px solid rgba(37,99,235,0.2)', mb: 4 }}>
-              <LayersOutlinedIcon sx={{ color: '#2563eb', fontSize: 20 }} />
-              <Typography sx={{ color: '#2563eb', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.75rem' }}>
-                Add-Ons
-              </Typography>
             </Box>
             <Typography variant="h1" sx={{ fontWeight: 800, fontSize: { xs: '2.6rem', md: '3.75rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4, mx: 'auto', maxWidth: 800, color: '#172554' }}>
               Extend any tier,<br />
               <span style={{ color: '#64748B' }}>whenever you need to.</span>
             </Typography>
-            <Typography sx={{ color: '#475569', fontSize: { xs: '1.05rem', md: '1.2rem' }, maxWidth: 640, lineHeight: 1.6, mx: 'auto' }}>
+            <Typography sx={{ color: '#475569', fontSize: { xs: '1.05rem', md: '1.2rem' }, maxWidth: 640, lineHeight: 1.6, mx: 'auto', mb: 3 }}>
               Add validators, storage, RPC capacity, branding, and more on top of your existing plan at any time. No need to upgrade tiers for a single capability.
+            </Typography>
+            <Typography sx={{ color: '#64748B', fontSize: '0.9rem', maxWidth: 560, lineHeight: 1.6, mx: 'auto', fontStyle: 'italic' }}>
+              Add-ons can be selected when you choose your tier in Cerulea Studio, or added anytime afterward from your dashboard.
             </Typography>
           </motion.div>
         </Container>

@@ -331,8 +331,11 @@ export default function PricingPage() {
                 <Typography sx={{ fontSize: '1.5rem', fontWeight: 800, color: '#172554', mb: 1, letterSpacing: '-0.01em' }}>
                   Extend any tier
                 </Typography>
-                <Typography sx={{ color: '#475569', fontSize: '0.95rem' }}>
+                <Typography sx={{ color: '#475569', fontSize: '0.95rem', mb: 1 }}>
                   Add validators, storage, RPC capacity, branding, and more on top of any plan.
+                </Typography>
+                <Typography sx={{ color: '#94A3B8', fontSize: '0.82rem', fontStyle: 'italic' }}>
+                  Selected when choosing your tier in Cerulea Studio, or added anytime afterward from your dashboard.
                 </Typography>
               </Box>
               <Link href="/pricing/addons" style={{ textDecoration: 'none', flexShrink: 0 }}>
