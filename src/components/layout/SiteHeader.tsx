@@ -194,11 +194,11 @@ export default function SiteHeader() {
       }}
     >
       <Container>
-        <Toolbar disableGutters sx={{ height: 64, gap: 4 }}>
+        <Toolbar disableGutters sx={{ height: 72, gap: 4 }}>
           {/* Brand */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Link href={brand.homeUrl} style={{ textDecoration: 'none' }}>
-              <img src="/cerulea-logo.svg" alt="Cerulea" style={{ height: 52, width: 'auto', display: 'block' }} />
+              <img src="/cerulea-logo-navbar.svg" alt="Cerulea" style={{ height: 62, width: 'auto', display: 'block' }} />
             </Link>
           </Box>
 

@@ -102,7 +102,7 @@ export default function HomePage() {
     <Box sx={{ bgcolor: '#FAFAFA', minHeight: '100vh', color: '#172554', pb: 0, overflowX: 'hidden' }}>
       
       {/* 1. THE HERO SECTION */}
-      <Box sx={{ pt: { xs: 10, md: 12 }, pb: { xs: 10, md: 16 }, position: 'relative', overflow: 'hidden' }}>
+      <Box sx={{ pt: { xs: 6, md: 8 }, pb: { xs: 10, md: 16 }, position: 'relative', overflow: 'hidden' }}>
 
         <Box sx={{ position: 'absolute', top: '-20%', left: '50%', transform: 'translateX(-50%)', width: '100%', height: '1000px', background: 'radial-gradient(ellipse at top, rgba(37, 99, 235, 0.1), transparent 70%)', pointerEvents: 'none' }} />
 
@@ -331,7 +331,7 @@ export default function HomePage() {
         </Container>
       </Box>
 
-      {/* 5. WHERE IT IS APPLIED: Industry Matrix (Strict Side-by-Side CSS Grid) */}
+      {/* 5. INDUSTRY MATRIX */}
       <Box sx={{ bgcolor: '#F8FAFC', py: 20 }}>
         <Container maxWidth="lg">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={staggerContainer}>
@@ -495,7 +495,41 @@ export default function HomePage() {
         </Container>
       </Box>
 
-      {/* 6. EMPOWERED FINAL CTA */}
+      {/* 6. FEATURED ON BADGES */}
+      <Box sx={{ bgcolor: '#FFFFFF', py: 10, borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0' }}>
+        <Container maxWidth="lg">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={fadeUp}>
+            <Typography sx={{ textAlign: 'center', color: '#94A3B8', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', mb: 6 }}>
+              Featured On
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+
+              {/* Product Hunt card */}
+              <Box sx={{ border: '1px solid #E0E0E0', borderRadius: 3, p: 2.5, bgcolor: '#FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', maxWidth: 320, width: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+                  <Box component="img" src="https://ph-files.imgix.net/96cad058-4f0f-4501-982a-18a23908dc59.jpeg?auto=format&fit=crop&w=80&h=80" alt="Cerulea" sx={{ width: 52, height: 52, borderRadius: 2, objectFit: 'cover', flexShrink: 0 }} />
+                  <Box>
+                    <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1a1a1a', lineHeight: 1.3 }}>Cerulea</Typography>
+                    <Typography sx={{ fontSize: '0.82rem', color: '#666', mt: 0.5 }}>Blockchain for Good</Typography>
+                  </Box>
+                </Box>
+                <Box component="a" href="https://www.producthunt.com/products/cerulea?embed=true&utm_source=embed&utm_medium=post_embed" target="_blank" rel="noopener noreferrer"
+                  sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, mt: 1, px: 2, py: 1, bgcolor: '#FF6154', color: '#fff', textDecoration: 'none', borderRadius: 2, fontSize: '0.82rem', fontWeight: 700, '&:hover': { bgcolor: '#e5544a' } }}>
+                  Check it out on Product Hunt →
+                </Box>
+              </Box>
+
+              {/* Smol Launch badge */}
+              <Box component="a" href="https://smollaunch.com" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center' }}>
+                <Box component="img" src="https://smollaunch.com/badges/featured.svg" alt="Featured on Smol Launch" loading="lazy" sx={{ width: 250, height: 60 }} />
+              </Box>
+
+            </Box>
+          </motion.div>
+        </Container>
+      </Box>
+
+      {/* 7. EMPOWERED FINAL CTA */}
       <Box sx={{ bgcolor: '#172554', py: 20, position: 'relative', overflow: 'hidden' }}>
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 800, height: 800, background: 'radial-gradient(circle, rgba(37,99,235,0.2) 0%, transparent 60%)', borderRadius: '50%', pointerEvents: 'none' }} />
         
