@@ -99,13 +99,16 @@ function MenuItem({ item, onClose }: { item: MegaItem; onClose: () => void }) {
 
 // TIGHTENED MEGA PANEL LAYOUT WITH TWO-COLUMN SUPPORT
 function MegaPanel({ menu, onClose }: { menu: MegaMenu; onClose: () => void }) {
+  const isSolutions = menu.label === 'Solutions';
+
   return (
-    <Box 
-      sx={{ 
-        p: 2.5, 
-        display: 'flex', 
-        gap: 3, 
-        width: 'max-content', 
+    <Box
+      sx={{
+        p: 2.5,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 0,
+        width: 'max-content',
         maxWidth: 'calc(100vw - 32px)',
         maxHeight: 'calc(100vh - 100px)',
         overflowY: 'auto',
@@ -137,24 +140,6 @@ function MegaPanel({ menu, onClose }: { menu: MegaMenu; onClose: () => void }) {
                   <MenuItem key={item.label} item={item} onClose={onClose} />
                 ))}
               </Stack>
-              
-              {/* Dynamic View All Links for the Solutions columns */}
-              {section.title === 'BY INDUSTRY' && (
-                <Box sx={{ px: 1, mt: 2 }}>
-                  <Link href={getMainUrl('/solutions/industries')} onClick={onClose} style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#2563eb' }}>
-                    <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, '&:hover': { color: '#1d4ed8' } }}>View All Industries</Typography>
-                    <ArrowForwardIcon sx={{ fontSize: 16 }} />
-                  </Link>
-                </Box>
-              )}
-              {section.title === 'BY USE CASE' && (
-                <Box sx={{ px: 1, mt: 2 }}>
-                  <Link href={getMainUrl('/solutions/use-cases')} onClick={onClose} style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#2563eb' }}>
-                    <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, '&:hover': { color: '#1d4ed8' } }}>View All Use Cases</Typography>
-                    <ArrowForwardIcon sx={{ fontSize: 16 }} />
-                  </Link>
-                </Box>
-              )}
             </Box>
 
             {/* Vertical Divider Line between columns */}
@@ -164,6 +149,16 @@ function MegaPanel({ menu, onClose }: { menu: MegaMenu; onClose: () => void }) {
           </React.Fragment>
         ))}
       </Box>
+
+      {/* Footer link for Solutions menu */}
+      {isSolutions && (
+        <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #E2E8F0' }}>
+          <Link href={getMainUrl('/solutions/industries')} onClick={onClose} style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#2563eb' }}>
+            <Typography sx={{ fontSize: '0.85rem', fontWeight: 600, '&:hover': { color: '#1d4ed8' } }}>View All Industries</Typography>
+            <ArrowForwardIcon sx={{ fontSize: 16 }} />
+          </Link>
+        </Box>
+      )}
     </Box>
   );
 }
