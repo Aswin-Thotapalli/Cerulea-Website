@@ -123,9 +123,42 @@ export default function HomePage() {
             </motion.div>
             
             <motion.div variants={fadeUp}>
-              <Typography sx={{ color: '#475569', fontSize: { xs: '1.1rem', md: '1.35rem' }, maxWidth: 800, lineHeight: 1.6, mb: 6, mx: 'auto', fontWeight: 400 }}>
-                Stop hand-coding complex smart contracts. Visually design, deploy, and operate production-ready decentralized applications and sovereign private chains in minutes. <strong>Zero coding required.</strong>
-              </Typography>
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: { xs: 4, md: 3 }, mb: 8, maxWidth: 860, mx: 'auto' }}>
+                {[
+                  {
+                    Icon: LayersOutlinedIcon,
+                    label: 'Dapps',
+                    tagline: 'No smart contract developer needed. Ship production dapps on public or private chains in days.',
+                    color: '#2563eb',
+                  },
+                  {
+                    Icon: StorefrontOutlinedIcon,
+                    label: 'SME',
+                    tagline: 'Cut months of dev work to days. No-code infrastructure that lowers cost without lowering capability.',
+                    color: '#7c3aed',
+                  },
+                  {
+                    Icon: DomainOutlinedIcon,
+                    label: 'Enterprise',
+                    tagline: 'No-code does not mean low-power. Built to enterprise compliance and industry infrastructure standards.',
+                    color: '#0f766e',
+                  },
+                  {
+                    Icon: AccountBalanceOutlinedIcon,
+                    label: 'Government',
+                    tagline: 'Sovereign deployments with zero technical overhead. Purpose-built for regulatory mandates and public systems.',
+                    color: '#b45309',
+                  },
+                ].map((seg) => (
+                  <Box key={seg.label} sx={{ textAlign: 'center', px: 2, py: 3 }}>
+                    <Box sx={{ width: 52, height: 52, borderRadius: 3, bgcolor: `${seg.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
+                      <seg.Icon sx={{ fontSize: 26, color: seg.color }} />
+                    </Box>
+                    <Typography sx={{ fontWeight: 800, color: '#172554', fontSize: '0.95rem', mb: 1 }}>{seg.label}</Typography>
+                    <Typography sx={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.55 }}>{seg.tagline}</Typography>
+                  </Box>
+                ))}
+              </Box>
             </motion.div>
 
             <motion.div variants={fadeUp}>
