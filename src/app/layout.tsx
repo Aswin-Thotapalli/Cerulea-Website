@@ -19,6 +19,11 @@ import WebVitalsTracker from '@/components/analytics/WebVitalsTracker';
 export const metadata: Metadata = {
   title: 'Cerulea | Enterprise Blockchain Infrastructure',
   description: 'Scalable, secure, and regulatory-compliant blockchain infrastructure for enterprise and public sector.',
+  icons: {
+    icon: '/cerulea-logo.png',
+    shortcut: '/cerulea-logo.png',
+    apple: '/cerulea-logo.png',
+  },
 };
 
 const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID;

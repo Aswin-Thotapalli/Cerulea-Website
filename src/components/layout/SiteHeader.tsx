@@ -198,7 +198,7 @@ export default function SiteHeader() {
           {/* Brand */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Link href={brand.homeUrl} style={{ textDecoration: 'none' }}>
-              <img src="/cerulea-logo.svg" alt="Cerulea" style={{ height: 38, width: 'auto', display: 'block' }} />
+              <img src="/cerulea-logo.svg" alt="Cerulea" style={{ height: 52, width: 'auto', display: 'block' }} />
             </Link>
           </Box>
 

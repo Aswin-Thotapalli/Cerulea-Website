@@ -106,7 +106,7 @@ export default function HomePage() {
 
         <Box sx={{ position: 'absolute', top: '-20%', left: '50%', transform: 'translateX(-50%)', width: '100%', height: '1000px', background: 'radial-gradient(ellipse at top, rgba(37, 99, 235, 0.1), transparent 70%)', pointerEvents: 'none' }} />
 
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
           <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
 
             <motion.div variants={fadeUp}>
@@ -116,14 +116,14 @@ export default function HomePage() {
             </motion.div>
 
             <motion.div variants={fadeUp}>
-              <Typography variant="h1" sx={{ fontWeight: 800, fontSize: { xs: '3.5rem', sm: '5rem', md: '6.5rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4, maxWidth: 1100, color: '#172554' }}>
+              <Typography variant="h1" sx={{ fontWeight: 800, fontSize: { xs: '3.5rem', sm: '5rem', md: '6.5rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4, mx: 'auto', maxWidth: 1100, color: '#172554' }}>
                 The <span style={{ color: '#2563eb' }}>No-Code</span><br />
                 Blockchain Engine.
               </Typography>
             </motion.div>
 
             <motion.div variants={fadeUp}>
-              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: { xs: 4, md: 3 }, mb: 8, maxWidth: 860 }}>
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: { xs: 4, md: 3 }, mb: 8, maxWidth: 860, mx: 'auto' }}>
                 {[
                   {
                     Icon: LayersOutlinedIcon,
@@ -150,7 +150,7 @@ export default function HomePage() {
                     color: '#b45309',
                   },
                 ].map((seg) => (
-                  <Box key={seg.label} sx={{ px: 2, py: 3 }}>
+                  <Box key={seg.label} sx={{ px: 2, py: 3, textAlign: 'left' }}>
                     <Box sx={{ width: 52, height: 52, borderRadius: 3, bgcolor: `${seg.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
                       <seg.Icon sx={{ fontSize: 26, color: seg.color }} />
                     </Box>
@@ -162,7 +162,7 @@ export default function HomePage() {
             </motion.div>
 
             <motion.div variants={fadeUp}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="flex-start">
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
                 <Button 
                   href="/product/studio"
                   variant="contained" 
