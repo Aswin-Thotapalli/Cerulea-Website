@@ -505,7 +505,7 @@ export default function HomePage() {
 
               {/* Product Hunt badge */}
               <Box component="a" href="https://www.producthunt.com/products/cerulea?embed=true&utm_source=embed&utm_medium=post_embed" target="_blank" rel="noopener noreferrer"
-                sx={{ display: 'inline-flex', alignItems: 'center', gap: 2, px: 3, height: 60, border: '1px solid #E0E0E0', borderRadius: 2, bgcolor: '#fff', textDecoration: 'none', flexShrink: 0, transition: 'border-color 0.2s', '&:hover': { borderColor: '#FF6154' } }}>
+                sx={{ display: 'inline-flex', alignItems: 'center', gap: 2, px: 3, width: 240, height: 60, border: '1px solid #E0E0E0', borderRadius: 2, bgcolor: '#fff', textDecoration: 'none', flexShrink: 0, boxSizing: 'border-box', transition: 'border-color 0.2s', '&:hover': { borderColor: '#FF6154' } }}>
                 <Box sx={{ width: 36, height: 36, bgcolor: '#FF6154', borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: '1.1rem', lineHeight: 1 }}>P</Typography>
                 </Box>
@@ -516,8 +516,8 @@ export default function HomePage() {
               </Box>
 
               {/* Smol Launch badge */}
-              <Box component="a" href="https://smollaunch.com" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', height: 60 }}>
-                <Box component="img" src="https://smollaunch.com/badges/featured.svg" alt="Featured on Smol Launch" loading="lazy" sx={{ height: 60, width: 'auto' }} />
+              <Box component="a" href="https://smollaunch.com" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', width: 240, height: 60, flexShrink: 0 }}>
+                <Box component="img" src="https://smollaunch.com/badges/featured.svg" alt="Featured on Smol Launch" loading="lazy" sx={{ width: 240, height: 60 }} />
               </Box>
 
             </Box>
