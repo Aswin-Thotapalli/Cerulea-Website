@@ -102,28 +102,28 @@ export default function HomePage() {
     <Box sx={{ bgcolor: '#FAFAFA', minHeight: '100vh', color: '#172554', pb: 0, overflowX: 'hidden' }}>
       
       {/* 1. THE HERO SECTION */}
-      <Box sx={{ pt: { xs: 16, md: 24 }, pb: { xs: 10, md: 16 }, position: 'relative', overflow: 'hidden' }}>
-        
+      <Box sx={{ pt: { xs: 10, md: 12 }, pb: { xs: 10, md: 16 }, position: 'relative', overflow: 'hidden' }}>
+
         <Box sx={{ position: 'absolute', top: '-20%', left: '50%', transform: 'translateX(-50%)', width: '100%', height: '1000px', background: 'radial-gradient(ellipse at top, rgba(37, 99, 235, 0.1), transparent 70%)', pointerEvents: 'none' }} />
 
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
-            
+
             <motion.div variants={fadeUp}>
               <Typography sx={{ fontWeight: 900, fontSize: { xs: '3.5rem', md: '6.5rem' }, color: '#2563eb', letterSpacing: '0.2em', textTransform: 'uppercase', mb: 2 }}>
                 CERULEA
               </Typography>
             </motion.div>
-            
+
             <motion.div variants={fadeUp}>
-              <Typography variant="h1" sx={{ fontWeight: 800, fontSize: { xs: '3.5rem', sm: '5rem', md: '6.5rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4, mx: 'auto', maxWidth: 1100, color: '#172554' }}>
+              <Typography variant="h1" sx={{ fontWeight: 800, fontSize: { xs: '3.5rem', sm: '5rem', md: '6.5rem' }, lineHeight: 1.05, letterSpacing: '-0.03em', mb: 4, maxWidth: 1100, color: '#172554' }}>
                 The <span style={{ color: '#2563eb' }}>No-Code</span><br />
                 Blockchain Engine.
               </Typography>
             </motion.div>
-            
+
             <motion.div variants={fadeUp}>
-              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: { xs: 4, md: 3 }, mb: 8, maxWidth: 860, mx: 'auto' }}>
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: 'repeat(4, 1fr)' }, gap: { xs: 4, md: 3 }, mb: 8, maxWidth: 860 }}>
                 {[
                   {
                     Icon: LayersOutlinedIcon,
@@ -162,7 +162,7 @@ export default function HomePage() {
             </motion.div>
 
             <motion.div variants={fadeUp}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="flex-start">
                 <Button 
                   href="/product/studio"
                   variant="contained" 
