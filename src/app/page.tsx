@@ -128,13 +128,13 @@ export default function HomePage() {
                   {
                     Icon: LayersOutlinedIcon,
                     label: 'Dapps',
-                    tagline: 'No smart contract developer needed. No-code means anyone on your team can design and ship production dapps.',
+                    tagline: 'Your focus should be your application, not the infrastructure beneath it. No-code means production-grade blockchain without writing a single smart contract.',
                     color: '#2563eb',
                   },
                   {
                     Icon: StorefrontOutlinedIcon,
                     label: 'SME',
-                    tagline: 'No-code cuts the cost and complexity of blockchain adoption. Operate production infrastructure without a specialist team.',
+                    tagline: 'No-code removes the biggest barrier to blockchain adoption: the engineering cost. Get production-grade infrastructure without specialist hires.',
                     color: '#7c3aed',
                   },
                   {
@@ -146,7 +146,7 @@ export default function HomePage() {
                   {
                     Icon: AccountBalanceOutlinedIcon,
                     label: 'Government',
-                    tagline: 'No-code means no specialist engineering team required. Deploy sovereign, compliant blockchain infrastructure with your existing staff.',
+                    tagline: 'Compliance and sovereignty built in from day one. No-code means your existing IT team can deploy and operate audit-ready blockchain infrastructure.',
                     color: '#b45309',
                   },
                 ].map((seg) => (
