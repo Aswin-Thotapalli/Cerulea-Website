@@ -128,25 +128,25 @@ export default function HomePage() {
                   {
                     Icon: LayersOutlinedIcon,
                     label: 'Dapps',
-                    tagline: 'Your focus should be your application, not the infrastructure beneath it. No-code means production-grade blockchain without writing a single smart contract.',
+                    tagline: 'Your focus should be your application, not the infrastructure beneath it. No-code means production-grade blockchain without coding a single smart contract.',
                     color: '#2563eb',
                   },
                   {
                     Icon: StorefrontOutlinedIcon,
                     label: 'SME',
-                    tagline: 'No-code removes the biggest barrier to blockchain adoption: the engineering cost. Get production-grade infrastructure without specialist hires.',
+                    tagline: 'No-code removes the two biggest barriers to blockchain adoption: engineering cost and time. Get production-grade infrastructure without specialist hires.',
                     color: '#7c3aed',
                   },
                   {
                     Icon: DomainOutlinedIcon,
                     label: 'Enterprise',
-                    tagline: 'No-code does not mean low-power. Built to enterprise compliance and industry infrastructure standards.',
+                    tagline: 'No-code does not mean low-power. Cerulea is built to enterprise compliance and industry infrastructure standards.',
                     color: '#0f766e',
                   },
                   {
                     Icon: AccountBalanceOutlinedIcon,
                     label: 'Government',
-                    tagline: 'Compliance and sovereignty built in from day one. No-code means your existing IT team can deploy and operate audit-ready blockchain infrastructure.',
+                    tagline: 'Governments need sovereignty, audit trails, and long-term operational certainty. No-code means you configure all three without commissioning a custom blockchain build.',
                     color: '#b45309',
                   },
                 ].map((seg) => (
@@ -155,7 +155,7 @@ export default function HomePage() {
                       <seg.Icon sx={{ fontSize: 26, color: seg.color }} />
                     </Box>
                     <Typography sx={{ fontWeight: 800, color: '#172554', fontSize: '0.95rem', mb: 1 }}>{seg.label}</Typography>
-                    <Typography sx={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.55, textAlign: 'justify' }}>{seg.tagline}</Typography>
+                    <Typography sx={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.55 }}>{seg.tagline}</Typography>
                   </Box>
                 ))}
               </Box>
