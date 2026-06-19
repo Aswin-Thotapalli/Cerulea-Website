@@ -128,13 +128,13 @@ export default function HomePage() {
                   {
                     Icon: LayersOutlinedIcon,
                     label: 'Dapps',
-                    tagline: 'No smart contract developer needed. Ship production dapps on public or private chains in days.',
+                    tagline: 'No smart contract developer needed. No-code means anyone on your team can design and ship production dapps.',
                     color: '#2563eb',
                   },
                   {
                     Icon: StorefrontOutlinedIcon,
                     label: 'SME',
-                    tagline: 'Cut months of dev work to days. No-code infrastructure that lowers cost without lowering capability.',
+                    tagline: 'No-code cuts the cost and complexity of blockchain adoption. Operate production infrastructure without a specialist team.',
                     color: '#7c3aed',
                   },
                   {
@@ -146,16 +146,16 @@ export default function HomePage() {
                   {
                     Icon: AccountBalanceOutlinedIcon,
                     label: 'Government',
-                    tagline: 'Sovereign deployments with zero technical overhead. Purpose-built for regulatory mandates and public systems.',
+                    tagline: 'No-code means no specialist engineering team required. Deploy sovereign, compliant blockchain infrastructure with your existing staff.',
                     color: '#b45309',
                   },
                 ].map((seg) => (
-                  <Box key={seg.label} sx={{ textAlign: 'center', px: 2, py: 3 }}>
-                    <Box sx={{ width: 52, height: 52, borderRadius: 3, bgcolor: `${seg.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 2 }}>
+                  <Box key={seg.label} sx={{ px: 2, py: 3 }}>
+                    <Box sx={{ width: 52, height: 52, borderRadius: 3, bgcolor: `${seg.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
                       <seg.Icon sx={{ fontSize: 26, color: seg.color }} />
                     </Box>
                     <Typography sx={{ fontWeight: 800, color: '#172554', fontSize: '0.95rem', mb: 1 }}>{seg.label}</Typography>
-                    <Typography sx={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.55 }}>{seg.tagline}</Typography>
+                    <Typography sx={{ color: '#64748B', fontSize: '0.82rem', lineHeight: 1.55, textAlign: 'justify' }}>{seg.tagline}</Typography>
                   </Box>
                 ))}
               </Box>
