@@ -126,23 +126,37 @@ export const headerNav: Array<
       label: 'Solutions',
       sections: [
         {
-          title: 'BY INDUSTRY',
-          items: [
-            { label: 'Financial Services', href: getMainUrl('/solutions/industries/financial-services'), description: 'Institutional DeFi and interbank clearing.' },
-            { label: 'Supply Chain & Logistics', href: getMainUrl('/solutions/industries/supply-chain'), description: 'Tamper-proof transit and customs tracking.' },
-            { label: 'Government & Public Sector', href: getMainUrl('/solutions/industries/government'), description: 'Sovereign citizen identity and registries.' },
-            { label: 'Healthcare & Life Sciences', href: getMainUrl('/solutions/industries/healthcare'), description: 'HIPAA compliant patient record networks.' },
-            { label: 'Energy & Utilities', href: getMainUrl('/solutions/industries/energy'), description: 'Carbon offset tracking and grid telemetry.' },
-          ],
-        },
-        {
-          title: 'BY USE CASE',
+          title: 'DAPPS',
           items: [
             { label: 'Tokenized Assets (RWA)', href: getMainUrl('/solutions/use-cases/tokenized-assets'), description: 'Digitize physical assets and real estate.' },
             { label: 'Decentralized Identity', href: getMainUrl('/solutions/use-cases/decentralized-identity'), description: 'Zero-trust Web2 to Web3 authentication.' },
-            { label: 'Cross-Border Settlements', href: getMainUrl('/solutions/use-cases/cross-border-settlements'), description: 'Bypass SWIFT for instant global payments.' },
-            { label: 'Compliance & Audit', href: getMainUrl('/solutions/use-cases/compliance-audit'), description: 'Automated SOC2 and GDPR pruning.' },
             { label: 'IoT & DePIN', href: getMainUrl('/solutions/use-cases/iot-depin'), description: 'Secure machine-to-machine data layers.' },
+          ],
+        },
+        {
+          title: 'SME',
+          items: [
+            { label: 'Supply Chain & Logistics', href: getMainUrl('/solutions/industries/supply-chain'), description: 'Tamper-proof transit and customs tracking.' },
+            { label: 'Healthcare & Life Sciences', href: getMainUrl('/solutions/industries/healthcare'), description: 'HIPAA compliant patient record networks.' },
+            { label: 'Energy & Utilities', href: getMainUrl('/solutions/industries/energy'), description: 'Carbon offset tracking and grid telemetry.' },
+            { label: 'Compliance & Audit', href: getMainUrl('/solutions/use-cases/compliance-audit'), description: 'Automated SOC2 and GDPR pruning.' },
+          ],
+        },
+        {
+          title: 'ENTERPRISE',
+          items: [
+            { label: 'Financial Services', href: getMainUrl('/solutions/industries/financial-services'), description: 'Institutional DeFi and interbank clearing.' },
+            { label: 'Cross-Border Settlements', href: getMainUrl('/solutions/use-cases/cross-border-settlements'), description: 'Bypass SWIFT for instant global payments.' },
+            { label: 'Tokenized Assets (RWA)', href: getMainUrl('/solutions/use-cases/tokenized-assets'), description: 'Digitize physical assets and real estate.' },
+            { label: 'Compliance & Audit', href: getMainUrl('/solutions/use-cases/compliance-audit'), description: 'Automated SOC2 and GDPR pruning.' },
+          ],
+        },
+        {
+          title: 'GOVERNMENT',
+          items: [
+            { label: 'Government & Public Sector', href: getMainUrl('/solutions/industries/government'), description: 'Sovereign citizen identity and registries.' },
+            { label: 'Decentralized Identity', href: getMainUrl('/solutions/use-cases/decentralized-identity'), description: 'Zero-trust Web2 to Web3 authentication.' },
+            { label: 'Compliance & Audit', href: getMainUrl('/solutions/use-cases/compliance-audit'), description: 'Automated SOC2 and GDPR pruning.' },
           ],
         },
       ],
