@@ -10,7 +10,6 @@ import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalance
 import DomainOutlinedIcon from '@mui/icons-material/DomainOutlined';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
-import SecurityOutlinedIcon from '@mui/icons-material/SecurityOutlined';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
 import MonitorHeartOutlinedIcon from '@mui/icons-material/MonitorHeartOutlined';
 import RouterOutlinedIcon from '@mui/icons-material/RouterOutlined';
@@ -496,83 +495,32 @@ export default function HomePage() {
       </Box>
 
       {/* 6. FEATURED ON BADGES */}
-      <Box sx={{ bgcolor: '#FFFFFF', py: 10, borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0' }}>
+      <Box sx={{ bgcolor: '#FFFFFF', py: 5, borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0' }}>
         <Container maxWidth="lg">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} variants={fadeUp}>
-            <Typography sx={{ textAlign: 'center', color: '#94A3B8', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', mb: 6 }}>
+            <Typography sx={{ textAlign: 'center', color: '#94A3B8', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', mb: 4 }}>
               Featured On
             </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
 
-              {/* Product Hunt card */}
-              <Box sx={{ border: '1px solid #E0E0E0', borderRadius: 3, p: 2.5, bgcolor: '#FFFFFF', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', maxWidth: 320, width: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
-                  <Box component="img" src="https://ph-files.imgix.net/96cad058-4f0f-4501-982a-18a23908dc59.jpeg?auto=format&fit=crop&w=80&h=80" alt="Cerulea" sx={{ width: 52, height: 52, borderRadius: 2, objectFit: 'cover', flexShrink: 0 }} />
-                  <Box>
-                    <Typography sx={{ fontWeight: 700, fontSize: '1rem', color: '#1a1a1a', lineHeight: 1.3 }}>Cerulea</Typography>
-                    <Typography sx={{ fontSize: '0.82rem', color: '#666', mt: 0.5 }}>Blockchain for Good</Typography>
-                  </Box>
+              {/* Product Hunt badge */}
+              <Box component="a" href="https://www.producthunt.com/products/cerulea?embed=true&utm_source=embed&utm_medium=post_embed" target="_blank" rel="noopener noreferrer"
+                sx={{ display: 'inline-flex', alignItems: 'center', gap: 2, px: 3, height: 60, border: '1px solid #E0E0E0', borderRadius: 2, bgcolor: '#fff', textDecoration: 'none', flexShrink: 0, transition: 'border-color 0.2s', '&:hover': { borderColor: '#FF6154' } }}>
+                <Box sx={{ width: 36, height: 36, bgcolor: '#FF6154', borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: '1.1rem', lineHeight: 1 }}>P</Typography>
                 </Box>
-                <Box component="a" href="https://www.producthunt.com/products/cerulea?embed=true&utm_source=embed&utm_medium=post_embed" target="_blank" rel="noopener noreferrer"
-                  sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, mt: 1, px: 2, py: 1, bgcolor: '#FF6154', color: '#fff', textDecoration: 'none', borderRadius: 2, fontSize: '0.82rem', fontWeight: 700, '&:hover': { bgcolor: '#e5544a' } }}>
-                  Check it out on Product Hunt →
+                <Box>
+                  <Typography sx={{ fontSize: '0.6rem', color: '#888', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', lineHeight: 1 }}>Featured on</Typography>
+                  <Typography sx={{ fontSize: '0.9rem', color: '#1a1a1a', fontWeight: 700, lineHeight: 1.3, mt: 0.3 }}>Product Hunt</Typography>
                 </Box>
               </Box>
 
               {/* Smol Launch badge */}
-              <Box component="a" href="https://smollaunch.com" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center' }}>
-                <Box component="img" src="https://smollaunch.com/badges/featured.svg" alt="Featured on Smol Launch" loading="lazy" sx={{ width: 250, height: 60 }} />
+              <Box component="a" href="https://smollaunch.com" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', height: 60 }}>
+                <Box component="img" src="https://smollaunch.com/badges/featured.svg" alt="Featured on Smol Launch" loading="lazy" sx={{ height: 60, width: 'auto' }} />
               </Box>
 
             </Box>
-          </motion.div>
-        </Container>
-      </Box>
-
-      {/* 7. EMPOWERED FINAL CTA */}
-      <Box sx={{ bgcolor: '#172554', py: 20, position: 'relative', overflow: 'hidden' }}>
-        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 800, height: 800, background: 'radial-gradient(circle, rgba(37,99,235,0.2) 0%, transparent 60%)', borderRadius: '50%', pointerEvents: 'none' }} />
-        
-        <Container maxWidth="md" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
-            <Box sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 64, height: 64, borderRadius: 4, bgcolor: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.2)', mb: 4 }}>
-              <SecurityOutlinedIcon sx={{ fontSize: 32, color: '#60A5FA' }} />
-            </Box>
-            
-            <Typography variant="h2" sx={{ fontSize: { xs: '2.5rem', md: '3.5rem' }, fontWeight: 800, mb: 3, letterSpacing: '-0.02em', color: '#FFFFFF' }}>
-              Stop hand-coding your blockchain logic.
-            </Typography>
-            
-            <Typography sx={{ color: '#94A3B8', fontSize: '1.15rem', mb: 6, lineHeight: 1.6, maxWidth: 650, mx: 'auto' }}>
-              Open Cerulea Studio to visually configure and deploy your complete blockchain architecture today. No specialized developers required.
-            </Typography>
-            
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
-              <Button 
-                href="/product/studio"
-                variant="contained" 
-                size="large"
-                sx={{ 
-                  bgcolor: '#2563eb', color: '#ffffff', px: 5, py: 2, fontSize: '1.05rem', fontWeight: 700, borderRadius: 2,
-                  '&:hover': { bgcolor: '#1d4ed8', transform: 'translateY(-2px)' },
-                  transition: 'all 0.2s',
-                  boxShadow: '0 8px 20px -6px rgba(37, 99, 235, 0.4)'
-                }}
-              >
-                Start Building Now
-              </Button>
-              <Button 
-                href="/company/contact"
-                variant="outlined" 
-                size="large"
-                sx={{ 
-                  borderColor: 'rgba(255,255,255,0.2)', color: '#FFFFFF', px: 5, py: 2, fontSize: '1.05rem', fontWeight: 700, borderRadius: 2,
-                  '&:hover': { borderColor: '#FFFFFF', bgcolor: 'rgba(255,255,255,0.05)' }
-                }}
-              >
-                Contact Sales
-              </Button>
-            </Stack>
           </motion.div>
         </Container>
       </Box>
