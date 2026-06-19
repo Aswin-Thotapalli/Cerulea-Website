@@ -198,20 +198,7 @@ export default function SiteHeader() {
           {/* Brand */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Link href={brand.homeUrl} style={{ textDecoration: 'none' }}>
-              <Stack direction="row" spacing={1.5} alignItems="center">
-                <Box
-                  sx={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: 1,
-                    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                    boxShadow: '0 0 16px rgba(59, 130, 246, 0.4)',
-                  }}
-                />
-                <Typography sx={{ fontWeight: 800, color: '#0A192F', letterSpacing: '-0.02em', fontSize: '1.15rem' }}>
-                  Cerulea
-                </Typography>
-              </Stack>
+              <img src="/cerulea-logo.svg" alt="Cerulea" style={{ height: 38, width: 'auto', display: 'block' }} />
             </Link>
           </Box>
 
