@@ -738,6 +738,7 @@ export default function AgricultureSolutionPage() {
         </Container>
       </Box>
 
+
     </Box>
   );
 }
