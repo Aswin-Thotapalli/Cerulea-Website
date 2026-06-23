@@ -117,7 +117,7 @@ const WHY = [
   'Prove cold chain integrity with IoT-backed temperature logs on-chain',
   'Consolidate every actor on one platform instead of WhatsApp threads and email chains',
   'APEDA, NPPO, customs, and phytosanitary workflows built in from day one',
-  'White-label ready with your branding, your domain, your platform powered by Cerulea Studio',
+  'White-label ready with your branding, your domain, your platform powered by Cerulea',
 ];
 
 export default function AgroTraceShowcasePage() {
@@ -133,12 +133,12 @@ export default function AgroTraceShowcasePage() {
           <motion.div initial="hidden" animate="visible" variants={stagger}>
 
             <motion.div variants={fadeUp}>
-              <Stack direction="row" spacing={1.5} justifyContent="center" alignItems="center" mb={4}>
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2, py: 1, borderRadius: 2, bgcolor: `${ACCENT}15`, border: `1px solid ${ACCENT}30` }}>
-                  <AgricultureOutlinedIcon sx={{ color: ACCENT, fontSize: 18 }} />
-                  <Typography sx={{ color: ACCENT, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.72rem' }}>Built on Cerulea</Typography>
+              <Stack direction="column" spacing={1.5} justifyContent="center" alignItems="center" mb={5}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 2, px: 3, py: 1.5, borderRadius: 2.5, bgcolor: `${ACCENT}18`, border: `2px solid ${ACCENT}50`, boxShadow: `0 0 24px ${ACCENT}20` }}>
+                  <AgricultureOutlinedIcon sx={{ color: ACCENT, fontSize: 22 }} />
+                  <Typography sx={{ color: ACCENT, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', fontSize: '0.85rem' }}>Built on Cerulea</Typography>
                 </Box>
-                <Chip label="Agriculture and Food Tech" size="small" sx={{ bgcolor: '#f0fdf4', color: ACCENT, fontWeight: 600, fontSize: '0.72rem', border: `1px solid ${ACCENT}20` }} />
+                <Chip label="Agriculture and Food Tech" size="small" sx={{ bgcolor: '#f0fdf4', color: ACCENT, fontWeight: 600, fontSize: '0.75rem', border: `1px solid ${ACCENT}20` }} />
               </Stack>
             </motion.div>
 
@@ -180,20 +180,6 @@ export default function AgroTraceShowcasePage() {
             </motion.div>
 
           </motion.div>
-        </Container>
-      </Box>
-
-      {/* LIVE STATS STRIP */}
-      <Box sx={{ bgcolor: '#172554', py: 6 }}>
-        <Container maxWidth="lg">
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(3, 1fr)', md: 'repeat(6, 1fr)' }, gap: 4, textAlign: 'center' }}>
-            {LIVE_STATS.map((stat) => (
-              <Box key={stat.label}>
-                <Typography sx={{ color: '#4ade80', fontWeight: 800, fontSize: { xs: '1.75rem', md: '2.25rem' }, letterSpacing: '-0.02em', lineHeight: 1 }}>{stat.value}</Typography>
-                <Typography sx={{ color: '#94A3B8', fontSize: '0.78rem', mt: 0.75, fontWeight: 500, lineHeight: 1.4 }}>{stat.label}</Typography>
-              </Box>
-            ))}
-          </Box>
         </Container>
       </Box>
 
@@ -466,10 +452,10 @@ export default function AgroTraceShowcasePage() {
             <motion.div variants={fadeUp}>
               <Typography sx={{ color: '#4ade80', fontWeight: 700, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', mb: 3 }}>About AgroTrace</Typography>
               <Typography variant="h2" sx={{ color: '#fff', fontSize: { xs: '1.75rem', md: '2.5rem' }, fontWeight: 800, letterSpacing: '-0.02em', mb: 4 }}>
-                A Caerulean Bytechains product, built on Cerulea Studio.
+                A Caerulean Bytechains product, built on Cerulea.
               </Typography>
               <Typography sx={{ color: '#94A3B8', fontSize: '1.05rem', lineHeight: 1.8, maxWidth: 660, mx: 'auto', mb: 6 }}>
-                AgroTrace is a showcase platform built by Caerulean Bytechains to demonstrate the Cerulea Studio capability stack. Adopter organisations take full ownership and run it independently under their own branding, domain, and configuration.
+                AgroTrace is a showcase platform built by Caerulean Bytechains to demonstrate the Cerulea capability stack. Adopter organisations take full ownership and run it independently under their own branding, domain, and configuration.
               </Typography>
             </motion.div>
             <motion.div variants={fadeUp}>
