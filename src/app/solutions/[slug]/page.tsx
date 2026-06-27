@@ -34,7 +34,7 @@ export default function SolutionDetailPage({ params }: { params: { slug: string 
               <Stack spacing={1}>
                 {s.whoItsFor.map((x) => (
                   <Typography key={x} sx={{ color: 'text.secondary', lineHeight: 1.8 }}>
-                    • {x}
+                    {'•'} {x}
                   </Typography>
                 ))}
               </Stack>
@@ -47,7 +47,7 @@ export default function SolutionDetailPage({ params }: { params: { slug: string 
               <Stack spacing={1}>
                 {s.outcomes.map((x) => (
                   <Typography key={x} sx={{ color: 'text.secondary', lineHeight: 1.8 }}>
-                    • {x}
+                    {'•'} {x}
                   </Typography>
                 ))}
               </Stack>
@@ -60,7 +60,7 @@ export default function SolutionDetailPage({ params }: { params: { slug: string 
               <Stack spacing={1}>
                 {s.painPoints.map((x) => (
                   <Typography key={x} sx={{ color: 'text.secondary', lineHeight: 1.8 }}>
-                    • {x}
+                    {'•'} {x}
                   </Typography>
                 ))}
               </Stack>
@@ -82,11 +82,11 @@ export default function SolutionDetailPage({ params }: { params: { slug: string 
         </Section>
 
         <Paper variant="outlined" sx={{ p: 3, mt: 4 }}>
-          <Stack direction={{ xs: ‘column’, md: ‘row’ }} spacing={1.5} alignItems={{ md: ‘center’ }} justifyContent="space-between">
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5} alignItems={{ md: 'center' }} justifyContent="space-between">
             <Box>
               <Typography sx={{ fontWeight: 950 }}>Talk to us</Typography>
-              <Typography sx={{ color: ‘text.secondary’ }}>
-                Tell us what you want to deploy (public app, private chain, or hybrid) and we’ll map the fastest path.
+              <Typography sx={{ color: 'text.secondary' }}>
+                Tell us what you want to deploy (public app, private chain, or hybrid) and we will map the fastest path.
               </Typography>
             </Box>
             <SolutionCTA href={s.cta.href} label={s.cta.label} slug={s.slug} title={s.title} />
