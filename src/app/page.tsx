@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Box, Container, Typography, Stack, Button, Divider } from '@mui/material';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { track } from '@/lib/track';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import SpeedOutlinedIcon from '@mui/icons-material/SpeedOutlined';
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
@@ -162,11 +163,12 @@ export default function HomePage() {
 
             <motion.div variants={fadeUp}>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} justifyContent="center">
-                <Button 
+                <Button
                   href="/product/studio"
-                  variant="contained" 
+                  variant="contained"
                   size="large"
-                  sx={{ 
+                  onClick={() => track.ctaClick('Launch Cerulea Studio', '/product/studio', 'hero')}
+                  sx={{
                     bgcolor: '#2563eb', color: '#ffffff', px: 5, py: 2, fontSize: '1.05rem', fontWeight: 700, borderRadius: 2,
                     '&:hover': { bgcolor: '#1d4ed8', transform: 'translateY(-2px)' },
                     transition: 'all 0.2s',
@@ -175,11 +177,12 @@ export default function HomePage() {
                 >
                   Launch Cerulea Studio
                 </Button>
-                <Button 
+                <Button
                   href="/developers/docs"
-                  variant="outlined" 
+                  variant="outlined"
                   size="large"
-                  sx={{ 
+                  onClick={() => track.ctaClick('Read the Docs', '/developers/docs', 'hero')}
+                  sx={{
                     borderColor: '#CBD5E1', color: '#172554', px: 5, py: 2, fontSize: '1.05rem', fontWeight: 700, borderRadius: 2, bgcolor: '#FFFFFF',
                     '&:hover': { borderColor: '#172554', bgcolor: '#F8FAFC' }
                   }}

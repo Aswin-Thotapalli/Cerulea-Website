@@ -17,6 +17,7 @@ import {
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { headerNav, MegaMenu, MegaItem, brand, getMainUrl } from '@/content/siteContent';
+import { track } from '@/lib/track';
 
 type OpenState = {
   anchorEl: HTMLElement | null;
@@ -26,7 +27,7 @@ type OpenState = {
 // COMPACT PREMIUM MENU ITEM
 function MenuItem({ item, onClose }: { item: MegaItem; onClose: () => void }) {
   return (
-    <Link href={item.href} onClick={onClose} style={{ textDecoration: 'none' }}>
+    <Link href={item.href} onClick={() => { onClose(); track.navClick(item.label, item.href); }} style={{ textDecoration: 'none' }}>
       <Box
         sx={{
           display: 'flex',
@@ -202,7 +203,7 @@ export default function SiteHeader() {
             {headerNav.map((item) => {
               if (item.type === 'link') {
                 return (
-                  <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'flex' }}>
+                  <Link key={item.href} href={item.href} style={{ textDecoration: 'none', display: 'flex' }} onClick={() => track.navClick(item.label, item.href)}>
                     <Button sx={{ color: '#475569', fontSize: '0.85rem', fontWeight: 600, minWidth: 'auto', px: 1.5, '&:hover': { color: '#0A192F', bgcolor: 'transparent' } }}>
                       {item.label}
                     </Button>
@@ -238,7 +239,7 @@ export default function SiteHeader() {
 
           {/* Right CTAs */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1.5, alignItems: 'center' }}>
-            <Link href={getMainUrl('/company/contact')} style={{ textDecoration: 'none' }}>
+            <Link href={getMainUrl('/company/contact')} style={{ textDecoration: 'none' }} onClick={() => track.ctaClick('Contact Us', '/company/contact', 'header')}>
               <Button variant="contained" sx={{ bgcolor: '#0A192F', color: '#FFFFFF', fontWeight: 700, fontSize: '0.8rem', px: 2, py: 0.75, '&:hover': { bgcolor: '#1E2B4D' } }}>
                 Contact Us
               </Button>

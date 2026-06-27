@@ -60,6 +60,31 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       referrer: document.referrer || '(direct)',
     });
 
+    // ── IP-to-company enrichment ──────────────────────────────────────────────
+    fetch('/api/enrich')
+      .then(r => r.json())
+      .then((d) => {
+        if (d.local || d.error) return;
+        posthog.setPersonProperties({
+          ip_company:  d.company  ?? undefined,
+          ip_org:      d.org      ?? undefined,
+          ip_city:     d.city     ?? undefined,
+          ip_region:   d.region   ?? undefined,
+          ip_country:  d.country  ?? undefined,
+          ip_timezone: d.timezone ?? undefined,
+        });
+        if (d.company) {
+          posthog.capture('company_identified', {
+            company:  d.company,
+            org:      d.org,
+            city:     d.city,
+            region:   d.region,
+            country:  d.country,
+          });
+        }
+      })
+      .catch(() => {});
+
     // ── Rage click detection ──────────────────────────────────────────────────
     const clicks: { x: number; y: number; time: number }[] = [];
     const onRageClick = (e: MouseEvent) => {
