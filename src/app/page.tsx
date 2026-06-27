@@ -520,6 +520,11 @@ export default function HomePage() {
                 <Box component="img" src="https://smollaunch.com/badges/featured.svg" alt="Featured on Smol Launch" loading="lazy" sx={{ width: 240, height: 60 }} />
               </Box>
 
+              {/* Uneed badge */}
+              <Box component="a" href="https://www.uneed.best/tool/cerulea" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                <Box component="img" src="https://www.uneed.best/EMBED3B.png" alt="Launching Soon on Uneed" sx={{ width: 250, height: 'auto' }} />
+              </Box>
+
             </Box>
           </motion.div>
         </Container>
