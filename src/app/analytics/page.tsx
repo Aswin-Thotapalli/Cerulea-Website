@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
-import { isAdmin } from '@/lib/auth';
+import { isSiteAdmin } from '@/lib/site-admin';
 import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
 import {
   isConfigured, checkApiHealth,
@@ -50,8 +50,8 @@ function SetupRequired() {
 }
 
 export default async function AnalyticsPage({ searchParams }: { searchParams: Promise<{ days?: string }> }) {
-  const admin = await isAdmin();
-  if (!admin) redirect('/');
+  const admin = await isSiteAdmin();
+  if (!admin) redirect('/analytics/login');
   if (!isConfigured()) return <SetupRequired />;
 
   const { days: dp } = await searchParams;

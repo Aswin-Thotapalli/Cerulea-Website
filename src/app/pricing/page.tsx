@@ -13,6 +13,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { Variants } from 'framer-motion';
+import { track } from '@/lib/track';
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -296,6 +297,7 @@ export default function PricingPage() {
                           color: tier.accent,
                           '&:hover': { borderColor: tier.accent, bgcolor: `${tier.accent}08` },
                         }}
+                        onClick={() => track.ctaClick(tier.buttonText, tier.buttonHref, `pricing-${tier.id}`)}
                       >
                         {tier.buttonText}
                       </Button>
@@ -343,6 +345,7 @@ export default function PricingPage() {
                   variant="contained"
                   endIcon={<ArrowForwardIcon sx={{ fontSize: '1rem !important' }} />}
                   sx={{ py: 1.25, px: 3, fontSize: '0.9rem', fontWeight: 700, borderRadius: 2, bgcolor: '#172554', '&:hover': { bgcolor: '#0f1b3d' } }}
+                  onClick={() => track.ctaClick('View All Add-Ons', '/pricing/addons', 'pricing-addons')}
                 >
                   View All Add-Ons
                 </Button>

@@ -472,19 +472,38 @@ export default function AnalyticsDashboard({ data, days, phBase, apiOk, apiError
           <span style={{ fontSize: 14, fontWeight: 700, color: C.text, letterSpacing: '-0.01em' }}>Analytics</span>
         </div>
 
-        {/* Time range pills */}
-        <div style={{ display: 'flex', gap: 2, background: 'rgba(0,0,0,0.07)', borderRadius: 9, padding: 2 }}>
-          {([7, 30, 90] as const).map(d => (
-            <Link key={d} href={`/analytics?days=${d}`} style={{
-              padding: '5px 14px', borderRadius: 7, fontSize: 12, fontWeight: 600,
-              textDecoration: 'none', transition: 'all 180ms ease',
-              background: days === d ? C.surface : 'transparent',
-              color: days === d ? C.text : C.sub,
-              boxShadow: days === d ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
-            }}>
-              {d === 7 ? '7d' : d === 30 ? '30d' : '90d'}
-            </Link>
-          ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          {/* Time range pills */}
+          <div style={{ display: 'flex', gap: 2, background: 'rgba(0,0,0,0.07)', borderRadius: 9, padding: 2 }}>
+            {([7, 30, 90] as const).map(d => (
+              <Link key={d} href={`/analytics?days=${d}`} style={{
+                padding: '5px 14px', borderRadius: 7, fontSize: 12, fontWeight: 600,
+                textDecoration: 'none', transition: 'all 180ms ease',
+                background: days === d ? C.surface : 'transparent',
+                color: days === d ? C.text : C.sub,
+                boxShadow: days === d ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+              }}>
+                {d === 7 ? '7d' : d === 30 ? '30d' : '90d'}
+              </Link>
+            ))}
+          </div>
+
+          <div style={{ width: 1, height: 16, background: C.border }} />
+
+          <Link href="/analytics/team" style={{ padding: '5px 12px', borderRadius: 7, border: `1px solid ${C.border}`, fontSize: 12, fontWeight: 600, textDecoration: 'none', color: C.sub, background: 'transparent' }}>
+            Team
+          </Link>
+
+          <button
+            onClick={async () => {
+              const { createClient } = await import('@/lib/supabase');
+              await createClient().auth.signOut();
+              window.location.href = '/analytics/login';
+            }}
+            style={{ padding: '5px 12px', borderRadius: 7, border: `1px solid ${C.border}`, fontSize: 12, fontWeight: 600, cursor: 'pointer', color: C.sub, background: 'transparent' }}
+          >
+            Sign Out
+          </button>
         </div>
       </div>
 

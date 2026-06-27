@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Box, Container, Paper, Typography, Stack, Button, Grid, Divider } from '@mui/material';
 import PageHeader from '@/components/blocks/PageHeader';
 import Section from '@/components/blocks/Section';
+import SolutionCTA from '@/components/blocks/SolutionCTA';
 import { solutions } from '@/content/siteContent';
 
 export default function SolutionDetailPage({ params }: { params: { slug: string } }) {
@@ -81,18 +82,14 @@ export default function SolutionDetailPage({ params }: { params: { slug: string 
         </Section>
 
         <Paper variant="outlined" sx={{ p: 3, mt: 4 }}>
-          <Stack direction={{ xs: 'column', md: 'row' }} spacing={1.5} alignItems={{ md: 'center' }} justifyContent="space-between">
+          <Stack direction={{ xs: ‘column’, md: ‘row’ }} spacing={1.5} alignItems={{ md: ‘center’ }} justifyContent="space-between">
             <Box>
               <Typography sx={{ fontWeight: 950 }}>Talk to us</Typography>
-              <Typography sx={{ color: 'text.secondary' }}>
+              <Typography sx={{ color: ‘text.secondary’ }}>
                 Tell us what you want to deploy (public app, private chain, or hybrid) and we’ll map the fastest path.
               </Typography>
             </Box>
-            <Link href={s.cta.href} style={{ textDecoration: 'none' }}>
-              <Button variant="contained" size="large">
-                {s.cta.label}
-              </Button>
-            </Link>
+            <SolutionCTA href={s.cta.href} label={s.cta.label} slug={s.slug} title={s.title} />
           </Stack>
         </Paper>
       </Container>
