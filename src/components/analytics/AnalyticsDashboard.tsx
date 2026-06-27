@@ -64,6 +64,9 @@ interface DashboardData {
   sessions: SessionRec[];
   companyVisitors: { company: string; org: string; city: string; country: string; visitors: number; lastSeen: string }[];
   visitorsByIP: { ip: string; company: string; city: string; country: string; region: string; pageViews: number; sessions: number; lastSeen: string }[];
+  topPaths: { entry: string; exitPage: string; sessions: number }[];
+  weeklyTraffic: { week: string; newVisitors: number; returning: number; total: number }[];
+  cohortConversion: { entryPage: string; total: number; conversions: number; rate: number }[];
 }
 
 interface Props { data: DashboardData; days: number; phBase: string; apiOk: boolean; apiError?: string; }
@@ -403,6 +406,47 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
 };
 
+// ─── Stacked bar chart (new vs returning per week) ────────────────────────────
+function StackedWeekBars({ data }: { data: { week: string; newVisitors: number; returning: number; total: number }[] }) {
+  const max = Math.max(...data.map(d => d.total), 1);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const BH = 72;
+  const fmtWeek = (w: string) => {
+    const d = new Date(w + 'T00:00:00');
+    return isNaN(d.getTime()) ? w.slice(5) : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+  return (
+    <div ref={ref} style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: BH + 24, overflowX: 'auto' }}>
+      {data.map((d, i) => {
+        const totalH = max ? Math.max((d.total / max) * BH, d.total ? 3 : 0) : 0;
+        const newH = d.total ? (d.newVisitors / d.total) * totalH : 0;
+        const retH = totalH - newH;
+        return (
+          <div key={d.week} style={{ flex: '1 0 28px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, minWidth: 28 }}
+            title={`${fmtWeek(d.week)}: ${d.total} visitors (${d.newVisitors} new, ${d.returning} returning)`}>
+            <div style={{ width: '100%', height: BH, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <motion.div
+                initial={{ height: 0 }}
+                animate={isInView ? { height: retH } : {}}
+                transition={{ duration: 0.7, ease: EASE, delay: i * 0.04 }}
+                style={{ width: '100%', background: C.violet, borderRadius: retH > 2 ? '3px 3px 0 0' : 3, opacity: 0.85 }}
+              />
+              <motion.div
+                initial={{ height: 0 }}
+                animate={isInView ? { height: newH } : {}}
+                transition={{ duration: 0.7, ease: EASE, delay: i * 0.04 + 0.05 }}
+                style={{ width: '100%', background: C.indigo, borderRadius: newH > 2 ? '3px 3px 0 0' : 3, opacity: 0.5, marginTop: 1 }}
+              />
+            </div>
+            <span style={{ fontSize: 8, color: C.ghost, whiteSpace: 'nowrap', overflow: 'hidden', maxWidth: 36, textOverflow: 'ellipsis' }}>{fmtWeek(d.week)}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
 export default function AnalyticsDashboard({ data, days, phBase, apiOk, apiError }: Props) {
   const {
@@ -414,7 +458,34 @@ export default function AnalyticsDashboard({ data, days, phBase, apiOk, apiError
     funnel, vitals, productBreakdown, sessions,
     companyVisitors,
     visitorsByIP,
+    topPaths,
+    weeklyTraffic,
+    cohortConversion,
   } = data;
+
+  // ── Real-time pulse (client-side polling every 30s) ──────────────────────
+  const [realtime, setRealtime] = useState<{ total: number; pages: { page: string; users: number }[] }>({ total: 0, pages: [] });
+  const [rtLastUpdated, setRtLastUpdated] = useState<Date | null>(null);
+  const [rtLoading, setRtLoading] = useState(true);
+
+  const fetchRealtime = useCallback(async () => {
+    try {
+      const res = await fetch('/api/analytics/realtime');
+      if (res.ok) {
+        const d = await res.json();
+        setRealtime(d);
+        setRtLastUpdated(new Date());
+      }
+    } catch { /* ignore */ } finally {
+      setRtLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchRealtime();
+    const id = setInterval(fetchRealtime, 30_000);
+    return () => clearInterval(id);
+  }, [fetchRealtime]);
 
   const dViews    = delta(ov.pageViews,     prev.pageViews);
   const dVisitors = delta(ov.uniqueVisitors, prev.uniqueVisitors);
@@ -533,6 +604,71 @@ export default function AnalyticsDashboard({ data, days, phBase, apiOk, apiError
             </div>
           </div>
         )}
+
+        {/* ── Real-time visitor pulse ──────────────────────────────────── */}
+        <div style={{
+          marginBottom: 20, borderRadius: 14, border: `1px solid ${C.border}`,
+          background: C.surface, overflow: 'hidden',
+        }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '14px 22px', borderBottom: realtime.pages.length > 0 ? `1px solid ${C.border}` : 'none',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ position: 'relative', width: 10, height: 10 }}>
+                <div style={{
+                  position: 'absolute', inset: 0, borderRadius: '50%',
+                  background: realtime.total > 0 ? C.emerald : C.ghost,
+                  animation: realtime.total > 0 ? 'pulse-ring 1.8s ease-out infinite' : 'none',
+                  opacity: 0.4,
+                }} />
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: realtime.total > 0 ? C.emerald : C.ghost }} />
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>
+                {rtLoading ? 'Checking...' : realtime.total > 0
+                  ? `${realtime.total} visitor${realtime.total !== 1 ? 's' : ''} active now`
+                  : 'No active visitors right now'}
+              </span>
+              <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.emerald, background: `${C.emerald}12`, border: `1px solid ${C.emerald}25`, borderRadius: 6, padding: '2px 7px' }}>
+                Live
+              </span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {rtLastUpdated && (
+                <span style={{ fontSize: 11, color: C.ghost }}>
+                  Updated {timeAgo(rtLastUpdated.toISOString())}
+                </span>
+              )}
+              <button
+                onClick={fetchRealtime}
+                style={{ fontSize: 11, color: C.sub, background: C.elevated, border: `1px solid ${C.border}`, borderRadius: 6, padding: '3px 10px', cursor: 'pointer', fontWeight: 600 }}
+              >
+                Refresh
+              </button>
+            </div>
+          </div>
+          {realtime.pages.length > 0 && (
+            <div style={{ padding: '10px 22px 14px', display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {realtime.pages.map(({ page, users }) => (
+                <div key={page} style={{
+                  display: 'flex', alignItems: 'center', gap: 7,
+                  background: C.elevated, borderRadius: 8, border: `1px solid ${C.border}`,
+                  padding: '5px 12px',
+                }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: C.emerald, opacity: 0.7 }} />
+                  <span style={{ fontSize: 12, color: C.sub, fontFamily: 'monospace' }}>{page}</span>
+                  {users > 1 && <span style={{ fontSize: 11, fontWeight: 700, color: C.emerald }}>{users}</span>}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <style>{`
+          @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.4; }
+            100% { transform: scale(2.8); opacity: 0; }
+          }
+        `}</style>
 
         {/* ── KPI grid (stagger) ────────────────────────────────────────── */}
         <motion.div variants={stagger} initial="hidden" animate="show"
@@ -692,6 +828,33 @@ export default function AnalyticsDashboard({ data, days, phBase, apiOk, apiError
           </div>
         </Reveal>
 
+        {/* ── Path Analysis ─────────────────────────────────────────────── */}
+        <Reveal delay={0.05}>
+          <Card style={{ marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Label>Path Analysis</Label>
+              <span style={{ fontSize: 11, color: C.dim }}>Most common session journeys</span>
+            </div>
+            {topPaths.length === 0
+              ? <Soon text="Shows the most common start and end page per session. Appears after multiple sessions are recorded." />
+              : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {topPaths.map(({ entry, exitPage, sessions: s }, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', background: C.elevated, borderRadius: 9, border: `1px solid ${C.border}` }}>
+                      <span style={{ fontSize: 11, fontWeight: 800, color: C.ghost, width: 18, flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>{i + 1}</span>
+                      <span style={{ fontSize: 12, color: C.text, fontFamily: 'monospace', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={entry}>{entry}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke={C.dim} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </div>
+                      <span style={{ fontSize: 12, color: C.sub, fontFamily: 'monospace', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={exitPage}>{exitPage}</span>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: C.cyan, flexShrink: 0, fontVariantNumeric: 'tabular-nums', minWidth: 28, textAlign: 'right' }}>{s}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+          </Card>
+        </Reveal>
+
         {/* ── Scroll + Hourly + DOW ─────────────────────────────────────── */}
         <Reveal delay={0.05}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 20 }}>
@@ -792,6 +955,97 @@ export default function AnalyticsDashboard({ data, days, phBase, apiOk, apiError
                   ))}
               </Card>
             </div>
+          </div>
+        </Reveal>
+
+        {/* ── Retention curves + Cohort analysis ────────────────────────── */}
+        <Reveal delay={0.05}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: 12, marginBottom: 20 }}>
+            <Card>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <Label>Retention Curves (12 Weeks)</Label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 11, color: C.dim }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: C.violet, opacity: 0.85 }} />
+                    Returning
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4, marginLeft: 10 }}>
+                    <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: 2, background: C.indigo, opacity: 0.5 }} />
+                    New
+                  </span>
+                </div>
+              </div>
+              {weeklyTraffic.length < 2
+                ? <Soon text="Shows new vs returning visitors per week over 12 weeks. Needs several weeks of traffic to populate." />
+                : (
+                  <>
+                    <StackedWeekBars data={weeklyTraffic} />
+                    <div style={{ marginTop: 12, display: 'flex', gap: 20, fontSize: 12 }}>
+                      <div>
+                        <span style={{ color: C.dim }}>Total (12w) </span>
+                        <span style={{ fontWeight: 700, color: C.text, fontVariantNumeric: 'tabular-nums' }}>
+                          {weeklyTraffic.reduce((s, d) => s + d.total, 0).toLocaleString()}
+                        </span>
+                      </div>
+                      <div>
+                        <span style={{ color: C.dim }}>Avg return rate </span>
+                        <span style={{ fontWeight: 700, color: C.violet, fontVariantNumeric: 'tabular-nums' }}>
+                          {weeklyTraffic.filter(d => d.total > 0).length
+                            ? Math.round(weeklyTraffic.reduce((s, d) => s + (d.total ? d.returning / d.total : 0), 0) / weeklyTraffic.filter(d => d.total > 0).length * 100)
+                            : 0}%
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                )}
+            </Card>
+            <Card>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <Label>Cohort Analysis</Label>
+                <span style={{ fontSize: 11, color: C.dim }}>Entry page conversion</span>
+              </div>
+              {cohortConversion.length === 0
+                ? <Soon text="Shows which entry pages convert to contact form submissions. Appears after sessions with contact submissions." />
+                : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 280 }}>
+                      <thead>
+                        <tr>
+                          <TH>Entry Page</TH>
+                          <TH>Sessions</TH>
+                          <TH>Conv %</TH>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cohortConversion.map((row, i) => (
+                          <tr key={i}
+                            style={{ borderBottom: `1px solid ${C.border}`, transition: 'background 120ms ease' }}
+                            onMouseEnter={e => (e.currentTarget.style.background = C.elevated)}
+                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                            <td style={{ padding: '8px 10px', fontSize: 12, fontFamily: 'monospace', color: C.sub, maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={row.entryPage}>
+                              {row.entryPage}
+                            </td>
+                            <td style={{ padding: '8px 10px', fontSize: 13, fontWeight: 700, color: C.text, fontVariantNumeric: 'tabular-nums', textAlign: 'right' }}>
+                              {row.total}
+                            </td>
+                            <td style={{ padding: '8px 10px', textAlign: 'right' }}>
+                              <span style={{
+                                fontSize: 12, fontWeight: 700,
+                                color: row.rate > 0 ? C.emerald : C.ghost,
+                                background: row.rate > 0 ? `${C.emerald}12` : 'transparent',
+                                borderRadius: 6, padding: row.rate > 0 ? '2px 8px' : 0,
+                                fontVariantNumeric: 'tabular-nums',
+                              }}>
+                                {row.rate > 0 ? `${row.rate}%` : '—'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+            </Card>
           </div>
         </Reveal>
 

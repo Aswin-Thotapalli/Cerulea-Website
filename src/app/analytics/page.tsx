@@ -20,6 +20,7 @@ import {
   getProductBreakdown, getSessionRecordings,
   getCompanyVisitors,
   getVisitorsByIP,
+  getTopPaths, getWeeklyTraffic, getCohortConversion,
 } from '@/lib/posthog-api';
 
 export const metadata: Metadata = {
@@ -68,6 +69,9 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
     funnel, vitals, productBreakdown, sessions,
     companyVisitors,
     visitorsByIP,
+    topPaths,
+    weeklyTraffic,
+    cohortConversion,
   ] = await Promise.all([
     getOverview(days).catch(() => ({ pageViews: 0, uniqueVisitors: 0, sessions: 0, contacts: 0 })),
     getPreviousOverview(days).catch(() => ({ pageViews: 0, uniqueVisitors: 0, sessions: 0, contacts: 0 })),
@@ -101,6 +105,9 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
     getSessionRecordings(20).catch(() => []),
     getCompanyVisitors(days).catch(() => []),
     getVisitorsByIP(days).catch(() => []),
+    getTopPaths(days).catch(() => []),
+    getWeeklyTraffic().catch(() => []),
+    getCohortConversion(days).catch(() => []),
   ]);
 
   const phBase = `https://us.posthog.com/project/${process.env.POSTHOG_PROJECT_ID}`;
@@ -116,6 +123,9 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
         funnel, vitals, productBreakdown, sessions,
         companyVisitors,
         visitorsByIP,
+        topPaths,
+        weeklyTraffic,
+        cohortConversion,
       }}
       days={days}
       phBase={phBase}

@@ -641,6 +641,103 @@ export async function getWebVitals(days: number) {
   return rows.map(([metric, avg, p75]) => ({ metric, avg: avg ?? 0, p75: p75 ?? 0 }));
 }
 
+// ── Active users in last 5 min (real-time pulse) ──────────────────────────────
+
+export async function getActiveUsers() {
+  const rows = await hql<[string, number][]>(`
+    SELECT
+      properties.$pathname as page,
+      count(distinct person_id) as users
+    FROM events
+    WHERE event = '$pageview'
+      AND timestamp > now() - interval 5 minute
+    GROUP BY page
+    ORDER BY users DESC
+    LIMIT 20
+  `);
+  const total = rows.reduce((s, r) => s + r[1], 0);
+  return { total, pages: rows.map(([page, users]) => ({ page, users })) };
+}
+
+// ── Navigation path analysis (entry → exit) ───────────────────────────────────
+
+export async function getTopPaths(days: number) {
+  const rows = await hql<[string, string, number][]>(`
+    SELECT entry, exit_page, count() as path_count
+    FROM (
+      SELECT
+        argMin(properties.$pathname, timestamp) as entry,
+        argMax(properties.$pathname, timestamp) as exit_page
+      FROM events
+      WHERE event = '$pageview'
+        AND timestamp > now() - interval ${days} day
+        AND properties.$session_id IS NOT NULL
+      GROUP BY properties.$session_id
+    )
+    WHERE entry != exit_page
+      AND entry IS NOT NULL
+      AND exit_page IS NOT NULL
+    GROUP BY entry, exit_page
+    ORDER BY path_count DESC
+    LIMIT 12
+  `);
+  return rows.map(([entry, exitPage, sessions]) => ({ entry, exitPage, sessions }));
+}
+
+// ── Weekly traffic trend (new vs returning — retention proxy) ─────────────────
+
+export async function getWeeklyTraffic() {
+  const rows = await hql<[string, number, number][]>(`
+    SELECT
+      toString(toStartOfWeek(timestamp)) as week,
+      countIf(person.created_at >= toStartOfWeek(timestamp)) as new_visitors,
+      countIf(person.created_at < toStartOfWeek(timestamp)) as returning_visitors
+    FROM events
+    WHERE event = '$pageview'
+      AND timestamp > now() - interval 84 day
+    GROUP BY week
+    ORDER BY week ASC
+  `);
+  return rows.map(([week, newVisitors, returning]) => ({
+    week: String(week).slice(0, 10),
+    newVisitors,
+    returning,
+    total: newVisitors + returning,
+  }));
+}
+
+// ── Cohort conversion: entry page → contact submission rate ───────────────────
+
+export async function getCohortConversion(days: number) {
+  const rows = await hql<[string, number, number][]>(`
+    SELECT
+      entry_page,
+      count() as total,
+      sum(had_contact) as conversions
+    FROM (
+      SELECT
+        properties.$session_id,
+        argMin(properties.$pathname, timestamp) as entry_page,
+        maxIf(1, event = 'contact_form_submitted') as had_contact
+      FROM events
+      WHERE timestamp > now() - interval ${days} day
+        AND (event = '$pageview' OR event = 'contact_form_submitted')
+        AND properties.$session_id IS NOT NULL
+      GROUP BY properties.$session_id
+    )
+    WHERE entry_page IS NOT NULL
+    GROUP BY entry_page
+    ORDER BY total DESC
+    LIMIT 10
+  `);
+  return rows.map(([entryPage, total, conversions]) => ({
+    entryPage,
+    total,
+    conversions,
+    rate: total ? Math.round((conversions / total) * 1000) / 10 : 0,
+  }));
+}
+
 // ── Session recordings (REST, not HogQL) ──────────────────────────────────────
 
 export interface SessionRec {
