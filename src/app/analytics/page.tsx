@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import { isAdmin } from '@/lib/auth';
 import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
 import {
-  isConfigured,
+  isConfigured, checkApiHealth,
   getOverview, getPreviousOverview,
   getBounceRate, getPreviousBounceRate,
   getAvgSessionDuration, getPagesPerSession,
@@ -18,6 +18,8 @@ import {
   getDailyViews, getHourlyTraffic, getDayOfWeek,
   getScrollDepth, getConversionFunnel, getWebVitals,
   getProductBreakdown, getSessionRecordings,
+  getCompanyVisitors,
+  getVisitorsByIP,
 } from '@/lib/posthog-api';
 
 export const metadata: Metadata = {
@@ -55,6 +57,8 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
   const { days: dp } = await searchParams;
   const days = Number(dp) || 7;
 
+  const apiHealth = await checkApiHealth().catch(() => ({ ok: false, error: 'Network error' }));
+
   const [
     ov, prev, bounce, prevBounce, dur, pps, nvr,
     topPages, pagesTime, entryPages, exitPages,
@@ -62,6 +66,8 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
     countries, devices, os, browsers, sources, utmSources,
     leads, events, daily, hourly, dow, scroll,
     funnel, vitals, productBreakdown, sessions,
+    companyVisitors,
+    visitorsByIP,
   ] = await Promise.all([
     getOverview(days).catch(() => ({ pageViews: 0, uniqueVisitors: 0, sessions: 0, contacts: 0 })),
     getPreviousOverview(days).catch(() => ({ pageViews: 0, uniqueVisitors: 0, sessions: 0, contacts: 0 })),
@@ -93,6 +99,8 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
     getWebVitals(days).catch(() => []),
     getProductBreakdown(days).catch(() => []),
     getSessionRecordings(20).catch(() => []),
+    getCompanyVisitors(days).catch(() => []),
+    getVisitorsByIP(days).catch(() => []),
   ]);
 
   const phBase = `https://us.posthog.com/project/${process.env.POSTHOG_PROJECT_ID}`;
@@ -106,9 +114,13 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
         countries, devices, os, browsers, sources, utmSources,
         leads, events, daily, hourly, dow, scroll,
         funnel, vitals, productBreakdown, sessions,
+        companyVisitors,
+        visitorsByIP,
       }}
       days={days}
       phBase={phBase}
+      apiOk={apiHealth.ok}
+      apiError={apiHealth.error}
     />
   );
 }

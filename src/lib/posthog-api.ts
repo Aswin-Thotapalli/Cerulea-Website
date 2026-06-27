@@ -10,6 +10,22 @@ const BASE       = `https://us.posthog.com/api/projects/${PROJECT_ID}`;
 
 export const isConfigured = () => Boolean(PROJECT_ID && API_KEY);
 
+export async function checkApiHealth(): Promise<{ ok: boolean; status?: number; error?: string }> {
+  try {
+    const res = await fetch(`${BASE}/query`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: { kind: 'HogQLQuery', query: 'SELECT 1' } }),
+      cache: 'no-store',
+    });
+    if (res.ok) return { ok: true };
+    const text = await res.text();
+    return { ok: false, status: res.status, error: text.slice(0, 200) };
+  } catch (e) {
+    return { ok: false, error: String(e) };
+  }
+}
+
 async function hql<T = unknown[]>(query: string): Promise<T> {
   const res = await fetch(`${BASE}/query`, {
     method: 'POST',
@@ -330,7 +346,7 @@ export async function getNavClicks(days: number) {
 
 export async function getHourlyTraffic(days: number) {
   const rows = await hql<[number, number][]>(`
-    SELECT toHour(timestamp) as hour, count() as views
+    SELECT toHour(toTimeZone(timestamp, 'Asia/Kolkata')) as hour, count() as views
     FROM events
     WHERE event = '$pageview'
       AND timestamp > now() - interval ${days} day
@@ -391,6 +407,56 @@ export async function getLeads(days: number) {
   return rows.map(([name, email, company, timestamp]) => ({ name, email, company, timestamp }));
 }
 
+// ── Per-IP visitor intelligence ───────────────────────────────────────────────
+
+export async function getVisitorsByIP(days: number) {
+  const rows = await hql<[string, string, string, string, string, number, number, string][]>(`
+    SELECT
+      coalesce(person.properties.ip_address, '')   as ip,
+      coalesce(person.properties.ip_company, '')   as company,
+      coalesce(person.properties.ip_city, '')      as city,
+      coalesce(person.properties.ip_country, '')   as country,
+      coalesce(person.properties.ip_region, '')    as region,
+      count()                                       as page_views,
+      count(distinct properties.$session_id)        as sessions,
+      toString(max(timestamp))                      as last_seen
+    FROM events
+    WHERE event = '$pageview'
+      AND timestamp > now() - interval ${days} day
+      AND person.properties.ip_address IS NOT NULL
+      AND person.properties.ip_address != ''
+    GROUP BY ip, company, city, country, region
+    ORDER BY max(timestamp) DESC
+    LIMIT 200`);
+  return rows.map(([ip, company, city, country, region, pageViews, sessions, lastSeen]) => ({
+    ip, company, city, country, region, pageViews, sessions, lastSeen,
+  }));
+}
+
+// ── Company / IP visitor identification ───────────────────────────────────────
+
+export async function getCompanyVisitors(days: number) {
+  const rows = await hql<[string, string, string, string, number, string][]>(`
+    SELECT
+      properties.company                    as company,
+      coalesce(properties.org, '')          as org,
+      coalesce(properties.city, '')         as city,
+      coalesce(properties.country, '')      as country,
+      count(distinct person_id)             as visitors,
+      toString(max(timestamp))              as last_seen
+    FROM events
+    WHERE event = 'company_identified'
+      AND timestamp > now() - interval ${days} day
+      AND isNotNull(properties.company)
+      AND properties.company != ''
+    GROUP BY company, org, city, country
+    ORDER BY max(timestamp) DESC
+    LIMIT 100`);
+  return rows.map(([company, org, city, country, visitors, lastSeen]) => ({
+    company, org, city, country, visitors, lastSeen,
+  }));
+}
+
 // ── Top custom events ─────────────────────────────────────────────────────────
 
 export async function getTopEvents(days: number) {
@@ -402,7 +468,8 @@ export async function getTopEvents(days: number) {
         '$feature_flag_called', '$identify', '$create_alias',
         '$groupidentify', '$$client_ingestion_warning',
         'nav_clicked', 'cta_clicked', 'blog_post_viewed',
-        'scroll_depth_reached', 'contact_form_started'
+        'scroll_depth_reached', 'contact_form_started',
+        'company_identified', 'ip_identified'
       )
       AND timestamp > now() - interval ${days} day
     GROUP BY event

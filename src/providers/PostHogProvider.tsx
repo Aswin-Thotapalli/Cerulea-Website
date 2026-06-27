@@ -66,6 +66,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       .then((d) => {
         if (d.local || d.error) return;
         posthog.setPersonProperties({
+          ip_address:  d.ip       ?? undefined,
           ip_company:  d.company  ?? undefined,
           ip_org:      d.org      ?? undefined,
           ip_city:     d.city     ?? undefined,
@@ -82,6 +83,14 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
             country:  d.country,
           });
         }
+        posthog.capture('ip_identified', {
+          ip:      d.ip,
+          company: d.company,
+          org:     d.org,
+          city:    d.city,
+          region:  d.region,
+          country: d.country,
+        });
       })
       .catch(() => {});
 

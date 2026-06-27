@@ -62,9 +62,11 @@ interface DashboardData {
   vitals: { metric: string; avg: number; p75: number }[];
   productBreakdown: { page: string; feature: string; views: number }[];
   sessions: SessionRec[];
+  companyVisitors: { company: string; org: string; city: string; country: string; visitors: number; lastSeen: string }[];
+  visitorsByIP: { ip: string; company: string; city: string; country: string; region: string; pageViews: number; sessions: number; lastSeen: string }[];
 }
 
-interface Props { data: DashboardData; days: number; phBase: string; }
+interface Props { data: DashboardData; days: number; phBase: string; apiOk: boolean; apiError?: string; }
 
 // ─── Utils ────────────────────────────────────────────────────────────────────
 const pct  = (v: number, t: number) => (t ? Math.round((v / t) * 100) : 0);
@@ -99,6 +101,11 @@ const FLAGS: Record<string, string> = {
   Brazil: '🇧🇷', UAE: '🇦🇪', 'South Korea': '🇰🇷', China: '🇨🇳',
   Indonesia: '🇮🇩', Israel: '🇮🇱', Spain: '🇪🇸', Italy: '🇮🇹',
 };
+
+const codeToFlag = (code: string) =>
+  code.length === 2
+    ? code.toUpperCase().split('').map(c => String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65)).join('')
+    : '🌐';
 
 const VITAL_T: Record<string, [number, number]> = {
   LCP: [2500, 4000], FID: [100, 300], INP: [200, 500],
@@ -397,7 +404,7 @@ const item = {
 };
 
 // ─── MAIN DASHBOARD ───────────────────────────────────────────────────────────
-export default function AnalyticsDashboard({ data, days, phBase }: Props) {
+export default function AnalyticsDashboard({ data, days, phBase, apiOk, apiError }: Props) {
   const {
     ov, prev, bounce, prevBounce, dur, pps, nvr,
     topPages, pagesTime, entryPages, exitPages,
@@ -405,6 +412,8 @@ export default function AnalyticsDashboard({ data, days, phBase }: Props) {
     countries, devices, os, browsers, sources, utmSources,
     leads, events, daily, hourly, dow, scroll,
     funnel, vitals, productBreakdown, sessions,
+    companyVisitors,
+    visitorsByIP,
   } = data;
 
   const dViews    = delta(ov.pageViews,     prev.pageViews);
@@ -480,6 +489,31 @@ export default function AnalyticsDashboard({ data, days, phBase }: Props) {
       </div>
 
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 28px 100px', position: 'relative', zIndex: 1 }}>
+
+        {/* ── API health warning ────────────────────────────────────────── */}
+        {!apiOk && (
+          <div style={{
+            marginBottom: 20, padding: '14px 20px', borderRadius: 12,
+            background: `${C.amber}12`, border: `1px solid ${C.amber}35`,
+            display: 'flex', alignItems: 'flex-start', gap: 12,
+          }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0, marginTop: 1 }}>
+              <path d="M8 1L15 14H1L8 1Z" stroke={C.amber} strokeWidth="1.5" strokeLinejoin="round" />
+              <path d="M8 6v3M8 11v.5" stroke={C.amber} strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: C.amber, marginBottom: 4 }}>
+                PostHog API returned an error — all widgets show empty data
+              </div>
+              <div style={{ fontSize: 12, color: C.sub, lineHeight: 1.6 }}>
+                Your <code style={{ fontFamily: 'monospace', background: 'rgba(0,0,0,0.07)', borderRadius: 4, padding: '1px 5px' }}>POSTHOG_PERSONAL_API_KEY</code> may be wrong or missing permissions.
+                Go to PostHog → your avatar → <strong>Personal API Keys</strong> and create a key with <em>Read</em> access for project <strong>332348</strong>.
+                Then update the Vercel env var and redeploy.
+                {apiError && <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 11, color: C.dim, wordBreak: 'break-all' }}>{apiError}</div>}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── KPI grid (stagger) ────────────────────────────────────────── */}
         <motion.div variants={stagger} initial="hidden" animate="show"
@@ -666,7 +700,7 @@ export default function AnalyticsDashboard({ data, days, phBase }: Props) {
               )}
             </Card>
             <Card>
-              <Label>Hourly Traffic (UTC)</Label>
+              <Label>Hourly Traffic (IST)</Label>
               <HeatGrid data={hourly} color={C.indigo} />
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
                 {['0h', '6h', '12h', '18h', '23h'].map(l => (
@@ -758,6 +792,140 @@ export default function AnalyticsDashboard({ data, days, phBase }: Props) {
                       <span style={{ fontSize: 12, fontWeight: 700, color: C.text, width: 32, textAlign: 'right', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>{count}</span>
                     </div>
                   ))}
+                </div>
+              )}
+          </Card>
+        </Reveal>
+
+        {/* ── Company / IP Visitors ─────────────────────────────────────── */}
+        <Reveal delay={0.05}>
+          <Card style={{ marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Label>Company Visitors</Label>
+                {companyVisitors.length > 0 && (
+                  <span style={{ fontSize: 11, fontWeight: 700, color: C.teal, background: `${C.teal}12`, border: `1px solid ${C.teal}25`, borderRadius: 6, padding: '2px 8px', marginTop: -16 }}>
+                    {companyVisitors.length} identified
+                  </span>
+                )}
+              </div>
+              <span style={{ fontSize: 11, color: C.dim, maxWidth: 280, textAlign: 'right', lineHeight: 1.5 }}>
+                Companies identified via IP lookup (ipinfo.io)
+              </span>
+            </div>
+            {companyVisitors.length === 0
+              ? (
+                <Soon text="Companies are identified when a visitor's IP resolves to an org via ipinfo.io. Appears once real traffic arrives — ISP-only IPs (residential / mobile) are not matched." />
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
+                    <thead>
+                      <tr>
+                        <TH>Company / Organisation</TH>
+                        <TH>ISP / Network</TH>
+                        <TH>Location</TH>
+                        <TH>Visits</TH>
+                        <TH>Last Seen</TH>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {companyVisitors.map((row, i) => (
+                        <tr key={i} style={{ borderBottom: `1px solid ${C.border}`, transition: 'background 120ms ease' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = C.elevated)}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                          <td style={{ padding: '10px 12px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                              <div style={{ width: 30, height: 30, borderRadius: 8, background: `${C.teal}14`, border: `1px solid ${C.teal}25`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800, color: C.teal, flexShrink: 0, letterSpacing: '-0.01em' }}>
+                                {row.company.charAt(0).toUpperCase()}
+                              </div>
+                              <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{row.company}</span>
+                            </div>
+                          </td>
+                          <td style={{ padding: '10px 12px', fontSize: 12, color: C.dim, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {row.org || '—'}
+                          </td>
+                          <td style={{ padding: '10px 12px', fontSize: 13, color: C.sub, whiteSpace: 'nowrap' }}>
+                            {row.country
+                              ? `${codeToFlag(row.country)} ${[row.city, row.country].filter(Boolean).join(', ')}`
+                              : '—'}
+                          </td>
+                          <td style={{ padding: '10px 12px', fontSize: 14, fontWeight: 800, color: C.teal, fontVariantNumeric: 'tabular-nums' }}>
+                            {row.visitors}
+                          </td>
+                          <td style={{ padding: '10px 12px', fontSize: 12, color: C.ghost, whiteSpace: 'nowrap' }}>
+                            {timeAgo(row.lastSeen)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+          </Card>
+        </Reveal>
+
+        {/* ── IP Visitor Intelligence ───────────────────────────────────── */}
+        <Reveal delay={0.05}>
+          <Card style={{ marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Label>IP Visitor Intelligence</Label>
+                {visitorsByIP.length > 0 && (
+                  <span style={{ fontSize: 11, fontWeight: 700, color: C.violet, background: `${C.violet}12`, border: `1px solid ${C.violet}25`, borderRadius: 6, padding: '2px 8px', marginTop: -16 }}>
+                    {visitorsByIP.length} unique IPs
+                  </span>
+                )}
+              </div>
+              <span style={{ fontSize: 11, color: C.dim }}>Per-IP page views, sessions & location</span>
+            </div>
+            {visitorsByIP.length === 0
+              ? <Soon text="Appears once visitors arrive and their IP resolves. New visitors since the last deploy will populate this." />
+              : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 720 }}>
+                    <thead>
+                      <tr>
+                        <TH>IP Address</TH>
+                        <TH>Company / ISP</TH>
+                        <TH>Location</TH>
+                        <TH>Pages</TH>
+                        <TH>Sessions</TH>
+                        <TH>Last Seen</TH>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {visitorsByIP.map((row, i) => (
+                        <tr key={i} style={{ borderBottom: `1px solid ${C.border}`, transition: 'background 120ms ease' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = C.elevated)}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                          <td style={{ padding: '10px 12px' }}>
+                            <code style={{ fontSize: 12, fontFamily: 'monospace', color: C.text, fontWeight: 600, background: `${C.violet}0C`, border: `1px solid ${C.violet}20`, borderRadius: 5, padding: '2px 7px' }}>
+                              {row.ip || '—'}
+                            </code>
+                          </td>
+                          <td style={{ padding: '10px 12px', maxWidth: 220 }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: C.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {row.company || <span style={{ color: C.ghost }}>Unknown</span>}
+                            </div>
+                          </td>
+                          <td style={{ padding: '10px 12px', fontSize: 12, color: C.sub, whiteSpace: 'nowrap' }}>
+                            {row.country
+                              ? `${codeToFlag(row.country)} ${[row.city, row.region, row.country].filter(Boolean).join(', ')}`
+                              : '—'}
+                          </td>
+                          <td style={{ padding: '10px 12px', fontSize: 14, fontWeight: 800, color: C.indigo, fontVariantNumeric: 'tabular-nums' }}>
+                            {row.pageViews}
+                          </td>
+                          <td style={{ padding: '10px 12px', fontSize: 13, fontWeight: 600, color: C.violet, fontVariantNumeric: 'tabular-nums' }}>
+                            {row.sessions}
+                          </td>
+                          <td style={{ padding: '10px 12px', fontSize: 12, color: C.ghost, whiteSpace: 'nowrap' }}>
+                            {timeAgo(row.lastSeen)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
           </Card>

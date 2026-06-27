@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# secrets — never commit these
+API Keys.txt
+*.keys.txt
+*.secrets.txt
+
+# claude code internal
+.agents/
+.claude/
+skills-lock.json
