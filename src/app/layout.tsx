@@ -24,9 +24,13 @@ export const metadata: Metadata = {
     shortcut: '/cerulea-logo.png',
     apple: '/cerulea-logo.png',
   },
+  ...(process.env.NEXT_PUBLIC_GSC_VERIFICATION
+    ? { verification: { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION } }
+    : {}),
 };
 
-const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID;
+const clarityId       = process.env.NEXT_PUBLIC_CLARITY_ID;
+const linkedInId      = process.env.NEXT_PUBLIC_LINKEDIN_PARTNER_ID;
 
 export default function RootLayout({
   children,
@@ -44,6 +48,13 @@ export default function RootLayout({
               t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
               y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
             })(window,document,"clarity","script","${clarityId}");`}
+          </Script>
+        )}
+
+        {/* LinkedIn Insight Tag — B2B company-level visitor attribution */}
+        {linkedInId && (
+          <Script id="linkedin-insight" strategy="afterInteractive">
+            {`_linkedin_partner_id="${linkedInId}";window._linkedin_data_partner_ids=window._linkedin_data_partner_ids||[];window._linkedin_data_partner_ids.push(_linkedin_partner_id);(function(l){if(!l){window.lintrk=function(a,b){window.lintrk.q.push([a,b])};window.lintrk.q=[]}var s=document.getElementsByTagName("script")[0];var b=document.createElement("script");b.type="text/javascript";b.async=true;b.src="https://snap.licdn.com/li.lms-analytics/insight.min.js";s.parentNode.insertBefore(b,s)})(window.lintrk);`}
           </Script>
         )}
       </head>

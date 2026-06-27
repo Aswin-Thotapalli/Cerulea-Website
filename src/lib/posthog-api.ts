@@ -212,7 +212,8 @@ export async function getCountries(days: number) {
     FROM events
     WHERE event = '$pageview'
       AND timestamp > now() - interval ${days} day
-      AND country IS NOT NULL AND country != ''
+      AND properties.$geoip_country_name IS NOT NULL
+      AND properties.$geoip_country_name != ''
     GROUP BY country
     ORDER BY count DESC
     LIMIT 12`);
@@ -224,47 +225,44 @@ export async function getCountries(days: number) {
 
 export async function getDevices(days: number) {
   const rows = await hql<[string, number][]>(`
-    SELECT properties.$device_type as device, count() as count
+    SELECT coalesce(properties.$device_type, 'Unknown') as device, count() as count
     FROM events
     WHERE event = '$pageview'
       AND timestamp > now() - interval ${days} day
-      AND device IS NOT NULL
     GROUP BY device
     ORDER BY count DESC`);
 
-  return rows.map(([device, count]) => ({ device: device || 'Unknown', count }));
+  return rows.map(([device, count]) => ({ device, count }));
 }
 
 // ── OS ────────────────────────────────────────────────────────────────────────
 
 export async function getOS(days: number) {
   const rows = await hql<[string, number][]>(`
-    SELECT properties.$os as os, count() as count
+    SELECT coalesce(properties.$os, 'Unknown') as os, count() as count
     FROM events
     WHERE event = '$pageview'
       AND timestamp > now() - interval ${days} day
-      AND os IS NOT NULL
     GROUP BY os
     ORDER BY count DESC
     LIMIT 8`);
 
-  return rows.map(([os, count]) => ({ os: os || 'Unknown', count }));
+  return rows.map(([os, count]) => ({ os, count }));
 }
 
 // ── Browsers ──────────────────────────────────────────────────────────────────
 
 export async function getBrowsers(days: number) {
   const rows = await hql<[string, number][]>(`
-    SELECT properties.$browser as browser, count() as count
+    SELECT coalesce(properties.$browser, 'Unknown') as browser, count() as count
     FROM events
     WHERE event = '$pageview'
       AND timestamp > now() - interval ${days} day
-      AND browser IS NOT NULL
     GROUP BY browser
     ORDER BY count DESC
     LIMIT 6`);
 
-  return rows.map(([browser, count]) => ({ browser: browser || 'Unknown', count }));
+  return rows.map(([browser, count]) => ({ browser, count }));
 }
 
 // ── Traffic sources ───────────────────────────────────────────────────────────
@@ -279,13 +277,13 @@ export async function getSources(days: number) {
         properties.$referrer LIKE '%twitter%' OR properties.$referrer LIKE '%t.co%', 'Twitter / X',
         properties.$referrer LIKE '%github%', 'GitHub',
         properties.$referrer LIKE '%bing%', 'Bing',
-        replaceRegexpOne(properties.$referring_domain, '^www\\.', '')
+        coalesce(nullIf(replaceRegexpOne(properties.$referring_domain, '^www\\.', ''), ''), 'Other')
       ) as source,
       count() as count
     FROM events
     WHERE event = '$pageview'
       AND timestamp > now() - interval ${days} day
-    GROUP BY source
+    GROUP BY 1
     ORDER BY count DESC
     LIMIT 10`);
 
@@ -304,7 +302,7 @@ export async function getTopBlogPosts(days: number) {
     FROM events
     WHERE event = 'blog_post_viewed'
       AND timestamp > now() - interval ${days} day
-      AND slug IS NOT NULL
+      AND properties.slug IS NOT NULL
     GROUP BY slug, title, category
     ORDER BY views DESC
     LIMIT 10`);
@@ -381,7 +379,7 @@ export async function getScrollDepth(days: number) {
     FROM events
     WHERE event = 'scroll_depth_reached'
       AND timestamp > now() - interval ${days} day
-      AND depth IS NOT NULL
+      AND toInt32OrNull(properties.depth_percent) IS NOT NULL
     GROUP BY depth
     ORDER BY depth ASC`);
   const milestones = [25, 50, 75, 90, 100];
@@ -637,7 +635,7 @@ export async function getWebVitals(days: number) {
     FROM events
     WHERE event = 'web_vitals'
       AND timestamp > now() - interval ${days} day
-      AND metric IS NOT NULL
+      AND properties.metric_name IS NOT NULL
     GROUP BY metric
     ORDER BY metric ASC`);
   return rows.map(([metric, avg, p75]) => ({ metric, avg: avg ?? 0, p75: p75 ?? 0 }));

@@ -75,6 +75,14 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
           ip_timezone: d.timezone ?? undefined,
         });
         if (d.company) {
+          // PostHog Groups API — groups ALL events from this visitor under the company
+          posthog.group('company', d.company, {
+            name:    d.company,
+            org:     d.org ?? undefined,
+            city:    d.city ?? undefined,
+            region:  d.region ?? undefined,
+            country: d.country ?? undefined,
+          });
           posthog.capture('company_identified', {
             company:  d.company,
             org:      d.org,
