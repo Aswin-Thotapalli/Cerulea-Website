@@ -501,31 +501,44 @@ export default function HomePage() {
             <Typography sx={{ textAlign: 'center', color: '#94A3B8', fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', mb: 4 }}>
               Featured On
             </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
 
-              {/* Product Hunt — featured */}
-              <Box component="a" href="https://www.producthunt.com/products/cerulea?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-cerulea-2" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                <Box component="img" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1175054&theme=light&t=1782326312407" alt="Cerulea - The Blockchain Platform | Product Hunt" sx={{ width: 250, height: 54 }} />
+              {/* Product Hunt — featured + follow in one card */}
+              <Box sx={{ display: 'inline-flex', alignItems: 'stretch', height: 54, border: '1px solid #E2E8F0', borderRadius: 2, bgcolor: '#fff', overflow: 'hidden', flexShrink: 0, boxShadow: '0 1px 4px rgba(0,0,0,0.05)' }}>
+                <Box component="a"
+                  href="https://www.producthunt.com/products/cerulea?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-cerulea-2"
+                  target="_blank" rel="noopener noreferrer"
+                  sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2.5, textDecoration: 'none', transition: 'bgcolor 0.15s', '&:hover': { bgcolor: '#fff8f7' } }}>
+                  <Box sx={{ width: 28, height: 28, bgcolor: '#FF6154', borderRadius: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Typography sx={{ color: '#fff', fontWeight: 900, fontSize: '0.9rem', lineHeight: 1 }}>P</Typography>
+                  </Box>
+                  <Box>
+                    <Typography sx={{ fontSize: '0.55rem', color: '#999', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', lineHeight: 1 }}>Featured on</Typography>
+                    <Typography sx={{ fontSize: '0.82rem', color: '#111', fontWeight: 700, lineHeight: 1.3, mt: 0.3 }}>Product Hunt</Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ width: '1px', bgcolor: '#E2E8F0', my: 1 }} />
+                <Box component="a"
+                  href="https://www.producthunt.com/products/cerulea?utm_source=badge-follow&utm_medium=badge&utm_source=badge-cerulea"
+                  target="_blank" rel="noopener noreferrer"
+                  sx={{ display: 'inline-flex', alignItems: 'center', px: 2, textDecoration: 'none', transition: 'bgcolor 0.15s', '&:hover': { bgcolor: '#fff8f7' } }}>
+                  <Typography sx={{ fontSize: '0.78rem', color: '#FF6154', fontWeight: 700, whiteSpace: 'nowrap' }}>+ Follow</Typography>
+                </Box>
               </Box>
 
-              {/* Product Hunt — follow */}
-              <Box component="a" href="https://www.producthunt.com/products/cerulea?utm_source=badge-follow&utm_medium=badge&utm_source=badge-cerulea" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                <Box component="img" src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=1235758&theme=light&size=small" alt="Cerulea - Blockchain for Good | Product Hunt" sx={{ width: 86, height: 32 }} />
+              {/* Smol Launch */}
+              <Box component="a" href="https://smollaunch.com" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', height: 54, flexShrink: 0 }}>
+                <Box component="img" src="https://smollaunch.com/badges/featured.svg" alt="Featured on Smol Launch" loading="lazy" sx={{ height: 54, width: 'auto' }} />
               </Box>
 
-              {/* Smol Launch badge */}
-              <Box component="a" href="https://smollaunch.com" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                <Box component="img" src="https://smollaunch.com/badges/featured.svg" alt="Featured on Smol Launch" loading="lazy" sx={{ width: 240, height: 60 }} />
+              {/* SaasHub */}
+              <Box component="a" href="https://www.saashub.com/cerulea?utm_source=badge&utm_campaign=badge&utm_content=cerulea&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', height: 54, flexShrink: 0 }}>
+                <Box component="img" src="https://cdn-b.saashub.com/img/badges/approved-color.png?v=1" alt="Approved on SaasHub" sx={{ height: 54, width: 'auto' }} />
               </Box>
 
-              {/* SaasHub approved badge */}
-              <Box component="a" href="https://www.saashub.com/cerulea?utm_source=badge&utm_campaign=badge&utm_content=cerulea&badge_variant=color&badge_kind=approved" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                <Box component="img" src="https://cdn-b.saashub.com/img/badges/approved-color.png?v=1" alt="Cerulea badge" sx={{ maxWidth: 150, height: 'auto' }} />
-              </Box>
-
-              {/* Uneed badge */}
-              <Box component="a" href="https://www.uneed.best/tool/cerulea" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                <Box component="img" src="https://www.uneed.best/EMBED3B.png" alt="Launching Soon on Uneed" sx={{ width: 250, height: 'auto' }} />
+              {/* Uneed */}
+              <Box component="a" href="https://www.uneed.best/tool/cerulea" target="_blank" rel="noopener noreferrer" sx={{ display: 'flex', alignItems: 'center', height: 54, flexShrink: 0 }}>
+                <Box component="img" src="https://www.uneed.best/EMBED3B.png" alt="Launching Soon on Uneed" sx={{ height: 54, width: 'auto' }} />
               </Box>
 
             </Box>
