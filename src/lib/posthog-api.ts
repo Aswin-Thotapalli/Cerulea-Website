@@ -764,7 +764,7 @@ export interface SessionRec {
 
 export async function getSessionRecordings(limit = 20): Promise<SessionRec[]> {
   const res = await fetch(
-    `${BASE}/session_recordings/?order=-start_time&limit=${limit}`,
+    `${BASE}/session_recordings/?limit=${limit}`,
     {
       headers: { Authorization: `Bearer ${API_KEY}` },
       cache: 'no-store',
