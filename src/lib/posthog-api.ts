@@ -271,13 +271,13 @@ export async function getSources(days: number) {
   const rows = await hql<[string, number][]>(`
     SELECT
       multiIf(
-        properties.$referrer = '' OR properties.$referrer IS NULL, 'Direct',
+        properties.$referrer = '' OR properties.$referrer IS NULL OR properties.$referrer = '$direct', 'Direct',
         properties.$referrer LIKE '%google%', 'Google',
         properties.$referrer LIKE '%linkedin%', 'LinkedIn',
         properties.$referrer LIKE '%twitter%' OR properties.$referrer LIKE '%t.co%', 'Twitter / X',
         properties.$referrer LIKE '%github%', 'GitHub',
         properties.$referrer LIKE '%bing%', 'Bing',
-        coalesce(nullIf(replaceRegexpOne(properties.$referring_domain, '^www\\.', ''), ''), 'Other')
+        coalesce(nullIf(nullIf(properties.$referring_domain, ''), '$direct'), 'Other')
       ) as source,
       count() as count
     FROM events
@@ -374,12 +374,12 @@ export async function getDayOfWeek(days: number) {
 export async function getScrollDepth(days: number) {
   const rows = await hql<[number, number][]>(`
     SELECT
-      toInt32OrNull(properties.depth_percent) as depth,
-      count(distinct properties.$session_id)  as sessions
+      toInt(round(toFloat64OrNull(properties.depth_percent))) as depth,
+      count(distinct properties.$session_id)                    as sessions
     FROM events
     WHERE event = 'scroll_depth_reached'
       AND timestamp > now() - interval ${days} day
-      AND toInt32OrNull(properties.depth_percent) IS NOT NULL
+      AND toFloat64OrNull(properties.depth_percent) IS NOT NULL
     GROUP BY depth
     ORDER BY depth ASC`);
   const milestones = [25, 50, 75, 90, 100];
