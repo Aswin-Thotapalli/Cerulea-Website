@@ -1,16 +1,36 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
+      },
+    },
+  },
   async redirects() {
     return [
-      // Orphaned stub pages → canonical product pages
-      { source: '/apis',      destination: '/product/api',            permanent: true },
-      { source: '/dashboard', destination: '/product/dashboard',      permanent: true },
-      { source: '/studio',    destination: '/product/studio',         permanent: true },
-      { source: '/private',   destination: '/product/private-chains', permanent: true },
-    ];
+      // Developer section index routes -> first page in each
+      { source: "/developers", destination: "/developers/docs/foundation", permanent: true },
+      { source: "/developers/docs", destination: "/developers/docs/foundation", permanent: true },
+      { source: "/developers/api", destination: "/developers/api/introduction", permanent: true },
+      { source: "/developers/whitepaper", destination: "/developers/whitepaper/abstract", permanent: true },
+      // Legacy legal URLs -> merged legal page
+      { source: "/legal", destination: "/company/legal", permanent: true },
+      { source: "/legal/privacy", destination: "/company/legal?tab=privacy", permanent: true },
+      { source: "/legal/terms", destination: "/company/legal?tab=terms", permanent: true },
+      // Solutions index sub-paths -> solutions landing
+      { source: "/solutions", destination: "/industries", permanent: true },
+      { source: "/solutions/industry/:slug", destination: "/industries/:slug", permanent: true },
+      { source: "/solutions/industries", destination: "/industries", permanent: true },
+      { source: "/solutions/use-cases", destination: "/industries", permanent: true },
+      // Legacy short paths
+      { source: "/about", destination: "/company/about", permanent: true },
+      { source: "/contact", destination: "/company/contact", permanent: true },
+      { source: "/docs", destination: "/developers/docs/foundation", permanent: true },
+    ]
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
