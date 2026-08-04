@@ -29,10 +29,50 @@ const Featured = () => {
         </p>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-5">
-          <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="0"><Container className="w-auto" /></div>
-          <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="100"><FeaturedSmol className="w-auto" /></div>
-          <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="200"><ApprovedSaa className="w-auto" /></div>
-          <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="300"><Uneed className="w-auto" /></div>
+          <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="0">
+            <a
+              href="https://www.producthunt.com/products/cerulea?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-cerulea-2"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Featured on Product Hunt"
+              className="inline-flex transition-opacity hover:opacity-80"
+            >
+              <Container className="w-auto" />
+            </a>
+          </div>
+          <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+            <a
+              href="https://smollaunch.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Featured on Smol Launch"
+              className="inline-flex transition-opacity hover:opacity-80"
+            >
+              <FeaturedSmol className="w-auto" />
+            </a>
+          </div>
+          <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+            <a
+              href="https://www.saashub.com/cerulea?utm_source=badge&utm_campaign=badge&utm_content=cerulea&badge_variant=color&badge_kind=approved"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Approved on SaaSHub"
+              className="inline-flex transition-opacity hover:opacity-80"
+            >
+              <ApprovedSaa className="w-auto" />
+            </a>
+          </div>
+          <div data-aos="fade-up" data-aos-duration="800" data-aos-delay="300">
+            <a
+              href="https://www.uneed.best/tool/cerulea"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Launching soon on Uneed"
+              className="inline-flex transition-opacity hover:opacity-80"
+            >
+              <Uneed className="w-auto" />
+            </a>
+          </div>
         </div>
 
         {/* Featured content — clean separated cards, no internal grid lines */}
