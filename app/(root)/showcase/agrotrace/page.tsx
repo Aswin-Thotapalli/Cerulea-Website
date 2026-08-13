@@ -246,7 +246,10 @@ export default function AgroTraceShowcasePage() {
           </div>
 
           <div className="mt-14 text-center">
-            <p className="text-center font-mono text-[11px] font-bold tracking-widest text-background/60 uppercase">
+            <p
+              style={{ textAlign: "center" }}
+              className="font-mono text-[11px] font-bold tracking-widest text-background/60 uppercase"
+            >
               5-Node Validator Set, 4-of-5 to Finalise
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3 px-6">

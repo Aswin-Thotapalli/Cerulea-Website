@@ -77,7 +77,10 @@ export default function ChainFlowTabs({
             )
           })}
         </div>
-        <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
+        <p
+          style={{ textAlign: "center" }}
+          className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground"
+        >
           {current.note}
         </p>
       </div>
