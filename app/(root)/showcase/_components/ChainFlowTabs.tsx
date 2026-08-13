@@ -91,8 +91,6 @@ export default function ChainFlowTabs({
           <div
             key={stage.step}
             className="relative overflow-hidden rounded-xl border border-border bg-card p-6"
-            data-aos="fade-up"
-            data-aos-duration="500"
           >
             <span className={`absolute inset-x-0 top-0 h-0.5 ${a.bar}`} />
             <p

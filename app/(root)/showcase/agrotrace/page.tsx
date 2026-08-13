@@ -246,7 +246,7 @@ export default function AgroTraceShowcasePage() {
           </div>
 
           <div className="mt-14 text-center">
-            <p className="font-mono text-[11px] font-bold tracking-widest text-background/60 uppercase">
+            <p className="text-center font-mono text-[11px] font-bold tracking-widest text-background/60 uppercase">
               5-Node Validator Set, 4-of-5 to Finalise
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3 px-6">
@@ -395,40 +395,6 @@ export default function AgroTraceShowcasePage() {
                 </Button>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 10. BUILT BY, deep navy section */}
-      <section
-        data-aos="fade-up"
-        data-aos-duration="600"
-        className="mt-10 bg-foreground text-background"
-      >
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <Eyebrow variant="onDark">About AgroTrace</Eyebrow>
-          <h2 className="ff-title text-3xl font-bold text-background md:text-[40px]">
-            A Caerulean Bytechains product, built on Cerulea.
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-background/70 md:text-lg">
-            AgroTrace is a showcase platform built by Caerulean Bytechains to
-            demonstrate the Cerulea capability stack. Adopter organisations take
-            full ownership and run it independently under their own branding,
-            domain, and configuration.
-          </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href={AGROTRACE_URL} target="_blank" rel="noopener noreferrer">
-              <Button variant="default">
-                Visit AgroTrace
-                <ExternalLink />
-              </Button>
-            </Link>
-            <Link href="/product/studio">
-              <Button variant="outline" className="text-foreground">
-                How it was built
-                <ArrowRight />
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
