@@ -19,12 +19,13 @@ import { Button } from "@/components/animate-ui/components/buttons/button"
 import ChainFlowTabs, { type Flow } from "../_components/ChainFlowTabs"
 
 export const metadata: Metadata = {
-  title: "AgroTrace, Built on Cerulea",
+  title: "AquaTrace, Built on Cerulea",
   description:
-    "Blockchain traceability for Indian agricultural exports, mango and turmeric, built on Cerulea. From the farm to the foreign shore, every step on chain and verifiable from a single code.",
+    "Blockchain traceability for Indian seafood exports, farmed aquaculture and wild capture, built on Cerulea. From the broodstock or the catch to the retail shelf, every step on chain and verifiable from a single code.",
 }
 
-// Shared eyebrow, matches the dashed sharp-corner badge used site-wide
+// Shared eyebrow, matches the dashed sharp-corner badge used site-wide.
+// AquaTrace uses the blue accent (chart-3).
 function Eyebrow({
   children,
   variant = "muted",
@@ -34,9 +35,9 @@ function Eyebrow({
 }) {
   const styles =
     variant === "accent"
-      ? "border-chart-2/30 bg-chart-2/10 text-chart-2"
+      ? "border-chart-3/30 bg-chart-3/10 text-chart-3"
       : variant === "onDark"
-        ? "border-background/20 bg-background/5 text-chart-2"
+        ? "border-background/20 bg-background/5 text-chart-3"
         : "border-primary/25 bg-primary/10 text-foreground/75"
   return (
     <div
@@ -48,9 +49,9 @@ function Eyebrow({
   )
 }
 
-const AGROTRACE_URL = "https://agrotrace.cerulea.io"
+const AQUATRACE_URL = "https://aquatrace.cerulea.io"
 
-export default function AgroTraceShowcasePage() {
+export default function AquaTraceShowcasePage() {
   return (
     <main>
       {/* 1. HERO */}
@@ -58,15 +59,15 @@ export default function AgroTraceShowcasePage() {
         <SectionHeader
           segments={[
             { label: "Built on Cerulea" },
-            { label: "Agriculture & Food Tech" },
+            { label: "Seafood & Marine Exports" },
           ]}
-          headline1="AgroTrace"
-          description="**Prove where your harvest came from.** AgroTrace is blockchain traceability for Indian agricultural exports, mango and turmeric, that follows a consignment backward to the farm and forward to the buyer through every change of custody. Every event is recorded where and when it happens and anchored on a tamper-evident ledger, so origin and quality claims rest on evidence rather than paper. No external chain, no token, no gas."
+          headline1="AquaTrace"
+          description="**Prove where your seafood came from.** AquaTrace is blockchain traceability for Indian seafood exports, farmed aquaculture and wild capture, that follows a product backward to its origin and forward to its buyer through every change of custody. Every event is recorded where and when it happens and anchored on a tamper-evident ledger, so origin claims rest on evidence rather than paper. No external chain, no token, no gas."
           node={
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href={AGROTRACE_URL} target="_blank" rel="noopener noreferrer">
+              <Link href={AQUATRACE_URL} target="_blank" rel="noopener noreferrer">
                 <Button variant="default">
-                  Visit AgroTrace
+                  Visit AquaTrace
                   <ExternalLink />
                 </Button>
               </Link>
@@ -84,12 +85,12 @@ export default function AgroTraceShowcasePage() {
         <div className="mx-auto max-w-3xl text-center">
           <Eyebrow variant="accent">At a Glance</Eyebrow>
           <h2 className="ff-title text-3xl font-bold text-foreground md:text-[40px]">
-            Two commodity chains. One engine.
+            The full seafood basket. One engine.
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-            Turmeric and mango run on the same engine today, each with its own
-            workflow, roles, quality parameters and regulatory requirements, with
-            more crops added as data rather than code.
+            Farmed aquaculture and wild capture run on the same engine, each with
+            its own roles, workflow and regulatory set, with new categories added
+            as data rather than code.
           </p>
         </div>
         <div className="mx-auto mt-12 grid max-w-5xl grid-cols-1 gap-4 px-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -98,7 +99,7 @@ export default function AgroTraceShowcasePage() {
               key={g.title}
               className="rounded-xl border border-border bg-card p-6"
             >
-              <p className="ff-title text-2xl font-extrabold text-chart-2">
+              <p className="ff-title text-2xl font-extrabold text-chart-3">
                 {g.stat}
               </p>
               <h3 className="mt-2 text-base font-semibold text-foreground">
@@ -121,10 +122,10 @@ export default function AgroTraceShowcasePage() {
               The record keeps breaking where custody changes.
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Indian agricultural exports are worth billions a year, yet each
-              break in the record carries a cost, and a single import alert abroad
-              can place every later consignment under detention on arrival.
-              AgroTrace addresses each gap.
+              Indian marine product exports are worth several billion dollars a
+              year, yet each break in the record carries a cost, and a single
+              import alert abroad can place every later consignment under detention
+              on arrival. AquaTrace addresses each gap.
             </p>
           </div>
 
@@ -155,22 +156,20 @@ export default function AgroTraceShowcasePage() {
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
             Every step follows the same shape: record, validate, anchor, hand off,
-            accept or flag, finalise, verify. Switch between the two commodity
-            chains to see each ordered stage, its actor and where custody passes.
+            accept or flag, finalise, verify. Switch between the two production
+            systems to see each ordered stage, its actor and where custody passes.
           </p>
         </div>
 
         <div className="mx-auto max-w-6xl px-6">
-          <ChainFlowTabs flows={AGRO_FLOWS} accent="emerald" />
+          <ChainFlowTabs flows={AQUA_FLOWS} accent="blue" />
         </div>
 
         <p className="mx-auto mt-10 max-w-3xl px-6 text-center text-sm leading-relaxed text-muted-foreground">
-          The essential difference: turmeric is tested late, on the finished
-          powder, and adds boiling, drying, polishing, mandi sale, grinding and
-          Spices Board certification. Mango is tested early, on the raw fruit, and
-          adds packhouse grading, disinfestation treatment, NPPO phytosanitary
-          clearance and APEDA certification. The downstream logistics tail is
-          shared.
+          The farmed chain starts at the broodstock lot and repeats feed, grow-out
+          and sampling as many times as the crop needs. The wild chain starts at
+          the fishing trip and repeats on-vessel processing and transhipment. From
+          processing onward, the export, logistics and retail tail is shared.
         </p>
       </section>
 
@@ -189,7 +188,7 @@ export default function AgroTraceShowcasePage() {
               const Icon = f.icon
               return (
                 <div key={f.title} className="bg-card p-8">
-                  <div className="flex size-12 items-center justify-center rounded-md border border-chart-2/10 bg-background text-chart-2">
+                  <div className="flex size-12 items-center justify-center rounded-md border border-chart-3/10 bg-background text-chart-3">
                     <Icon className="size-6" />
                   </div>
                   <h3 className="mt-5 text-lg font-semibold text-foreground">
@@ -205,7 +204,7 @@ export default function AgroTraceShowcasePage() {
         </div>
       </section>
 
-      {/* 6. AGROCHAIN, deep navy section */}
+      {/* 6. THE LEDGER, deep navy section */}
       <section
         data-aos="fade-up"
         data-aos-duration="600"
@@ -213,26 +212,27 @@ export default function AgroTraceShowcasePage() {
       >
         <div className="py-20">
           <div className="mx-auto max-w-3xl px-6 text-center">
-            <Eyebrow variant="onDark">AgroChain</Eyebrow>
+            <Eyebrow variant="onDark">Permissioned Ledger</Eyebrow>
             <h2 className="ff-title text-3xl font-bold text-background md:text-[40px]">
-              The blockchain layer inside AgroTrace.
+              The blockchain layer inside AquaTrace.
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-background/70 md:text-lg">
-              AgroChain is an entirely internal, permissioned ledger with no
-              external dependencies, no gas fees and no wallet setup. Every event
-              produces a transaction, hashed with SHA-256 and signed by the acting
-              party, gathered into a block with a Merkle root and a hash link to
-              the block before it, and finalised by a signed consensus round.
+              AquaTrace runs on an internal, permissioned ledger designed for a
+              supply chain rather than a public cryptocurrency, with no external
+              chain, no token and no gas. Every event produces a transaction,
+              hashed with SHA-256 and signed with the acting party&apos;s ed25519
+              key, gathered into a block with a Merkle root and a hash link to the
+              block before it, and finalised by a signed consensus round.
             </p>
           </div>
 
           <div className="mx-auto mt-14 grid max-w-5xl grid-cols-1 gap-4 px-6 md:grid-cols-2">
-            {AGROCHAIN_SPECS.map((item) => (
+            {LEDGER_SPECS.map((item) => (
               <div
                 key={item.label}
                 className="rounded-lg border border-background/10 bg-background/5 p-6"
               >
-                <p className="font-mono text-[11px] font-bold tracking-widest text-chart-2 uppercase">
+                <p className="font-mono text-[11px] font-bold tracking-widest text-chart-3 uppercase">
                   {item.label}
                 </p>
                 <p className="mt-2 text-lg font-bold text-background">
@@ -247,17 +247,17 @@ export default function AgroTraceShowcasePage() {
 
           <div className="mt-14 text-center">
             <p className="font-mono text-[11px] font-bold tracking-widest text-background/60 uppercase">
-              5-Node Validator Set, 4-of-5 to Finalise
+              Signed Validator Set, Consensus to Finalise
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-3 px-6">
-              {VALIDATOR_NODES.map((node) => (
+              {SECURITY_TAGS.map((tag) => (
                 <div
-                  key={node}
-                  className="flex items-center gap-2 rounded-full border border-chart-2/30 bg-chart-2/10 px-4 py-2"
+                  key={tag}
+                  className="flex items-center gap-2 rounded-full border border-chart-3/30 bg-chart-3/10 px-4 py-2"
                 >
-                  <span className="size-2 rounded-full bg-chart-2" />
+                  <span className="size-2 rounded-full bg-chart-3" />
                   <span className="text-sm font-semibold text-background">
-                    {node}
+                    {tag}
                   </span>
                 </div>
               ))}
@@ -275,20 +275,20 @@ export default function AgroTraceShowcasePage() {
               Anyone can verify. No login required.
             </h2>
             <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
-              Every consignment carries a QR code that resolves to a public
+              Every shipment carries a QR code that resolves to a public
               verification page. A buyer, an auditor or an importing authority can
-              check the full journey from farm to foreign shore, the certificates,
-              and the laboratory results, each reading against its limit, with no
-              account and no blind trust. A separate chain explorer lets anyone
+              check the full journey from origin to retail, the certificates, and
+              the laboratory results, each residue reading against its limit, with
+              no account and no blind trust. A separate chain explorer lets anyone
               re-confirm that every block is hash-linked to the one before it.
             </p>
             <div className="mt-6 flex flex-col gap-3">
               {VERIFY_URLS.map((url) => (
                 <div
                   key={url}
-                  className="rounded-lg border border-chart-2/25 bg-chart-2/5 px-4 py-3"
+                  className="rounded-lg border border-chart-3/25 bg-chart-3/5 px-4 py-3"
                 >
-                  <p className="font-mono text-sm font-semibold break-all text-chart-2">
+                  <p className="font-mono text-sm font-semibold break-all text-chart-3">
                     {url}
                   </p>
                 </div>
@@ -303,8 +303,8 @@ export default function AgroTraceShowcasePage() {
             <ul className="mt-6 flex flex-col gap-4">
               {VERIFY_RECORD.map((item) => (
                 <li key={item} className="flex items-center gap-3">
-                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-chart-2/15">
-                    <span className="size-1.5 rounded-full bg-chart-2" />
+                  <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-chart-3/15">
+                    <span className="size-1.5 rounded-full bg-chart-3" />
                   </span>
                   <span className="text-sm font-medium text-foreground">
                     {item}
@@ -316,11 +316,11 @@ export default function AgroTraceShowcasePage() {
         </div>
       </section>
 
-      {/* 8. WHY AGROTRACE */}
+      {/* 8. WHY AQUATRACE */}
       <section data-aos="fade-up" data-aos-duration="600" className="mt-10 bg-card">
         <div className="pt-10">
           <div className="mx-auto max-w-3xl text-center">
-            <Eyebrow>Why AgroTrace</Eyebrow>
+            <Eyebrow>Why AquaTrace</Eyebrow>
             <h2 className="ff-title text-3xl font-bold text-foreground md:text-[40px]">
               What it does for your business.
             </h2>
@@ -328,7 +328,7 @@ export default function AgroTraceShowcasePage() {
           <div className="mx-auto mt-14 grid max-w-4xl grid-cols-1 gap-x-8 gap-y-6 px-6 md:grid-cols-2">
             {WHY.map((item, i) => (
               <div key={i} className="flex items-start gap-4">
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-chart-2/12 font-mono text-xs font-bold text-chart-2">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-chart-3/12 font-mono text-xs font-bold text-chart-3">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <p className="text-base leading-relaxed text-foreground">{item}</p>
@@ -341,7 +341,7 @@ export default function AgroTraceShowcasePage() {
       {/* 9. LIVE SHOWCASE PLATFORM */}
       <section data-aos="fade-up" data-aos-duration="600" className="mt-10 pt-10">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="rounded-2xl border border-chart-2/25 bg-chart-2/5 p-8 md:p-12">
+          <div className="rounded-2xl border border-chart-3/25 bg-chart-3/5 p-8 md:p-12">
             <div className="flex flex-col gap-10 md:flex-row md:items-start">
               <div className="flex-1">
                 <Eyebrow variant="accent">Live Showcase Platform</Eyebrow>
@@ -349,13 +349,12 @@ export default function AgroTraceShowcasePage() {
                   A working chain you can verify today.
                 </h3>
                 <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-                  The live platform at agrotrace.cerulea.io runs both commodity
-                  chains, turmeric and mango, pre-loaded with realistic showcase
-                  data across exporter organisations, registered harvest batches,
-                  active consignments at various pipeline stages, disputes with
-                  full response history, finalised blocks and on-chain
-                  transactions including simulated IoT humidity and cold-chain
-                  breaches.
+                  The live platform at aquatrace.cerulea.io runs both production
+                  systems, farmed aquaculture and wild capture, pre-loaded with
+                  realistic showcase data across the full seafood basket, from
+                  broodstock lots and fishing trips through processing, export
+                  documentation and retail delivery, with lab reports, monitoring
+                  alerts and disputes on the record.
                 </p>
                 <p className="mt-3 text-base leading-relaxed text-muted-foreground">
                   Contact Caerulean Bytechains for a demo account to explore the
@@ -368,7 +367,7 @@ export default function AgroTraceShowcasePage() {
                       key={s.label}
                       className="rounded-lg border border-border bg-background p-5"
                     >
-                      <p className="ff-title text-2xl font-extrabold text-chart-2">
+                      <p className="ff-title text-2xl font-extrabold text-chart-3">
                         {s.value}
                       </p>
                       <p className="mt-1 text-xs leading-tight text-muted-foreground">
@@ -381,12 +380,12 @@ export default function AgroTraceShowcasePage() {
 
               <div className="flex flex-col gap-3 md:pt-2">
                 <Link
-                  href={AGROTRACE_URL}
+                  href={AQUATRACE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Button variant="default" className="w-full">
-                    Visit AgroTrace
+                    Visit AquaTrace
                     <ExternalLink />
                   </Button>
                 </Link>
@@ -406,20 +405,20 @@ export default function AgroTraceShowcasePage() {
         className="mt-10 bg-foreground text-background"
       >
         <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <Eyebrow variant="onDark">About AgroTrace</Eyebrow>
+          <Eyebrow variant="onDark">About AquaTrace</Eyebrow>
           <h2 className="ff-title text-3xl font-bold text-background md:text-[40px]">
             A Caerulean Bytechains product, built on Cerulea.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-background/70 md:text-lg">
-            AgroTrace is a showcase platform built by Caerulean Bytechains to
+            AquaTrace is a showcase platform built by Caerulean Bytechains to
             demonstrate the Cerulea capability stack. Adopter organisations take
             full ownership and run it independently under their own branding,
             domain, and configuration.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href={AGROTRACE_URL} target="_blank" rel="noopener noreferrer">
+            <Link href={AQUATRACE_URL} target="_blank" rel="noopener noreferrer">
               <Button variant="default">
-                Visit AgroTrace
+                Visit AquaTrace
                 <ExternalLink />
               </Button>
             </Link>
@@ -443,13 +442,13 @@ export default function AgroTraceShowcasePage() {
 const GLANCE = [
   {
     stat: "2 chains",
-    title: "Turmeric & mango, one engine",
-    desc: "Turmeric runs 14 stages, mango runs 12, each with its own roles, quality parameters and regulatory set. New crops are added as data, not code.",
+    title: "Farmed & wild, one engine",
+    desc: "Farmed aquaculture runs 17 stages, wild capture runs 16, each with its own roles and regulatory set. New categories are added as data, not code.",
   },
   {
     stat: "1 unit",
-    title: "The harvest batch",
-    desc: "One traceable origin unit per chain, registered by the farmer, with nothing recorded before it.",
+    title: "Broodstock lot or fishing trip",
+    desc: "One traceable origin unit per chain, the broodstock lot for farmed and the fishing trip for wild, with nothing recorded before it.",
   },
   {
     stat: "On chain",
@@ -462,83 +461,90 @@ const GLANCE = [
     desc: "Every handoff is a two-party custody transfer the receiver accepts or disputes, co-signed on the ledger.",
   },
   {
-    stat: "QR",
-    title: "Public verification",
-    desc: "Any consignment is verifiable from a QR code, with the full journey, certificates and laboratory results.",
+    stat: "Lot edges",
+    title: "Identity survives grading",
+    desc: "Recorded splits and merges link parent lots to child lots, so a finished carton still traces to its source through consolidation.",
   },
   {
-    stat: "Alerts",
-    title: "Quality on the record",
-    desc: "On-chain quality assays, a maximum-residue-limit panel per commodity, and an IoT breach alert before the vessel departs.",
+    stat: "GDST",
+    title: "An international standard",
+    desc: "Aligned to the GDST Core Normative Standard, built on GS1 EPCIS, so the chain speaks the language importing buyers require.",
   },
 ]
 
 const PROBLEMS = [
   {
+    title: "Unrecorded treatments",
+    desc: "A treatment applied at the pond during a disease event goes unwritten and surfaces months later as a residue rejection at a foreign port.",
+  },
+  {
+    title: "Lost lot identity",
+    desc: "Several pond harvests merge on a grading table within one shift, so a single finished carton can no longer be traced to a source pond.",
+  },
+  {
     title: "Origin claims on paper",
-    desc: "A certificate of origin or a Spices Board registration moves as a paper document, which invites duplicate presentation, quantity inflation and transcription error.",
+    desc: "Catch certificates move as paper documents, which invites duplicate presentation, quantity inflation and transcription error.",
   },
   {
-    title: "Lost batch identity",
-    desc: "Several field lots merge on a grading or polishing floor within one shift, so a finished carton can no longer be traced back to a source farm.",
+    title: "Samples not tied to a pond",
+    desc: "A pre-harvest sample is linked to its pond only by a handwritten label and the memory of the person who drew it.",
   },
   {
-    title: "Unrecorded quality events",
-    desc: "A residue reading, a moisture reading or a treatment goes unwritten and surfaces months later as a rejection at a foreign port.",
+    title: "Handling outside the audit",
+    desc: "Peeling and de-heading are sent to informal sheds outside the audited perimeter of the certified plant.",
   },
   {
-    title: "Adulteration and residues",
-    desc: "Lead chromate colouring in turmeric, ethylene oxide fumigation banned by the EU, or a pesticide over the market limit on mango, none of it visible until arrival.",
-  },
-  {
-    title: "Contamination in transit",
-    desc: "A humidity spike raises aflatoxin risk in turmeric, or a cold-chain break spoils mango, with no reading on the record to catch it in time.",
-  },
-  {
-    title: "Disputes at the handoff",
-    desc: "A grower declares one weight and grade, the next party receives another, and the disagreement surfaces at the end of the chain rather than the moment it happened.",
+    title: "Missing cold chain history",
+    desc: "Product moves from pond bank or harbour to plant on ice with no temperature record on the first leg.",
   },
 ]
 
-const AGRO_FLOWS: Flow[] = [
+const AQUA_FLOWS: Flow[] = [
   {
-    id: "turmeric",
-    label: "Turmeric",
-    note: "The traceable unit is the harvest batch. 14 ordered stages, from the Armoor and Nizamabad belt to the destination port. Drying and the quality assay are performed on the finished product late in the chain.",
+    id: "farmed",
+    label: "Farmed Aquaculture",
+    note: "The traceable unit is the broodstock lot. 17 ordered stages. Feed, grow-out and sampling are repeatable, recorded as many times as the crop needs.",
     stages: [
-      { step: "01", label: "Batch Registration", actor: "Farmer" },
-      { step: "02", label: "Boiling & Curing", actor: "Boiling Unit" },
-      { step: "03", label: "Drying", actor: "Drying Yard" },
-      { step: "04", label: "Polishing", actor: "Polishing Mill" },
-      { step: "05", label: "First Sale at Mandi", actor: "Commission Agent" },
-      { step: "06", label: "Sterilisation & Grinding", actor: "Processing Unit" },
-      { step: "07", label: "Quality Assay", actor: "Laboratory" },
-      { step: "08", label: "Export Certification", actor: "Spices Board Officer" },
-      { step: "09", label: "Export Booking", actor: "Exporter" },
-      { step: "10", label: "Forwarder Handoff", actor: "Freight Forwarder" },
-      { step: "11", label: "Vessel Loading", actor: "Shipping Line" },
-      { step: "12", label: "Customs Clearance", actor: "Customs Broker" },
-      { step: "13", label: "Storage Custody", actor: "Cold Storage" },
-      { step: "14", label: "Receipt & Acceptance", actor: "Buyer" },
+      { step: "01", label: "Broodstock Lot Supply", actor: "Multiplication Centre" },
+      { step: "02", label: "Hatchery Seed Production", actor: "Hatchery Operator" },
+      { step: "03", label: "Pond Stocking", actor: "Farmer" },
+      { step: "04", label: "Feed & Input Application", actor: "Farmer" },
+      { step: "05", label: "Grow-out Reading", actor: "Farmer" },
+      { step: "06", label: "Pre-harvest Sampling", actor: "Farmer" },
+      { step: "07", label: "Harvest & Farm-gate Sale", actor: "Farmer" },
+      { step: "08", label: "Dealer Receipt & Dispatch", actor: "Dealer / Trader" },
+      { step: "09", label: "Pre-processing", actor: "Pre-processing Operator" },
+      { step: "10", label: "Processing", actor: "Plant Quality Manager" },
+      { step: "11", label: "Freezing & Cold Storage", actor: "Plant Quality Manager" },
+      { step: "12", label: "Export Documentation", actor: "Exporter Administrator" },
+      { step: "13", label: "Customs Clearance", actor: "Customs Broker" },
+      { step: "14", label: "Ocean Freight", actor: "Reefer Logistics Operator" },
+      { step: "15", label: "Import Clearance", actor: "Importer" },
+      { step: "16", label: "Distribution", actor: "Distributor / Repacker" },
+      { step: "17", label: "Retail Delivery", actor: "Retailer / Food Service" },
     ],
   },
   {
-    id: "mango",
-    label: "Mango",
-    note: "The traceable unit is the harvest batch. 12 ordered stages. The residue test is performed early, on the raw fruit, and the middle of the chain adds packhouse grading, disinfestation treatment and phytosanitary clearance.",
+    id: "wild",
+    label: "Wild Capture",
+    note: "The traceable unit is the fishing trip, the catch itself. 16 ordered stages. On-vessel processing and transhipment are repeatable.",
     stages: [
-      { step: "01", label: "Batch Registration", actor: "Farmer" },
-      { step: "02", label: "Residue Test", actor: "Laboratory" },
-      { step: "03", label: "Grading & Packing", actor: "Packhouse" },
-      { step: "04", label: "Treatment", actor: "Treatment Facility" },
-      { step: "05", label: "Phytosanitary Clearance", actor: "NPPO Inspector" },
-      { step: "06", label: "Export Certification", actor: "APEDA Officer" },
-      { step: "07", label: "Export Booking", actor: "Exporter" },
-      { step: "08", label: "Forwarder Handoff", actor: "Freight Forwarder" },
-      { step: "09", label: "Vessel Loading", actor: "Shipping Line" },
-      { step: "10", label: "Customs Clearance", actor: "Customs Broker" },
-      { step: "11", label: "Cold Storage", actor: "Cold Storage" },
-      { step: "12", label: "Receipt & Acceptance", actor: "Buyer" },
+      { step: "01", label: "Fishing Trip (Catch)", actor: "Skipper" },
+      { step: "02", label: "On-vessel Processing", actor: "Skipper" },
+      { step: "03", label: "Transhipment", actor: "Skipper" },
+      { step: "04", label: "Landing", actor: "Skipper" },
+      { step: "05", label: "Auction & First Sale", actor: "Auctioneer" },
+      { step: "06", label: "Assembly & Consolidation", actor: "Assembler / Supplier" },
+      { step: "07", label: "Wholesale Holding", actor: "Wholesaler" },
+      { step: "08", label: "Cleaning & Pre-processing", actor: "Cleaning Operator" },
+      { step: "09", label: "Processing", actor: "Plant Quality Manager" },
+      { step: "10", label: "Freezing & Cold Storage", actor: "Plant Quality Manager" },
+      { step: "11", label: "Export Documentation", actor: "Exporter Administrator" },
+      { step: "12", label: "Customs Clearance", actor: "Customs Broker" },
+      { step: "13", label: "Ocean Freight", actor: "Reefer Logistics Operator" },
+      { step: "14", label: "Import Clearance", actor: "Importer" },
+      { step: "15", label: "Distribution", actor: "Distributor / Repacker" },
+      { step: "16", label: "Retail Delivery", actor: "Retailer / Food Service" },
     ],
   },
 ]
@@ -546,106 +552,112 @@ const AGRO_FLOWS: Flow[] = [
 const FEATURES: { icon: LucideIcon; title: string; desc: string }[] = [
   {
     icon: QrCode,
-    title: "Batch & Consignment Management",
-    desc: "Register the harvest batch at the farm with cultivar or GI variety, location, harvest date and quantity, then assemble the export consignment from a certified batch. Each carries a QR code, scannable at any point to pull the full history.",
+    title: "Origin Units & Lot Tracing",
+    desc: "Register the broodstock lot for farmed or the fishing trip for wild, then follow it forward. Recorded splits and merges link parent lots to child lots, so identity survives consolidation and grading all the way to the finished pack.",
   },
   {
     icon: ClipboardCheck,
     title: "Compliance Scorecard",
-    desc: "Each mandatory check is scored pass or fail against a configurable MRL panel per commodity, curcumin, lead chromate, ethylene oxide and aflatoxin for turmeric, the pesticide panel for mango, aligned to FSSAI, EU, US, Japan and Codex limits. Catch violations before the vessel is loaded.",
+    desc: "Each mandatory check is scored pass or fail, from a residue reading within its maximum residue limit to an input applied that is not on the certified list, aligned to EU NRCP, US SIMP and Seafood HACCP, and Japan and China import requirements.",
   },
   {
     icon: Thermometer,
-    title: "IoT Monitoring & Alerts",
-    desc: "Rules run automatically as data is recorded. A humidity spike that raises aflatoxin risk in turmeric transit, or a cold-chain excursion for mango, is flagged before the vessel departs so the container can be held.",
+    title: "Monitoring & Alerts",
+    desc: "Rules run automatically as data is recorded, raising an alert on any breach: a residue over limit, an uncertified input, dissolved oxygen below the safe threshold, ammonia above it, or a first-mile transport leg above the chilled range.",
   },
   {
     icon: Gavel,
     title: "Two-Party Handoffs & Disputes",
-    desc: "Custody does not advance silently. The unit lands in the receiver's acceptance queue; they accept, co-signing quantity and grade on chain, or flag a discrepancy, which opens a dispute both parties work from on the same immutable record.",
+    desc: "Custody does not advance silently. The unit lands in the receiver's acceptance queue; they accept, co-signing declared weight and grade on chain, or flag a discrepancy, which opens a dispute both parties work from on the same immutable record.",
   },
   {
     icon: LayoutDashboard,
     title: "Role-Scoped Workspaces",
-    desc: "Every party in the chain has an account and a workspace scoped to their own work, farmer, boiling and drying and polishing units, mandi, processing unit, packhouse, treatment facility, laboratory, regulators and the overseas buyer, so the record is built by the people who hold the produce.",
+    desc: "Every party has an account and a workspace scoped to their own work, from broodstock centre, hatchery, farmer, skipper and auctioneer to pre-processor, plant, exporter, importer and retailer, plus read-only oversight for regulators and auditors.",
   },
   {
     icon: Globe,
     title: "Public Verification",
-    desc: "Anyone can verify a consignment at agrotrace.cerulea.io without logging in. The page shows the compliance scorecard, the full farm-to-shore journey, the certificates and the laboratory results, including the verified curcumin figure for turmeric.",
+    desc: "Anyone can verify a shipment at aquatrace.cerulea.io without logging in. The page shows the compliance scorecard, the full origin-to-retail journey, the certificates and the laboratory results, each residue reading against its limit.",
   },
   {
     icon: Boxes,
     title: "Profile-Driven Engine",
-    desc: "A thin engine interprets a declarative profile that defines a whole commodity chain, its entities, roles, stages and rules. Adding a crop is writing a profile, not changing the engine, so the same platform grows beyond mango and turmeric.",
+    desc: "A thin engine interprets a declarative profile that defines a whole chain, its entities, roles, stages and rules. Adding a category is writing a profile, not rebuilding the engine, so the same platform grows across the full seafood basket.",
   },
   {
     icon: Languages,
-    title: "Multilingual PWA",
-    desc: "Localised across nine Indian languages and delivered as an installable progressive web app that works on a phone, so the actor who holds the produce can capture the record in the field, in their own language.",
+    title: "Standards-Aligned PWA",
+    desc: "Records follow the GDST Core Normative Standard on GS1 EPCIS, capturing species, product form, lot, weight, event time and location and ownership. Localised and delivered as an installable progressive web app that works on a phone.",
   },
 ]
 
-const AGROCHAIN_SPECS = [
+const LEDGER_SPECS = [
   {
     label: "Consensus",
-    value: "4-of-5 validator set",
+    value: "Signed validator set",
     detail:
-      "A five-node validator set signs each block; a block is finalised only when it reaches the four-of-five threshold, otherwise its transactions return to the mempool.",
+      "A validator set signs each block; a block is finalised only when it reaches the configured consensus threshold, otherwise it is orphaned and its transactions return to the mempool.",
   },
   {
     label: "Integrity under load",
-    value: "Single producer, one chain head",
+    value: "DB advisory-lock serialised",
     detail:
-      "Block production runs on a single producer with an in-process guard on the true chain head, so a burst of records cannot fork or wedge the chain, and any unfinalised block is recovered on restart.",
+      "Block production is serialised with a database advisory lock, so overlapping instances during a deployment cannot fork the chain, and any unfinalised block is recovered on restart.",
   },
   {
     label: "Integrity",
-    value: "SHA-256 Merkle tree",
+    value: "SHA-256 Merkle, ed25519 keys",
     detail:
-      "Every transaction is hashed and signed, every block carries a Merkle root and a hash link to the previous block, all the way back to a genesis block.",
+      "Every transaction is hashed with SHA-256 and signed with the acting party's ed25519 key; the verification page and explorer re-compute Merkle roots and hash links.",
   },
   {
     label: "Document anchoring",
     value: "Digest on chain, file off chain",
     detail:
-      "Certificates and documents are anchored by their SHA-256 digest, so the original file can be checked against the ledger without storing it on chain.",
+      "Certificates and documents are anchored by their digest, so the original file can be checked against the ledger without storing it on chain.",
   },
 ]
 
-const VALIDATOR_NODES = ["Node 1", "Node 2", "Node 3", "Node 4", "Node 5"]
+const SECURITY_TAGS = [
+  "AES-256-GCM secrets",
+  "scrypt passwords",
+  "TOTP MFA",
+  "Rotating refresh tokens",
+  "RBAC + tenant scoping",
+]
 
 const VERIFY_URLS = [
-  "agrotrace.cerulea.io/verify/consignment/{ID}",
-  "agrotrace.cerulea.io/explorer",
+  "aquatrace.cerulea.io/verify/shipment/{ID}",
+  "aquatrace.cerulea.io/explorer",
 ]
 
 const VERIFY_RECORD = [
   "Compliance scorecard, each mandatory check pass or fail",
-  "The full journey, every stage from farm to foreign shore",
+  "The full journey, every stage from origin to retail",
   "Each stage marked on chain with its block",
   "The certificates, each with its issuing authority and anchor",
-  "Laboratory results, each reading against its limit",
-  "Verified curcumin figure for turmeric",
+  "Laboratory results, each residue reading against its limit",
+  "Lot edges linking parent and child lots",
   "Chain explorer to re-confirm every hash-linked block",
 ]
 
 const WHY = [
-  "Catch MRL violations before loading with an automated compliance scorecard per commodity",
-  "Share a public QR-scannable provenance link with every consignment",
+  "Catch residue and uncertified-input violations before loading with an automated compliance scorecard",
+  "Share a public QR-scannable provenance link with every shipment",
   "Resolve disputes faster with a shared immutable record both parties can see",
-  "Prove transit integrity with IoT humidity and cold-chain alerts on chain before the vessel departs",
-  "Consolidate every actor on one platform instead of paper documents and phone calls",
-  "Spices Board, APEDA, NPPO and customs workflows mapped in from day one",
-  "Records map to the GS1 EPCIS event model foreign buyers increasingly require",
+  "Keep lot identity through grading and consolidation with recorded split and merge edges",
+  "Prove cold-chain integrity from the first mile with monitoring alerts on chain",
+  "MPEDA, Coastal Aquaculture Authority, EIC and Department of Fisheries workflows mapped in from day one",
+  "Records follow the GDST Core Normative Standard on GS1 EPCIS that importing buyers increasingly require",
   "White-label ready with your branding, your domain, your platform powered by Cerulea",
 ]
 
 const LIVE_STATS = [
-  { value: "2", label: "Commodity chains (turmeric & mango)" },
-  { value: "14 / 12", label: "Stages per chain" },
-  { value: "9", label: "Indian languages" },
+  { value: "2", label: "Production systems (farmed & wild)" },
+  { value: "17 / 16", label: "Stages per chain" },
+  { value: "GDST", label: "GS1 EPCIS aligned" },
   { value: "SHA-256", label: "Signed & anchored records" },
-  { value: "4-of-5", label: "Validator consensus" },
-  { value: "QR", label: "Public consignment verification" },
+  { value: "ed25519", label: "Per-party transaction signing" },
+  { value: "QR", label: "Public shipment verification" },
 ]

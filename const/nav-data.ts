@@ -12,6 +12,7 @@ import {
   MdWidgets as Blocks,
   MdStorefront as Store,
   MdEco as Sprout,
+  MdWaves as Waves,
   MdMenuBook as BookOpen,
   MdNewspaper as Newspaper,
   MdInfo as Info,
@@ -245,7 +246,14 @@ export const NAV_ITEMS: NavItem[] = [
             label: "AgroTrace", iconEl: Sprout,
             href: "/showcase/agrotrace",
             description:
-              "A live showcase: end-to-end agricultural provenance built and deployed on Cerulea.",
+              "A live showcase: end-to-end agricultural provenance for mango and turmeric exports, built and deployed on Cerulea.",
+            icon: "A",
+          },
+          {
+            label: "AquaTrace", iconEl: Waves,
+            href: "/showcase/aquatrace",
+            description:
+              "A live showcase: end-to-end seafood provenance for farmed and wild exports, built and deployed on Cerulea.",
             icon: "A",
           },
           {

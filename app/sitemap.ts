@@ -24,6 +24,7 @@ const staticRoutes: MetadataRoute.Sitemap = [
   url("/industries", 0.9, "weekly"),
 
   url("/showcase/agrotrace", 0.7),
+  url("/showcase/aquatrace", 0.7),
 
   // Company
   url("/company/about", 0.6),
