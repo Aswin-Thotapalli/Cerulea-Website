@@ -1,5 +1,4 @@
 import { IndustryPage } from "@/types/industry"
-import { extraUseCases } from "./industry-usecases-extra"
 // Material icons (react-icons/md) aliased to the previous lucide names.
 import {
   MdSwapHoriz as ArrowLeftRight,
@@ -7545,17 +7544,5 @@ export const industries: IndustryPage[] = [
 ]
 
 export function getIndustryBySlug(slug: string) {
-  const industry = industries.find((i) => i.slug === slug)
-  if (!industry) return undefined
-  const extras = extraUseCases[slug]
-  if (!extras || extras.length === 0) return industry
-  // Append the extra use cases, skipping any whose label already exists.
-  const existing = new Set(
-    industry.useCases.map((u) => u.label.trim().toLowerCase())
-  )
-  const merged = [
-    ...industry.useCases,
-    ...extras.filter((e) => !existing.has(e.label.trim().toLowerCase())),
-  ]
-  return { ...industry, useCases: merged }
+  return industries.find((i) => i.slug === slug)
 }
