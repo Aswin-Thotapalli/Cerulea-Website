@@ -1,4 +1,5 @@
 import { CaseEntry } from "@/types/case"
+import { extraSolutions } from "./usecases-extra"
 // Material icons (react-icons/md) aliased to the previous lucide names.
 import {
   MdEco as Leaf,
@@ -52,7 +53,7 @@ import {
   MdGroups as Users,
 } from "react-icons/md"
 
-export const solutions: CaseEntry[] = [
+const baseSolutions: CaseEntry[] = [
   //========================================tokenized-asset
   {
     slug: "tokenized-asset",
@@ -5894,6 +5895,8 @@ export const solutions: CaseEntry[] = [
     logSystemName: "Operational log system",
   },
 ]
+
+export const solutions: CaseEntry[] = [...baseSolutions, ...extraSolutions]
 
 export function getSolutionBySlug(slug: string) {
   return solutions.find((s) => s.slug === slug)

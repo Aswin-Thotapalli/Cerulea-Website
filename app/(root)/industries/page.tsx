@@ -23,6 +23,11 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group"
 import { Case_RAW_ITEMS,INDUSTRY_VERTICALS, SolutionItem, Tone } from "@/const/solutionsRoot"
+import { extraCaseItems } from "@/const/usecases-extra"
+
+// Order industries appear in the grouped "Browse by Use Case" tab: the
+// platform-level capabilities first, then every industry alphabetically.
+const PLATFORM_GROUP = "Cerulea Platform"
 
 
 const TONE_CLASSES: Record<Tone, string> = {
@@ -53,11 +58,33 @@ const industryItems: SolutionItem[] = INDUSTRY_VERTICALS.map((item) => ({
   href: `/industries/${item.label.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`,
 })).sort((a, b) => a.label.localeCompare(b.label))
 
-// Combine all items for the use case tab, in alphabetical order
-const solutionNavItems: SolutionItem[] = Case_RAW_ITEMS.map((item, i) => ({
+// Combine platform capabilities (original items) with the industry-specific
+// use cases, tagging each with an industry group.
+const solutionNavItems: SolutionItem[] = [
+  ...Case_RAW_ITEMS.map((item) => ({
+    ...item,
+    industry: item.industry ?? PLATFORM_GROUP,
+  })),
+  ...extraCaseItems,
+].map((item, i) => ({
   ...item,
   tone: TONE_KEYS[i % TONE_KEYS.length],
-})).sort((a, b) => a.label.localeCompare(b.label))
+}))
+
+// Group use-case rows by industry, platform group first then alphabetical.
+function groupByIndustry(items: SolutionItem[]): [string, SolutionItem[]][] {
+  const groups = new Map<string, SolutionItem[]>()
+  for (const item of items) {
+    const key = item.industry ?? PLATFORM_GROUP
+    if (!groups.has(key)) groups.set(key, [])
+    groups.get(key)!.push(item)
+  }
+  return [...groups.entries()].sort(([a], [b]) => {
+    if (a === PLATFORM_GROUP) return -1
+    if (b === PLATFORM_GROUP) return 1
+    return a.localeCompare(b)
+  })
+}
 
 
 function SolutionRow({ item }: { item: SolutionItem }) {
@@ -236,9 +263,18 @@ function SolutionsPageContent() {
                 No solutions match &ldquo;{query}&rdquo;.
               </div>
             ) : (
-              <div>
-                {filteredUseCases.map((item) => (
-                  <SolutionRow key={item.href + item.label} item={item} />
+              <div className="flex flex-col gap-10">
+                {groupByIndustry(filteredUseCases).map(([industry, items]) => (
+                  <div key={industry}>
+                    <h2 className="mb-2 text-xs font-bold tracking-widest text-extra-1 uppercase">
+                      {industry}
+                    </h2>
+                    <div>
+                      {items.map((item) => (
+                        <SolutionRow key={item.href + item.label} item={item} />
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}

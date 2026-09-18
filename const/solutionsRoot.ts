@@ -1,4 +1,5 @@
 import { type LucideIcon } from "lucide-react"
+import type { IconType } from "react-icons"
 import {
   Coins,
   Fingerprint,
@@ -63,10 +64,11 @@ export interface SolutionItem {
     label: string
     href: string
     description: string
-    icon: LucideIcon
+    icon: LucideIcon | IconType
     category?: Category
     tags: string[]
     tone: Tone
+    industry?: string
 }
 
 
