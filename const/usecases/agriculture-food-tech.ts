@@ -2,30 +2,17 @@ import type { CaseEntry } from "@/types/case"
 import type { ExtraCaseItem } from "../usecases-extra"
 import {
   MdEco as Leaf,
-  MdWaterDrop as Droplet,
   MdLocalShipping as Truck,
   MdSearch as Search,
-  MdDescription as ScrollText,
-  MdVerifiedUser as ShieldCheck,
   MdFactCheck as FileCheck,
   MdFingerprint as Fingerprint,
-  MdAccountBalanceWallet as Wallet,
-  MdMemory as Cpu,
   MdStorage as Database,
   MdHub as Network,
   MdAccountBalance as Landmark,
   MdApartment as Building2,
   MdDns as Server,
   MdSchema as Workflow,
-  MdPieChart as PieChart,
-  MdCardGiftcard as Gift,
-  MdScience as FlaskConical,
-  MdBalance as Scale,
-  MdBolt as Zap,
   MdPublic as Globe,
-  MdGroups as Users,
-  MdWidgets as Boxes,
-  MdShield as Shield,
 } from "react-icons/md"
 
 const INDUSTRY = "Agriculture & Food Tech"
