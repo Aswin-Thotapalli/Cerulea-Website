@@ -25,9 +25,34 @@ import {
 import { Case_RAW_ITEMS,INDUSTRY_VERTICALS, SolutionItem, Tone } from "@/const/solutionsRoot"
 import { extraCaseItems } from "@/const/usecases-extra"
 
-// Order industries appear in the grouped "Browse by Use Case" tab: the
-// platform-level capabilities first, then every industry alphabetically.
-const PLATFORM_GROUP = "Cerulea Platform"
+// Maps each original platform use case (by its page href) to the industry it
+// belongs under in the grouped "Browse by Use Case" tab.
+const PLATFORM_USE_CASE_INDUSTRY: Record<string, string> = {
+  "/solutions/use-case/tokenized-asset": "Financial Services & Banking",
+  "/solutions/use-case/decentralized-identity": "Government & Public Sector",
+  "/solutions/use-case/iot-depin": "Telecommunications",
+  "/solutions/use-case/data-integrity-audit-trails": "Legal & Compliance",
+  "/solutions/use-case/cross-border-settlements": "Financial Services & Banking",
+  "/solutions/use-case/daos-corporate-governance": "Enterprise IT & SaaS",
+  "/solutions/use-case/cbdcs-stablecoins": "Financial Services & Banking",
+  "/solutions/use-case/parametric-insurance-payouts": "Insurance",
+  "/solutions/use-case/traceability-provenance": "Supply Chain & Logistics",
+  "/solutions/use-case/loyalty-reward-programs": "Retail & Consumer Goods",
+  "/solutions/use-case/ip-royalty-management": "Media & Entertainment",
+  "/solutions/use-case/decentralized-ai-compute": "Enterprise IT & SaaS",
+  "/solutions/use-case/decentralized-science-desci": "Healthcare & Life Sciences",
+  "/solutions/use-case/smart-legal-escrow": "Legal & Compliance",
+  "/solutions/use-case/carbon-credit-trading": "Energy & Utilities",
+  "/solutions/use-case/cryptographic-voting-systems": "Government & Public Sector",
+  "/solutions/use-case/enterprise-workflow-automation": "Enterprise IT & SaaS",
+  "/solutions/use-case/corporate-treasury-defi-yield": "Financial Services & Banking",
+  "/solutions/use-case/microtransactions-streaming": "Media & Entertainment",
+  "/solutions/use-case/decentralized-storage-archiving": "Enterprise IT & SaaS",
+  "/solutions/use-case/cross-chain-interoperability": "Enterprise IT & SaaS",
+  "/solutions/use-case/zero-trust-network-access": "Cybersecurity",
+  "/solutions/use-case/secure-healthcare-data-sharing": "Healthcare & Life Sciences",
+  "/solutions/use-case/fractional-ownership": "Real Estate & PropTech",
+}
 
 
 const TONE_CLASSES: Record<Tone, string> = {
@@ -63,7 +88,8 @@ const industryItems: SolutionItem[] = INDUSTRY_VERTICALS.map((item) => ({
 const solutionNavItems: SolutionItem[] = [
   ...Case_RAW_ITEMS.map((item) => ({
     ...item,
-    industry: item.industry ?? PLATFORM_GROUP,
+    industry:
+      item.industry ?? PLATFORM_USE_CASE_INDUSTRY[item.href] ?? "Other",
   })),
   ...extraCaseItems,
 ].map((item, i) => ({
@@ -71,19 +97,15 @@ const solutionNavItems: SolutionItem[] = [
   tone: TONE_KEYS[i % TONE_KEYS.length],
 }))
 
-// Group use-case rows by industry, platform group first then alphabetical.
+// Group use-case rows by industry, alphabetically.
 function groupByIndustry(items: SolutionItem[]): [string, SolutionItem[]][] {
   const groups = new Map<string, SolutionItem[]>()
   for (const item of items) {
-    const key = item.industry ?? PLATFORM_GROUP
+    const key = item.industry ?? "Other"
     if (!groups.has(key)) groups.set(key, [])
     groups.get(key)!.push(item)
   }
-  return [...groups.entries()].sort(([a], [b]) => {
-    if (a === PLATFORM_GROUP) return -1
-    if (b === PLATFORM_GROUP) return 1
-    return a.localeCompare(b)
-  })
+  return [...groups.entries()].sort(([a], [b]) => a.localeCompare(b))
 }
 
 
